@@ -5,7 +5,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ContainerBlock;
-import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Result;
@@ -16,6 +15,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.material.Door;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.TrapDoor;
+import org.bukkit.plugin.PluginManager;
 
 public class PlayerListener extends org.bukkit.event.player.PlayerListener {
 
@@ -25,9 +25,9 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
         this.plugin = plugin;
     }
 
-    public void registerEvents() {
-        plugin.pm.registerEvent(Type.PLAYER_INTERACT, this, Priority.Normal, plugin);
-        plugin.pm.registerEvent(Type.PLAYER_QUIT, this, Priority.Normal, plugin);
+    public void registerEvents(PluginManager pm) {
+        pm.registerEvent(Type.PLAYER_INTERACT, this, Priority.Normal, plugin);
+        pm.registerEvent(Type.PLAYER_QUIT, this, Priority.Normal, plugin);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
                 if (!plugin.logic.interactDoor(player, block)) {
                     event.setUseInteractedBlock(Result.DENY);
                     event.setUseItemInHand(Result.DENY);
-                    plugin.logic.sendErrorMessage(player, plugin.cm.msg_user_denied_door_locale);
+                    plugin.sendMessage(player, "msg-deny-door", true);
                 }
             }
         } else if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
@@ -53,19 +53,19 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
                 if (!plugin.logic.interactDoor(player, block)) {
                     event.setUseInteractedBlock(Result.DENY);
                     event.setUseItemInHand(Result.DENY);
-                    plugin.logic.sendErrorMessage(player, plugin.cm.msg_user_denied_door_locale);
+                    plugin.sendMessage(player, "msg-deny-door", true);
                 }
             } else if (state instanceof ContainerBlock) {
                 if (!plugin.logic.interactContainer(player, block)) {
                     event.setUseInteractedBlock(Result.DENY);
                     event.setUseItemInHand(Result.DENY);
-                    plugin.logic.sendErrorMessage(player, plugin.cm.msg_user_denied_container_locale);
+                    plugin.sendMessage(player, "msg-deny-container", true);
                 }
             } else if (block.getType().equals(Material.WALL_SIGN)) {
                 if (!plugin.logic.interactSign(player, block)) {
                     event.setUseInteractedBlock(Result.DENY);
                     event.setUseItemInHand(Result.DENY);
-                    plugin.logic.sendErrorMessage(player, plugin.cm.msg_user_denied_sign_locale);
+                    plugin.sendMessage(player, "msg-deny-sign", true);
                 }
             }
         }

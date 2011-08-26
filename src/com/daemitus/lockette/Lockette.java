@@ -2,21 +2,20 @@ package com.daemitus.lockette;
 
 import com.daemitus.lockette.events.*;
 import java.util.logging.Logger;
+import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Lockette extends JavaPlugin {
 
     public static final Logger log = Logger.getLogger("Minecraft");
-    public PluginManager pm;
-    public ConfigManager cm;
+    private PluginManager pm;
+    private ConfigManager cm;
     public LogicEngine logic;
 
     public void onEnable() {
@@ -24,16 +23,16 @@ public class Lockette extends JavaPlugin {
         pm = this.getServer().getPluginManager();
 
         BlockListener blockListener = new BlockListener(this);
-        blockListener.registerEvents();
+        blockListener.registerEvents(pm);
 
         EntityListener entityListener = new EntityListener(this);
-        entityListener.registerEvents();
+        entityListener.registerEvents(pm);
 
         PlayerListener playerListener = new PlayerListener(this);
-        playerListener.registerEvents();
+        playerListener.registerEvents(pm);
 
         cm = new ConfigManager(this);
-        cm.loadConfig(false);
+        cm.load();
 
         logic = new LogicEngine(this);
     }
@@ -45,26 +44,28 @@ public class Lockette extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(this.cm.err_msg_command_console_locale);
+            sender.sendMessage(ConfigManager.getLocale("console"));
             return true;
         } else {
             Player player = (Player) sender;
             Block block = logic.getSelectedSign(player);
             if (block == null) {
-                logic.sendInfoMessage(player, cm.err_msg_command_user_sign_not_selected_locale);
+                this.sendMessage(player, "cmd-sign-not-selected", false);
             } else if (args.length < 2) {
-                logic.sendInfoMessage(player, cm.err_msg_command_format_locale);
+                this.sendMessage(player, "cmd-bad-format", false);
             } else {
                 try {
                     int lineNum = Integer.valueOf(args[0]);
                     Sign sign = (Sign) block.getState();
                     String text = logic.stripColor(sign.getLine(0));
                     if (lineNum == 1) {
-                        logic.sendInfoMessage(player, cm.err_msg_command_cannot_change_sign_identifier_locale);
-                    } else if ((text.equalsIgnoreCase(cm.ingame_sign_primary) || text.equalsIgnoreCase(cm.ingame_sign_primary_locale)) && lineNum == 2) {
-                        logic.sendInfoMessage(player, cm.err_msg_command_owner_locale);
+                        this.sendMessage(player, "cmd-identifier-not-changeable", false);
+                    } else if ((text.equalsIgnoreCase(ConfigManager.getDefault("signtext-private"))
+                                    || text.equalsIgnoreCase(ConfigManager.getLocale("signtext-private")))
+                                   && lineNum == 2) {
+                        this.sendMessage(player, "cmd-owner-not-changeable", false);
                     } else if (lineNum < 1 || lineNum > 4) {
-                        logic.sendInfoMessage(player, cm.err_msg_command_line_number_out_of_range);
+                        this.sendMessage(player, "cmd-line-num-out-of-range", false);
                     } else {
                         String newText = "";
                         for (int i = 1; i < args.length; i++) {
@@ -77,10 +78,22 @@ public class Lockette extends JavaPlugin {
                         sign.update();
                     }
                 } catch (NumberFormatException ex) {
-                    logic.sendInfoMessage(player, cm.err_msg_command_format_locale);
+                    this.sendMessage(player, "cmd-bad-format", false);
                 }
             }
         }
         return true;
     }
+    //------------------------------------------------------------------------//
+    private final String pluginTag = "Lockette: ";
+    private final ChatColor info = ChatColor.GOLD;
+    private final ChatColor error = ChatColor.RED;
+
+    public void sendMessage(Player player, String key, boolean isError) {
+        String msg = ConfigManager.getLocale(key);
+        if (msg.equals(""))
+            return;
+        player.sendMessage((isError ? error : info) + pluginTag + msg);
+    }
+    //------------------------------------------------------------------------//
 }

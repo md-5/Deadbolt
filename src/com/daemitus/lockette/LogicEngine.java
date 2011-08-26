@@ -24,6 +24,10 @@ public class LogicEngine {
     public final Set<BlockFace> horizontalBlockFaces = EnumSet.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
     public final Set<BlockFace> verticalBlockFaces = EnumSet.of(BlockFace.UP, BlockFace.DOWN);
     private HashMap<Player, Block> selectedSign = new HashMap<Player, Block>();
+    private final String patternStripColor = "(?i)§[0-9a-zA-Z]";
+    private final String patternNormalTooLong = ".{16,}";
+    private final String patternBracketTooLong = "\\[.{14,}\\]";
+    private final String patternTimer = "\\[.{1,11}:[123456789]\\]";
 
     public LogicEngine(final Lockette plugin) {
         this.plugin = plugin;
@@ -42,8 +46,8 @@ public class LogicEngine {
     public boolean isAuthorized(String name, Block block) {
         List<String> names = getAllNames(block);
         return !names.isEmpty() && (names.contains(truncate(name).toLowerCase())
-                                    || names.contains(plugin.cm.ingame_sign_everyone)
-                                    || names.contains(plugin.cm.ingame_sign_everyone_locale));
+                                    || names.contains(ConfigManager.getDefault("signtext-private"))
+                                    || names.contains(ConfigManager.getLocale("signtext-private")));
     }
 
     public String getOwnerName(Block block) {
@@ -70,9 +74,9 @@ public class LogicEngine {
         else if (type.equals(Material.WALL_SIGN)) {
             Sign sign = (Sign) block.getState();
             String text = stripColor(sign.getLine(0));
-            if (text.equalsIgnoreCase(plugin.cm.ingame_sign_primary) || text.equalsIgnoreCase(plugin.cm.ingame_sign_primary_locale))
+            if (text.equalsIgnoreCase(ConfigManager.getDefault("signtext-private")) || text.equalsIgnoreCase(ConfigManager.getLocale("signtext-private")))
                 return block;
-            if (text.equalsIgnoreCase(plugin.cm.ingame_sign_moreusers) || text.equalsIgnoreCase(plugin.cm.ingame_sign_moreusers_locale)) {
+            if (text.equalsIgnoreCase(ConfigManager.getDefault("signtext-moreusers")) || text.equalsIgnoreCase(ConfigManager.getLocale("signtext-moreusers"))) {
                 Block attached = getBlockSignAttachedTo(block);
                 return getOwnerSign(attached);
             }
@@ -117,7 +121,7 @@ public class LogicEngine {
                 continue;
             Sign sign = (Sign) adjacent.getState();
             String text = stripColor(sign.getLine(0));
-            if (!text.equalsIgnoreCase(plugin.cm.ingame_sign_primary) && !text.equalsIgnoreCase(plugin.cm.ingame_sign_primary_locale))
+            if (!text.equalsIgnoreCase(ConfigManager.getDefault("signtext-private")) && !text.equalsIgnoreCase(ConfigManager.getLocale("signtext-private")))
                 continue;
             return adjacent;
         }
@@ -169,9 +173,9 @@ public class LogicEngine {
         else if (type.equals(Material.WALL_SIGN)) {
             Sign sign = (Sign) block.getState();
             String text = stripColor(sign.getLine(0));
-            if (text.equalsIgnoreCase(plugin.cm.ingame_sign_primary) || text.equalsIgnoreCase(plugin.cm.ingame_sign_primary_locale))
+            if (text.equalsIgnoreCase(ConfigManager.getDefault("signtext-private")) || text.equalsIgnoreCase(ConfigManager.getLocale("signtext-private")))
                 return getAllSigns(getBlockSignAttachedTo(block));
-            if (text.equalsIgnoreCase(plugin.cm.ingame_sign_moreusers) || text.equalsIgnoreCase(plugin.cm.ingame_sign_moreusers_locale))
+            if (text.equalsIgnoreCase(ConfigManager.getDefault("signtext-moreusers")) || text.equalsIgnoreCase(ConfigManager.getLocale("signtext-moreusers")))
                 return getAllSigns(getBlockSignAttachedTo(block));
         } else {
             Block upBlock = block.getRelative(BlockFace.UP);
@@ -207,9 +211,9 @@ public class LogicEngine {
                 continue;
             Sign sign = (Sign) adjacent.getState();
             String text = stripColor(sign.getLine(0));
-            if (text.equalsIgnoreCase(plugin.cm.ingame_sign_primary) || text.equalsIgnoreCase(plugin.cm.ingame_sign_primary_locale))
+            if (text.equalsIgnoreCase(ConfigManager.getDefault("signtext-private")) || text.equalsIgnoreCase(ConfigManager.getLocale("signtext-private")))
                 signSet.add(adjacent);
-            if (text.equalsIgnoreCase(plugin.cm.ingame_sign_moreusers) || text.equalsIgnoreCase(plugin.cm.ingame_sign_moreusers_locale))
+            if (text.equalsIgnoreCase(ConfigManager.getDefault("signtext-moreusers")) || text.equalsIgnoreCase(ConfigManager.getLocale("signtext-moreusers")))
                 signSet.add(adjacent);
         }
 
@@ -244,37 +248,29 @@ public class LogicEngine {
     }
 
     public String stripColor(String line) {
-        return line.replaceAll(plugin.cm.patternStripColor, "");
+        return line.replaceAll(patternStripColor, "");
     }
 
     public String truncate(String text) {
-        if (text.matches(plugin.cm.patternBracketTooLong))
+        if (text.matches(patternBracketTooLong))
             return "[" + text.substring(1, 14) + "]";
-        if (text.matches(plugin.cm.patternNormalTooLong))
+        if (text.matches(patternNormalTooLong))
             return text.substring(0, 15);
         return text;
-    }
-
-    public void sendInfoMessage(Player player, String msg) {
-        if (!msg.equals(""))
-            player.sendMessage(plugin.cm.color_info + plugin.cm.pluginTag + ": " + msg);
-    }
-
-    public void sendErrorMessage(Player player, String msg) {
-        if (!msg.equals(""))
-            player.sendMessage(plugin.cm.color_error + plugin.cm.pluginTag + ": " + msg);
     }
 
     public boolean interactDoor(Player player, Block block) {
         Block owner = getOwnerSign(block);
         if (owner == null)
             return true;
-        if (!isAuthorized(truncate(player.getName()), block))
+        if (!isAuthorized(player.getName(), block))
             return false;
         Block ownerAttached = getBlockSignAttachedTo(owner);
         int delay = getDelayFromSign((Sign) owner.getState());
         Set<Block> doorBlocks = new HashSet<Block>();
         doorBlocks = toggleDoor(block, ownerAttached, isNaturalOpen(block));
+        if (ConfigManager.setting_Timer_Doors_Always_On)
+            doorSchedule.add(doorBlocks, delay == 0 ? ConfigManager.setting_Timer_Doors_Always_On_Delay : delay);
         if (delay > 0) {
             doorSchedule.add(doorBlocks, delay);
         }
@@ -328,12 +324,12 @@ public class LogicEngine {
 
     private int getDelayFromSign(Sign sign) {
         for (int i = 2; i < 4; i++) {
-            String text = sign.getLine(i);
-            if (!text.matches(plugin.cm.patternTimer))
+            String text = stripColor(sign.getLine(i));
+            if (!text.matches(patternTimer))
                 continue;
 
             String word = text.substring(1, text.length() - 3);
-            if (!word.equalsIgnoreCase(plugin.cm.ingame_sign_timer) && !word.equalsIgnoreCase(plugin.cm.ingame_sign_timer_locale))
+            if (!word.equalsIgnoreCase(ConfigManager.getDefault("signtext-timer")) && !word.equalsIgnoreCase(ConfigManager.getLocale("signtext-timer")))
                 continue;
 
             return Integer.valueOf(text.substring(text.length() - 2, text.length() - 1));
@@ -350,7 +346,7 @@ public class LogicEngine {
         Block owner = getOwnerSign(block);
         if (owner == null)
             return true;
-        if (!isAuthorized(truncate(player.getName()), block))
+        if (!isAuthorized(player.getName(), block))
             return false;
         return true;
     }
@@ -360,11 +356,11 @@ public class LogicEngine {
         if (owner.equals("")) {
             return true;
         }
-        if (!owner.equalsIgnoreCase(stripColor(player.getName()))) {
+        if (!owner.equalsIgnoreCase(player.getName())) {
             return false;
         }
         selectedSign.put(player, block);
-        sendInfoMessage(player, plugin.cm.msg_user_sign_selected_locale);
+        plugin.sendMessage(player, "cmd-sign-selected", false);
         return true;
     }
 

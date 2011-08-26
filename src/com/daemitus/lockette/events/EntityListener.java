@@ -1,5 +1,6 @@
 package com.daemitus.lockette.events;
 
+import com.daemitus.lockette.ConfigManager;
 import com.daemitus.lockette.Lockette;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -8,6 +9,7 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.plugin.PluginManager;
 
 public class EntityListener extends org.bukkit.event.entity.EntityListener {
 
@@ -17,30 +19,30 @@ public class EntityListener extends org.bukkit.event.entity.EntityListener {
         this.plugin = plugin;
     }
 
-    public void registerEvents() {
-        plugin.pm.registerEvent(Type.ENTITY_EXPLODE, this, Priority.Normal, plugin);
+    public void registerEvents(PluginManager pm) {
+        pm.registerEvent(Type.ENTITY_EXPLODE, this, Priority.Normal, plugin);
     }
 
     @Override
     public void onEntityExplode(EntityExplodeEvent event) {
         if (event.isCancelled())
             return;
-        if (!plugin.cm.setting_explosion_protection)
+        if (!ConfigManager.setting_Explosion_Protection)
             return;
 
         for (Block block : event.blockList()) {
             if (plugin.logic.isProtected(block)) {
                 event.setCancelled(true);
-                if (plugin.cm.setting_broadcast_tnt_fizzle && event.getEntity() instanceof TNTPrimed) {
-                    for (Entity entity : event.getEntity().getNearbyEntities(plugin.cm.setting_broadcast_tnt_fizzle_radius,
-                                                                             plugin.cm.setting_broadcast_tnt_fizzle_radius,
-                                                                             plugin.cm.setting_broadcast_tnt_fizzle_radius)) {
+                if (ConfigManager.setting_Broadcast_TNT_Fizzle && event.getEntity() instanceof TNTPrimed) {
+                    for (Entity entity : event.getEntity().getNearbyEntities(ConfigManager.setting_Broadcast_TNT_Fizzle_Radius,
+                                                                             ConfigManager.setting_Broadcast_TNT_Fizzle_Radius,
+                                                                             ConfigManager.setting_Broadcast_TNT_Fizzle_Radius)) {
                         if (entity instanceof Player) {
-                            plugin.logic.sendInfoMessage((Player) entity, plugin.cm.msg_tnt_fizzle_locale);
+                            plugin.sendMessage((Player) entity, "msg-tnt-fizzle", false);
                         }
                     }
                 }
-                return;
+                break;
             }
         }
     }
