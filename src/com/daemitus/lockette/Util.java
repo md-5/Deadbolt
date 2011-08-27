@@ -17,40 +17,31 @@ import org.bukkit.material.Door;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.TrapDoor;
 
-public class LogicEngine {
+public class Util {
 
-    private final Lockette plugin;
-    private final DoorSchedule doorSchedule;
-    public final Set<BlockFace> horizontalBlockFaces = EnumSet.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
-    public final Set<BlockFace> verticalBlockFaces = EnumSet.of(BlockFace.UP, BlockFace.DOWN);
-    private HashMap<Player, Block> selectedSign = new HashMap<Player, Block>();
-    private final String patternStripColor = "(?i)§[0-9a-zA-Z]";
-    private final String patternNormalTooLong = ".{16,}";
-    private final String patternBracketTooLong = "\\[.{14,}\\]";
-    private final String patternTimer = "\\[.{1,11}:[123456789]\\]";
+    public static final Set<BlockFace> horizontalBlockFaces = EnumSet.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
+    public static final Set<BlockFace> verticalBlockFaces = EnumSet.of(BlockFace.UP, BlockFace.DOWN);
+    private static final HashMap<Player, Block> selectedSign = new HashMap<Player, Block>();
+    private static final String patternStripColor = "(?i)§[0-9a-zA-Z]";
+    private static final String patternNormalTooLong = ".{16,}";
+    private static final String patternBracketTooLong = "\\[.{14,}\\]";
 
-    public LogicEngine(final Lockette plugin) {
-        this.plugin = plugin;
-        doorSchedule = new DoorSchedule(plugin);
-        doorSchedule.start();
-    }
-
-    public boolean isProtected(Block block) {
+    public static boolean isProtected(Block block) {
         return getOwnerSign(block) != null;
     }
 
-    public boolean isOwner(String name, Block block) {
+    public static boolean isOwner(String name, Block block) {
         return truncate(name).equalsIgnoreCase(getOwnerName(block));
     }
 
-    public boolean isAuthorized(String name, Block block) {
+    public static boolean isAuthorized(String name, Block block) {
         List<String> names = getAllNames(block);
         return !names.isEmpty() && (names.contains(truncate(name).toLowerCase())
-                                    || names.contains(ConfigManager.getDefault("signtext-private"))
-                                    || names.contains(ConfigManager.getLocale("signtext-private")));
+                                    || names.contains(Config.signtext_everyone)
+                                    || names.contains(Config.signtext_everyone_locale));
     }
 
-    public String getOwnerName(Block block) {
+    public static String getOwnerName(Block block) {
         Block owner = getOwnerSign(block);
         if (owner == null)
             return "";
@@ -59,7 +50,7 @@ public class LogicEngine {
         return text;
     }
 
-    public Block getOwnerSign(Block block) {
+    public static Block getOwnerSign(Block block) {
         Material type = block.getType();
         BlockState state = block.getState();
         MaterialData data = state.getData();
@@ -74,9 +65,9 @@ public class LogicEngine {
         else if (type.equals(Material.WALL_SIGN)) {
             Sign sign = (Sign) block.getState();
             String text = stripColor(sign.getLine(0));
-            if (text.equalsIgnoreCase(ConfigManager.getDefault("signtext-private")) || text.equalsIgnoreCase(ConfigManager.getLocale("signtext-private")))
+            if (text.equalsIgnoreCase(Config.signtext_private) || text.equalsIgnoreCase(Config.signtext_private_locale))
                 return block;
-            if (text.equalsIgnoreCase(ConfigManager.getDefault("signtext-moreusers")) || text.equalsIgnoreCase(ConfigManager.getLocale("signtext-moreusers"))) {
+            if (text.equalsIgnoreCase(Config.signtext_moreusers) || text.equalsIgnoreCase(Config.signtext_moreusers_locale)) {
                 Block attached = getBlockSignAttachedTo(block);
                 return getOwnerSign(attached);
             }
@@ -95,7 +86,7 @@ public class LogicEngine {
         }
     }
 
-    private Block getOwnerSign(Block block, boolean iterateHorizontal, boolean iterateVertical, boolean trapDoor) {
+    private static Block getOwnerSign(Block block, boolean iterateHorizontal, boolean iterateVertical, boolean trapDoor) {
         if (trapDoor && block.getState().getData() instanceof TrapDoor) {
             TrapDoor door = (TrapDoor) block.getState().getData();
             block = block.getRelative(door.getAttachedFace());
@@ -121,7 +112,7 @@ public class LogicEngine {
                 continue;
             Sign sign = (Sign) adjacent.getState();
             String text = stripColor(sign.getLine(0));
-            if (!text.equalsIgnoreCase(ConfigManager.getDefault("signtext-private")) && !text.equalsIgnoreCase(ConfigManager.getLocale("signtext-private")))
+            if (!text.equalsIgnoreCase(Config.signtext_private) && !text.equalsIgnoreCase(Config.signtext_private_locale))
                 continue;
             return adjacent;
         }
@@ -144,7 +135,7 @@ public class LogicEngine {
         return null;
     }
 
-    public List<String> getAllNames(Block block) {
+    public static List<String> getAllNames(Block block) {
         Set<Block> signs = getAllSigns(block);
         List<String> names = new ArrayList<String>();
         for (Block signBlock : signs) {
@@ -158,7 +149,7 @@ public class LogicEngine {
         return names;
     }
 
-    private Set<Block> getAllSigns(Block block) {
+    private static Set<Block> getAllSigns(Block block) {
         Material type = block.getType();
         BlockState state = block.getState();
         MaterialData data = state.getData();
@@ -173,9 +164,9 @@ public class LogicEngine {
         else if (type.equals(Material.WALL_SIGN)) {
             Sign sign = (Sign) block.getState();
             String text = stripColor(sign.getLine(0));
-            if (text.equalsIgnoreCase(ConfigManager.getDefault("signtext-private")) || text.equalsIgnoreCase(ConfigManager.getLocale("signtext-private")))
+            if (text.equalsIgnoreCase(Config.signtext_private) || text.equalsIgnoreCase(Config.signtext_private_locale))
                 return getAllSigns(getBlockSignAttachedTo(block));
-            if (text.equalsIgnoreCase(ConfigManager.getDefault("signtext-moreusers")) || text.equalsIgnoreCase(ConfigManager.getLocale("signtext-moreusers")))
+            if (text.equalsIgnoreCase(Config.signtext_moreusers) || text.equalsIgnoreCase(Config.signtext_moreusers_locale))
                 return getAllSigns(getBlockSignAttachedTo(block));
         } else {
             Block upBlock = block.getRelative(BlockFace.UP);
@@ -188,7 +179,7 @@ public class LogicEngine {
         return new HashSet<Block>();
     }
 
-    private Set<Block> getAllSigns(Block block, boolean iterateHorizontal, boolean iterateVertical, boolean trapDoor) {
+    private static Set<Block> getAllSigns(Block block, boolean iterateHorizontal, boolean iterateVertical, boolean trapDoor) {
         Set<Block> signSet = new HashSet<Block>();
 
         if (trapDoor && block.getState().getData() instanceof TrapDoor) {
@@ -211,9 +202,9 @@ public class LogicEngine {
                 continue;
             Sign sign = (Sign) adjacent.getState();
             String text = stripColor(sign.getLine(0));
-            if (text.equalsIgnoreCase(ConfigManager.getDefault("signtext-private")) || text.equalsIgnoreCase(ConfigManager.getLocale("signtext-private")))
+            if (text.equalsIgnoreCase(Config.signtext_private) || text.equalsIgnoreCase(Config.signtext_private_locale))
                 signSet.add(adjacent);
-            if (text.equalsIgnoreCase(ConfigManager.getDefault("signtext-moreusers")) || text.equalsIgnoreCase(ConfigManager.getLocale("signtext-moreusers")))
+            if (text.equalsIgnoreCase(Config.signtext_moreusers) || text.equalsIgnoreCase(Config.signtext_moreusers_locale))
                 signSet.add(adjacent);
         }
 
@@ -232,7 +223,7 @@ public class LogicEngine {
         return signSet;
     }
 
-    public Block getBlockSignAttachedTo(Block block) {
+    public static Block getBlockSignAttachedTo(Block block) {
         if (block.getType().equals(Material.WALL_SIGN))
             switch (block.getData()) {
                 case 2:
@@ -247,11 +238,11 @@ public class LogicEngine {
         return null;
     }
 
-    public String stripColor(String line) {
+    public static String stripColor(String line) {
         return line.replaceAll(patternStripColor, "");
     }
 
-    public String truncate(String text) {
+    public static String truncate(String text) {
         if (text.matches(patternBracketTooLong))
             return "[" + text.substring(1, 14) + "]";
         if (text.matches(patternNormalTooLong))
@@ -259,116 +250,19 @@ public class LogicEngine {
         return text;
     }
 
-    public boolean interactDoor(Player player, Block block) {
-        Block owner = getOwnerSign(block);
-        if (owner == null)
-            return true;
-        if (!isAuthorized(player.getName(), block))
-            return false;
-        Block ownerAttached = getBlockSignAttachedTo(owner);
-        int delay = getDelayFromSign((Sign) owner.getState());
-        Set<Block> doorBlocks = new HashSet<Block>();
-        doorBlocks = toggleDoor(block, ownerAttached, isNaturalOpen(block));
-        if (ConfigManager.setting_Timer_Doors_Always_On)
-            doorSchedule.add(doorBlocks, delay == 0 ? ConfigManager.setting_Timer_Doors_Always_On_Delay : delay);
-        if (delay > 0) {
-            doorSchedule.add(doorBlocks, delay);
-        }
-        return true;
-    }
-
-    private Set<Block> toggleDoor(Block block, Block keyBlock, boolean naturalOpen) {
-        Set<Block> set = new HashSet<Block>();
-        set.add(block);
-        if (!naturalOpen)
-            toggleSingleBlock(block);
-
-        for (BlockFace bf : verticalBlockFaces) {
-            Block verticalBlock = block.getRelative(bf);
-            if (verticalBlock.getType().equals(block.getType())) {
-                set.add(verticalBlock);
-                if (!naturalOpen)
-                    toggleSingleBlock(verticalBlock);
-            }
-        }
-
-        if (keyBlock != null) {
-            for (BlockFace bf : horizontalBlockFaces) {
-                Block adjacent = block.getRelative(bf);
-                if (adjacent.getType().equals(block.getType())
-                    && ((adjacent.getX() == keyBlock.getX() && adjacent.getZ() == keyBlock.getZ())
-                        || (block.getX() == keyBlock.getX() && block.getZ() == keyBlock.getZ())))
-                    set.addAll(toggleDoor(adjacent, null, false));
-            }
-        }
-        return set;
-    }
-
-    private Block toggleSingleBlock(Block block) {
-        block.setData((byte) (block.getData() ^ 0x4));
-        return block;
-    }
-
-    private boolean isNaturalOpen(Block block) {
-        switch (block.getType()) {
-            case WOODEN_DOOR:
-                return true;
-            case TRAP_DOOR:
-                return true;
-            case IRON_DOOR_BLOCK:
-                return false;
-            default:
-                return true;
-        }
-    }
-
-    private int getDelayFromSign(Sign sign) {
-        for (int i = 2; i < 4; i++) {
-            String text = stripColor(sign.getLine(i));
-            if (!text.matches(patternTimer))
-                continue;
-
-            String word = text.substring(1, text.length() - 3);
-            if (!word.equalsIgnoreCase(ConfigManager.getDefault("signtext-timer")) && !word.equalsIgnoreCase(ConfigManager.getLocale("signtext-timer")))
-                continue;
-
-            return Integer.valueOf(text.substring(text.length() - 2, text.length() - 1));
-        }
-        return 0;
-    }
-
-    public void shutdown() {
-        selectedSign.clear();
-        doorSchedule.stop();
-    }
-
-    public boolean interactContainer(Player player, Block block) {
-        Block owner = getOwnerSign(block);
-        if (owner == null)
-            return true;
-        if (!isAuthorized(player.getName(), block))
-            return false;
-        return true;
-    }
-
-    public boolean interactSign(Player player, Block block) {
-        String owner = getOwnerName(block);
-        if (owner.equals("")) {
-            return true;
-        }
-        if (!owner.equalsIgnoreCase(player.getName())) {
-            return false;
-        }
-        selectedSign.put(player, block);
-        plugin.sendMessage(player, "cmd-sign-selected", false);
-        return true;
-    }
-
-    public Block getSelectedSign(Player player) {
+    public static Block getSelectedSign(Player player) {
         return selectedSign.get(player);
     }
 
-    public void clearSelectedSign(Player player) {
+    public static void setSelectedSign(Player player, Block block) {
+        selectedSign.put(player, block);
+    }
+
+    public static void clearSelectedSign(Player player) {
         selectedSign.remove(player);
+    }
+
+    public static void clearSelectedSigns() {
+        selectedSign.clear();
     }
 }

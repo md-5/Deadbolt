@@ -1,6 +1,9 @@
 package com.daemitus.lockette;
 
-import com.daemitus.lockette.events.*;
+import com.daemitus.lockette.events.BlockListener;
+import com.daemitus.lockette.events.EntityListener;
+import com.daemitus.lockette.events.PlayerListener;
+import java.util.Set;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
@@ -13,10 +16,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Lockette extends JavaPlugin {
 
-    public static final Logger log = Logger.getLogger("Minecraft");
+    public static final Logger logger = Logger.getLogger("Minecraft");
+    private static DoorSchedule doorSchedule;
     private PluginManager pm;
-    private ConfigManager cm;
-    public LogicEngine logic;
+    private Config cm;
 
     public void onEnable() {
 
@@ -31,41 +34,44 @@ public class Lockette extends JavaPlugin {
         PlayerListener playerListener = new PlayerListener(this);
         playerListener.registerEvents(pm);
 
-        cm = new ConfigManager(this);
+        cm = new Config(this);
         cm.load();
 
-        logic = new LogicEngine(this);
+        doorSchedule = new DoorSchedule(this);
+        doorSchedule.start();
     }
 
     public void onDisable() {
-        logic.shutdown();
+        stopDoorSchedule();
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        //todo maybe re-imp the /lockette reload command?
+        //todo look into cleaning this up
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ConfigManager.getLocale("console"));
+            sender.sendMessage(Config.console);
             return true;
         } else {
             Player player = (Player) sender;
-            Block block = logic.getSelectedSign(player);
+            Block block = Util.getSelectedSign(player);
             if (block == null) {
-                this.sendMessage(player, "cmd-sign-not-selected", false);
+                this.sendMessage(player, Config.cmd_sign_not_selected, ChatColor.YELLOW);
             } else if (args.length < 2) {
-                this.sendMessage(player, "cmd-bad-format", false);
+                this.sendMessage(player, Config.cmd_bad_format, ChatColor.RED);
             } else {
                 try {
                     int lineNum = Integer.valueOf(args[0]);
                     Sign sign = (Sign) block.getState();
-                    String text = logic.stripColor(sign.getLine(0));
+                    String text = Util.stripColor(sign.getLine(0));
                     if (lineNum == 1) {
-                        this.sendMessage(player, "cmd-identifier-not-changeable", false);
-                    } else if ((text.equalsIgnoreCase(ConfigManager.getDefault("signtext-private"))
-                                    || text.equalsIgnoreCase(ConfigManager.getLocale("signtext-private")))
+                        this.sendMessage(player, Config.cmd_identifier_not_changeable, ChatColor.RED);
+                    } else if ((text.equalsIgnoreCase(Config.signtext_private)
+                                    || text.equalsIgnoreCase(Config.signtext_private_locale))
                                    && lineNum == 2) {
-                        this.sendMessage(player, "cmd-owner-not-changeable", false);
+                        this.sendMessage(player, Config.cmd_owner_not_changeable, ChatColor.RED);
                     } else if (lineNum < 1 || lineNum > 4) {
-                        this.sendMessage(player, "cmd-line-num-out-of-range", false);
+                        this.sendMessage(player, Config.cmd_line_num_out_of_range, ChatColor.RED);
                     } else {
                         String newText = "";
                         for (int i = 1; i < args.length; i++) {
@@ -74,11 +80,11 @@ public class Lockette extends JavaPlugin {
                                 newText += " ";
                             }
                         }
-                        sign.setLine(lineNum - 1, logic.truncate(newText));
+                        sign.setLine(lineNum - 1, Util.truncate(newText));
                         sign.update();
                     }
                 } catch (NumberFormatException ex) {
-                    this.sendMessage(player, "cmd-bad-format", false);
+                    this.sendMessage(player, Config.cmd_bad_format, ChatColor.RED);
                 }
             }
         }
@@ -86,14 +92,29 @@ public class Lockette extends JavaPlugin {
     }
     //------------------------------------------------------------------------//
     private final String pluginTag = "Lockette: ";
-    private final ChatColor info = ChatColor.GOLD;
-    private final ChatColor error = ChatColor.RED;
 
-    public void sendMessage(Player player, String key, boolean isError) {
-        String msg = ConfigManager.getLocale(key);
+    public void sendMessage(Player player, String msg, ChatColor color) {
         if (msg.equals(""))
             return;
-        player.sendMessage((isError ? error : info) + pluginTag + msg);
+        player.sendMessage(color + pluginTag + msg);
+    }
+
+    public void sendBroadcast(String perm, String msg, ChatColor color) {
+        if (msg.equals(""))
+            return;
+        for (Player player : this.getServer().getOnlinePlayers()) {
+            if (player.hasPermission(perm))
+                player.sendMessage(msg);
+        }
     }
     //------------------------------------------------------------------------//
+
+    public static void scheduleDoor(Set<Block> doorBlocks, int delay) {
+        doorSchedule.add(doorBlocks, delay);
+    }
+
+    public static void stopDoorSchedule() {
+        Util.clearSelectedSigns();
+        doorSchedule.stop();
+    }
 }

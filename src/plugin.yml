@@ -6,3 +6,59 @@ description: A simple plugin for locking containers and doors without passwords 
 commands:
     lockette:
         description: Access to the Lockette plugin via commands.
+permissions:
+    lockette.*:
+        description: All user and admin functionality INCLUDING broadcasts
+        children:
+            lockette.user.*: true
+            lockette.admin.*: true
+            lockette.broadcast.*: true
+    lockette.user.*:
+        description: All user functionality
+        children:
+            lockette.user.create.*: true
+    lockette.user.create.*:
+        description: Allows protection of all chests, dispensers, furnaces, doors, and trapdoors
+        children:
+            lockette.user.create.chest: true
+            lockette.user.create.dispenser: true
+            lockette.user.create.door: true
+            lockette.user.create.furnace: true
+            lockette.user.create.trapdoor: true
+    lockette.user.create.chest:
+        description: Allows user protection of chests
+    lockette.user.create.dispenser:
+        description: Allows user protection of dispensers
+    lockette.user.create.door:
+        description: Allows user protection of doors
+    lockette.user.create.furnace:
+        description: Allows user protection of furnaces
+    lockette.user.create.trapdoor:
+        description: Allows user protection of trapdoors
+    lockette.admin.*:
+        description: Allows for all admin functionality 
+        children:
+            lockette.admin.create: true
+            lockette.admin.break: true
+            lockette.admin.bypass: true
+            lockette.admin.signs: true
+            lockette.admin.snoop: true
+    lockette.admin.create:
+        description: Allows admin protection of all for other users
+    lockette.admin.break:
+        description: Allows admin breaking of protected blocks
+    lockette.admin.bypass:
+        description: Allows admin usage of protected doors and trapdoors
+    lockette.admin.signs:
+        description: Allows admin usage of commands on user signs
+    lockette.admin.snoop:
+        description: Allows admin usage of protected chests, dispensers, and furnaces
+    lockette.broadcast.*:
+      description: Recieves all notifications of admin overrides
+      children:
+          lockette.broadcast.break: true
+          lockette.broadcast.snoop: true
+    lockette.broadcast.break:
+      description: Receives notifications of admin override block breaks
+    lockette.broadcast.snoop:
+      description: receives notifications of admin override container snoops

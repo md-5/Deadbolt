@@ -1,7 +1,9 @@
 package com.daemitus.lockette.events;
 
-import com.daemitus.lockette.ConfigManager;
+import com.daemitus.lockette.Config;
 import com.daemitus.lockette.Lockette;
+import com.daemitus.lockette.Util;
+import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -19,7 +21,7 @@ public class EntityListener extends org.bukkit.event.entity.EntityListener {
         this.plugin = plugin;
     }
 
-    public void registerEvents(PluginManager pm) {
+    public void registerEvents(final PluginManager pm) {
         pm.registerEvent(Type.ENTITY_EXPLODE, this, Priority.Normal, plugin);
     }
 
@@ -27,18 +29,18 @@ public class EntityListener extends org.bukkit.event.entity.EntityListener {
     public void onEntityExplode(EntityExplodeEvent event) {
         if (event.isCancelled())
             return;
-        if (!ConfigManager.setting_Explosion_Protection)
+        if (!Config.explosionProtection)
             return;
 
         for (Block block : event.blockList()) {
-            if (plugin.logic.isProtected(block)) {
+            if (Util.isProtected(block)) {
                 event.setCancelled(true);
-                if (ConfigManager.setting_Broadcast_TNT_Fizzle && event.getEntity() instanceof TNTPrimed) {
-                    for (Entity entity : event.getEntity().getNearbyEntities(ConfigManager.setting_Broadcast_TNT_Fizzle_Radius,
-                                                                             ConfigManager.setting_Broadcast_TNT_Fizzle_Radius,
-                                                                             ConfigManager.setting_Broadcast_TNT_Fizzle_Radius)) {
+                if (Config.broadcastTNT && event.getEntity() instanceof TNTPrimed) {
+                    for (Entity entity : event.getEntity().getNearbyEntities(Config.broadcastTNTRadius,
+                                                                             Config.broadcastTNTRadius,
+                                                                             Config.broadcastTNTRadius)) {
                         if (entity instanceof Player) {
-                            plugin.sendMessage((Player) entity, "msg-tnt-fizzle", false);
+                            plugin.sendMessage((Player) entity, Config.msg_tnt_fizzle, ChatColor.YELLOW);
                         }
                     }
                 }

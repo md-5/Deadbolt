@@ -1,8 +1,11 @@
 package com.daemitus.lockette.events;
 
-import com.daemitus.lockette.ConfigManager;
+import com.daemitus.lockette.Config;
 import com.daemitus.lockette.Lockette;
+import com.daemitus.lockette.Perm;
+import com.daemitus.lockette.Util;
 import java.util.List;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -13,7 +16,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
@@ -32,12 +34,11 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
         this.plugin = plugin;
     }
 
-    public void registerEvents(PluginManager pm) {
+    public void registerEvents(final PluginManager pm) {
         pm.registerEvent(Type.BLOCK_BREAK, this, Priority.Normal, plugin);
         pm.registerEvent(Type.BLOCK_PLACE, this, Priority.Normal, plugin);
         pm.registerEvent(Type.REDSTONE_CHANGE, this, Priority.Normal, plugin);
         pm.registerEvent(Type.SIGN_CHANGE, this, Priority.Normal, plugin);
-        pm.registerEvent(Type.BLOCK_PISTON_EXTEND, this, Priority.Normal, plugin);
         pm.registerEvent(Type.BLOCK_PISTON_RETRACT, this, Priority.Normal, plugin);
     }
 
@@ -47,11 +48,17 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
             return;
         Player player = event.getPlayer();
         Block block = event.getBlock();
-        String owner = plugin.logic.getOwnerName(block);
-        if (owner.equals("") || owner.equalsIgnoreCase(plugin.logic.truncate(player.getName())))
+        String owner = Util.getOwnerName(block);
+        if (owner.equals("") || owner.equalsIgnoreCase(Util.truncate(player.getName())))
             return;
+        if (Perm.override(player, Perm.admin_break)) {
+            plugin.sendBroadcast(Perm.admin_broadcast_break,
+                                 String.format(Config.msg_admin_break, player.getName(), owner),
+                                 ChatColor.RED);
+            return;
+        }
         event.setCancelled(true);
-        plugin.sendMessage(player, "msg-deny-block-break", true);
+        plugin.sendMessage(player, Config.msg_deny_block_break, ChatColor.RED);
     }
 
     @Override
@@ -59,7 +66,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
         if (event.isCancelled())
             return;
         Block against = event.getBlockAgainst();
-        if (against.getType().equals(Material.WALL_SIGN) && plugin.logic.isProtected(against)) {
+        if (against.getType().equals(Material.WALL_SIGN) && Util.isProtected(against)) {
             event.setCancelled(true);
             return;
         }
@@ -69,11 +76,10 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
         BlockState state = block.getState();
         MaterialData data = state.getData();
 
-
         if (type.equals(Material.CHEST)) {
             if (!onChestPlace(player, block)) {
                 event.setCancelled(true);
-                plugin.sendMessage(player, "msg-deny-placement-chest", true);
+                plugin.sendMessage(player, Config.msg_deny_chest_expansion, ChatColor.RED);
             }
         } else if (data instanceof Door) {
             if (!onDoorPlace(player, block)) {
@@ -82,241 +88,209 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
                 block.setType(Material.AIR);
                 block.getRelative(BlockFace.UP).setType(Material.SAND);
                 block.getRelative(BlockFace.UP).setType(Material.AIR);
-                plugin.sendMessage(player, "msg-deny-placement-door", true);
+                plugin.sendMessage(player, Config.msg_deny_door_expansion, ChatColor.RED);
             }
         } else if (data instanceof TrapDoor) {
             if (!onTrapDoorPlace(player, against)) {
                 event.setCancelled(true);
-                plugin.sendMessage(player, "msg-deny-placement-trapdoor", true);
+                plugin.sendMessage(player, Config.msg_deny_trapdoor_placement, ChatColor.RED);
             }
         }
     }
 
     private boolean onChestPlace(Player player, Block block) {
-        for (BlockFace bf : plugin.logic.horizontalBlockFaces) {
+        for (BlockFace bf : Util.horizontalBlockFaces) {
             Block adjacent = block.getRelative(bf);
             if (!adjacent.getType().equals(block.getType()))
                 continue;
-            String owner = plugin.logic.getOwnerName(adjacent);
-            if (owner.equals("") || owner.equals(plugin.logic.truncate(player.getName())))
-                continue;
+            String owner = Util.getOwnerName(adjacent);
+            if (owner.equals("") || owner.equals(Util.truncate(player.getName())))
+                return true;
             return false;
         }
         return true;
     }
 
     private boolean onDoorPlace(Player player, Block block) {
-        for (BlockFace bf : plugin.logic.horizontalBlockFaces) {
+        for (BlockFace bf : Util.horizontalBlockFaces) {
             Block adjacent = block.getRelative(bf);
             if (!adjacent.getType().equals(block.getType()))
                 continue;
-            String owner = plugin.logic.getOwnerName(adjacent);
-            if (owner.equals("") || owner.equals(plugin.logic.truncate(player.getName())))
+            String owner = Util.getOwnerName(adjacent);
+            if (owner.equals("") || owner.equals(Util.truncate(player.getName())))
                 continue;
             return false;
         }
-        String owner = plugin.logic.getOwnerName(block.getRelative(0, 2, 0));
-        if (owner.equals("") || owner.equals(plugin.logic.truncate(player.getName())))
+        String owner = Util.getOwnerName(block.getRelative(0, 2, 0));
+        if (owner.equals("") || owner.equals(Util.truncate(player.getName())))
             return true;
         return false;
     }
 
     private boolean onTrapDoorPlace(Player player, Block against) {
-        String owner = plugin.logic.getOwnerName(against);
-        if (owner.equals("") || owner.equals(plugin.logic.truncate(player.getName()))) {
+        String owner = Util.getOwnerName(against);
+        if (owner.equals("") || owner.equals(Util.truncate(player.getName()))) {
             return true;
         }
         return false;
     }
 
-    //TODO holy shit. optimize this.
     @Override
     public void onSignChange(SignChangeEvent event) {
-        Player player = event.getPlayer();
-        Block block = event.getBlock();
-        String text = plugin.logic.stripColor(event.getLine(0));
-
-        boolean primary = false;
-        boolean moreusers = false;
-        if (text.equalsIgnoreCase(ConfigManager.getDefault("signtext-private"))
-            || text.equalsIgnoreCase(ConfigManager.getLocale("signtext-private")))
-            primary = true;
-        else if (text.equalsIgnoreCase(ConfigManager.getDefault("signtext-moreusers"))
-                 || text.equalsIgnoreCase(ConfigManager.getLocale("signtext-moreusers")))
-            moreusers = true;
-
-        if (!primary && !moreusers)
+        String identifier = Util.stripColor(event.getLine(0));
+        boolean isPrivate =
+                identifier.equalsIgnoreCase(Config.signtext_private)
+                || identifier.equalsIgnoreCase(Config.signtext_private_locale);
+        boolean isMoreUsers =
+                identifier.equalsIgnoreCase(Config.signtext_moreusers)
+                || identifier.equalsIgnoreCase(Config.signtext_moreusers_locale);
+        if (!isPrivate && !isMoreUsers)
             return;
 
-        boolean valid = false;
-        if (block.getType().equals(Material.WALL_SIGN)) {
-            Block against = plugin.logic.getBlockSignAttachedTo(block);
-            String owner = plugin.logic.getOwnerName(against);
-            if (primary) {
-                if (!owner.equals("")) {
-                    plugin.sendMessage(player, "msg-deny-placement-sign-private-owner", true);
-                } else {
-                    for (BlockFace bf : plugin.logic.horizontalBlockFaces) {
-                        Block adjacent = against.getRelative(bf);
-                        BlockState state = adjacent.getState();
-                        MaterialData data = state.getData();
-                        if (data instanceof TrapDoor) {
-                            TrapDoor trapDoor = (TrapDoor) data;
-                            if (adjacent.getRelative(trapDoor.getAttachedFace()).equals(against))
-                                valid = true;
-                        }
-                    }
-                    if (!valid) {
-                        for (BlockFace bf : plugin.logic.verticalBlockFaces) {
-                            Block vertical = against.getRelative(bf);
-                            BlockState state = vertical.getState();
-                            MaterialData data = state.getData();
-                            if (data instanceof Door)
-                                valid = true;
-                        }
-                    }
-                    if (!valid)
-                        plugin.sendMessage(player, "msg-deny-placement-sign-nothing-nearby", true);
-                }
-            } else if (moreusers) {
-                if (owner.equals("")) {
-                    plugin.sendMessage(player, "msg-deny-placement-sign-moreusers-needs-private", true);
-                } else if (!owner.equalsIgnoreCase(plugin.logic.truncate(player.getName()))) {
-                    plugin.sendMessage(player, "msg-deny-placement-sign-moreusers-owner", true);
-                } else {
-                    valid = true;
-                }
-            }
+        boolean isWallSign = event.getBlock().getType().equals(Material.WALL_SIGN);
+        String status = "";
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
+
+        if (isWallSign) {
+            status = checkWallSign(player, block, isPrivate);
         } else {
             block.setType(Material.WALL_SIGN);
-            String error = "";
-            for (byte i = 2; i < 6 && !valid; i++) {
-                block.setData(i);
-                Block against = plugin.logic.getBlockSignAttachedTo(block);
-                if (against == null)
-                    continue;
-                String owner = plugin.logic.getOwnerName(against);
-                if (primary) {
-                    if (!owner.equals("")) {
-                        error = "msg-deny-placement-sign-private-owner";
-                    } else {
-                        if (against.getState() instanceof ContainerBlock) {
-                            valid = true;
-                        } else if (against.getState().getData() instanceof Door) {
-                            valid = true;
-                        } else {
-                            for (BlockFace bf : plugin.logic.horizontalBlockFaces) {
-                                Block adjacent = against.getRelative(bf);
-                                BlockState state = adjacent.getState();
-                                MaterialData data = state.getData();
-                                if (data instanceof TrapDoor) {
-                                    TrapDoor trapDoor = (TrapDoor) data;
-                                    if (adjacent.getRelative(trapDoor.getAttachedFace()).equals(against))
-                                        valid = true;
-                                }
-                            }
-                            if (!valid) {
-                                for (BlockFace bf : plugin.logic.verticalBlockFaces) {
-                                    Block vertical = against.getRelative(bf);
-                                    BlockState state = vertical.getState();
-                                    MaterialData data = state.getData();
-                                    if (data instanceof Door)
-                                        valid = true;
-                                }
-                            }
-                        }
-                    }
-                } else if (moreusers) {
-                    if (owner.equals("")) {
-                        error = "msg-deny-placement-sign-moreusers-needs-private";
-                        valid = false;
-                    } else if (!owner.equalsIgnoreCase(plugin.logic.truncate(player.getName()))) {
-                        error = "msg-deny-placement-sign-moreusers-owner";
-                        valid = false;
-                    } else {
-                        if (against.getState() instanceof ContainerBlock) {
-                            valid = true;
-                        } else if (against.getState().getData() instanceof Door) {
-                            valid = true;
-                        } else {
-
-                            for (BlockFace bf : plugin.logic.horizontalBlockFaces) {
-                                Block adjacent = against.getRelative(bf);
-                                BlockState state = adjacent.getState();
-                                MaterialData data = state.getData();
-                                if (data instanceof TrapDoor) {
-                                    TrapDoor trapDoor = (TrapDoor) data;
-                                    if (adjacent.getRelative(trapDoor.getAttachedFace()).equals(against))
-                                        valid = true;
-                                }
-                            }
-                            if (!valid) {
-                                for (BlockFace bf : plugin.logic.verticalBlockFaces) {
-                                    Block vertical = against.getRelative(bf);
-                                    BlockState state = vertical.getState();
-                                    MaterialData data = state.getData();
-                                    if (data instanceof Door)
-                                        valid = true;
-                                }
-                            }
-                        }
-                    }
-                }
+            for (byte data = 2; !status.equals("valid") && data < 6; data++) {
+                block.setData(data);
+                String temp = checkWallSign(player, block, isPrivate);
+                if (!temp.equals(""))
+                    status = temp;
             }
-            if (!valid)
-                if (!error.equals(""))
-                    plugin.sendMessage(player, error, true);
-                else
-                    plugin.sendMessage(player, "msg-deny-placement-sign-nothing-nearby", true);
         }
 
-        if (valid) {
-            String lines[] = event.getLines();
-            if (primary) {
-                if (lines[1].equals("")) {
-                    lines[1] = plugin.logic.truncate(player.getName());
-                } else if (plugin.getServer().getPlayer(lines[1]) == null) {
-                    plugin.sendMessage(player, "msg-player-not-found-warning", false);
+        String lines[] = event.getLines();
+        if (status.equals("valid")) {
+            if (isPrivate) {
+                boolean isAdminAuth = Perm.override(player, Perm.admin_create);
+                if (!isAdminAuth) {
+                    lines[1] = Util.truncate(player.getName());
+                } else {
+                    if (lines[1].equals("")) {
+                        lines[1] = Util.truncate(player.getName());
+                    } else if (plugin.getServer().getPlayer(lines[1]) == null) {
+                        plugin.sendMessage(player, String.format(Config.msg_warning_player_not_found, lines[1]), ChatColor.YELLOW);
+                    }
                 }
             }
-            BlockState state = block.getState();
-            Sign sign = (Sign) state;
+            Sign sign = (Sign) block.getState();
             for (int i = 0; i < 4; i++) {
                 sign.setLine(i, lines[i]);
                 sign.update(true);
             }
         } else {
+            if (status.equals(""))
+                status = Config.msg_deny_sign_private_nothing_nearby;
+            plugin.sendMessage(player, status, ChatColor.RED);
             event.setCancelled(true);
             block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(Material.SIGN, 1));
             block.setType(Material.AIR);
         }
+
+    }
+
+    private String checkWallSign(Player player, Block signBlock, boolean isPrivate) {
+        Block against = Util.getBlockSignAttachedTo(signBlock);
+        if (against == null)
+            return "";
+        String owner = Util.getOwnerName(against);
+
+        if (isPrivate) {
+            //is it owned?
+            if (!owner.equals("")) {
+                return Config.msg_deny_sign_private_already_owned;
+            } else {
+                //check against the block it is immediately on
+                switch (against.getType()) {
+                    case CHEST:
+                        return Perm.override(player, Perm.user_create_chest) ? "valid" : Config.msg_deny_chest_perm;
+                    case DISPENSER:
+                        return Perm.override(player, Perm.user_create_dispenser) ? "valid" : Config.msg_deny_dispenser_perm;
+                    case FURNACE:
+                        return Perm.override(player, Perm.user_create_furnace) ? "valid" : Config.msg_deny_furnace_perm;
+                    case BURNING_FURNACE:
+                        return Perm.override(player, Perm.user_create_furnace) ? "valid" : Config.msg_deny_furnace_perm;
+                    case WOODEN_DOOR:
+                        return Perm.override(player, Perm.user_create_door) ? "valid" : Config.msg_deny_door_perm;
+                    case IRON_DOOR_BLOCK:
+                        return Perm.override(player, Perm.user_create_door) ? "valid" : Config.msg_deny_door_perm;
+                }
+
+                //check for doors above/below
+                for (BlockFace bf : Util.verticalBlockFaces) {
+                    Block vertical = against.getRelative(bf);
+                    if (vertical.getState().getData() instanceof Door)
+                        return Perm.override(player, Perm.user_create_door) ? "valid" : Config.msg_deny_door_perm;
+                }
+
+                //look for trap doors nearby
+                for (BlockFace bf : Util.horizontalBlockFaces) {
+                    Block adjacent = against.getRelative(bf);
+                    BlockState state = adjacent.getState();
+                    MaterialData data = state.getData();
+                    if (data instanceof TrapDoor) {
+                        TrapDoor trapDoor = (TrapDoor) data;
+                        if (adjacent.getRelative(trapDoor.getAttachedFace()).equals(against)) {
+                            return Perm.override(player, Perm.user_create_trapdoor) ? "valid" : Config.msg_deny_trapdoor_perm;
+                        }
+                    }
+                }
+            }
+        } else {
+            if (owner.equals("")) {
+                return Config.msg_deny_sign_moreusers_no_private;
+            } else if (!owner.equalsIgnoreCase(Util.truncate(player.getName()))) {
+                if (Perm.override(player, Perm.admin_create)) {
+                    return "valid";
+                } else {
+                    return Config.msg_deny_sign_moreusers_already_owned;
+                }
+            } else {
+                return "valid";
+            }
+        }
+        //nothing found, let it iterate
+        return "";
     }
 
     @Override
-    public void onBlockRedstoneChange(
-            BlockRedstoneEvent event) {
-
+    public void onBlockRedstoneChange(BlockRedstoneEvent event) {
         Block block = event.getBlock();
         BlockState state = block.getState();
         MaterialData data = state.getData();
         if (!(data instanceof Door || data instanceof TrapDoor))
             return;
-
-        List<String> names = plugin.logic.getAllNames(block);
+        if (!Config.redstoneProtection)
+            return;
+        List<String> names = Util.getAllNames(block);
         if (names.isEmpty()
-            || names.contains(ConfigManager.getDefault("signtext-everyone"))
-            || names.contains(ConfigManager.getLocale("signtext-everyone")))
+            || names.contains(Config.signtext_everyone)
+            || names.contains(Config.signtext_everyone_locale))
             return;
         event.setNewCurrent(event.getOldCurrent());
     }
 
-    //TODO
-    @Override
-    public void onBlockPistonExtend(BlockPistonExtendEvent event) {
-    }
-
-    //TODO
     @Override
     public void onBlockPistonRetract(BlockPistonRetractEvent event) {
+        if (event.isCancelled())
+            return;
+        if (!Config.pistonProtection)
+            return;
+        Block block = event.getBlock();
+        if (!block.getType().equals(Material.PISTON_STICKY_BASE))
+            return;
+        BlockFace facing = event.getDirection();
+        Block extension = block.getRelative(facing);
+        Block check = extension.getRelative(facing);
+        if (Util.isProtected(check)) {
+            event.setCancelled(true);
+            extension.setType(Material.AIR);
+            block.setData((byte) (block.getData() ^ 0x8));
+        }
     }
 }
