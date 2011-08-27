@@ -1,0 +1,41 @@
+#Super Perms
+use-Permissions: true
+#Check against ops.txt
+use-OP-list: true
+
+#File to load for messages
+language: english.yml
+
+#Admin overrides to disregard ownership
+## Breaking protected blocks
+allow-admin-break: true
+## Toggling protected doors
+allow-admin-bypass: true
+## Using /lockette <line> <text> on protected signs
+allow-admin-sign: true
+## Opening protected containers
+allow-admin-snoop: true
+
+#Protect owned blocks from explosions
+explosion-protection: true
+#For TNT, broadcast within <radius> that it failed
+broadcast-tnt-fizzle: true
+broadcast-tnt-fizzle-radius: 25
+
+#Protects blocks from retracting sticky-pistons.
+#Protection from pushing is standard Minecraft
+piston-protection: true
+
+#Deny redstone affecting any protected Door
+redstone-protection: true
+
+#Force doors to automatically toggle after <delay>,
+#or by [Timer:#] if on the sign
+timer-doors-always-on: true
+timer-doors-always-on-delay: 3
+
+
+
+
+
+
