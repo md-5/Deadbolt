@@ -42,6 +42,8 @@ public class Lockette extends JavaPlugin {
         if (!started) {
             logger.log(Level.WARNING, Config.console_error_scheduler_start);
         }
+
+        logger.log(Level.INFO, "Lockette v%1$s enabled", this.getDescription().getVersion());
     }
 
     public void onDisable() {

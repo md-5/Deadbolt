@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -410,11 +411,12 @@ public class Util {
         if (owner.equals(""))
             return true;
         if (!Util.isAuthorized(player.getName(), block))
-            if (player.hasPermission(Perm.admin_snoop))
+            if (player.hasPermission(Perm.admin_snoop)) {
                 Util.sendBroadcast(Perm.admin_broadcast_snoop,
                                    String.format(Config.msg_admin_snoop, player.getName(), owner),
                                    ChatColor.RED);
-            else
+                Lockette.logger.log(Level.INFO, String.format("Lockette - " + Config.msg_admin_snoop, player.getName(), owner));
+            } else
                 return false;
         return true;
     }

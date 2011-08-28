@@ -7,6 +7,7 @@ import com.daemitus.lockette.Util;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -59,6 +60,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
             Util.sendBroadcast(Perm.admin_broadcast_break,
                                String.format(Config.msg_admin_break, player.getName(), owner),
                                ChatColor.RED);
+            Lockette.logger.log(Level.INFO, String.format("Lockette - " + Config.msg_admin_break, player.getName(), owner));
             return;
         }
 
