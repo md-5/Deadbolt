@@ -61,6 +61,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
                                ChatColor.RED);
             return;
         }
+
         event.setCancelled(true);
         Util.sendMessage(player, Config.msg_deny_block_break, ChatColor.RED);
     }
