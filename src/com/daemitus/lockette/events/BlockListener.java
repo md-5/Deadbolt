@@ -296,7 +296,6 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
         BlockFace facing = event.getDirection();
         for (int i = 1; i <= event.getLength() + 1; i++) {
             Block check = piston.getRelative(facing.getModX() * i, facing.getModY() * i, facing.getModZ() * i);
-            System.out.println(check.getType() + " " + event.getLength());
             if (Util.isProtected(check)) {
                 event.setCancelled(true);
                 return;
