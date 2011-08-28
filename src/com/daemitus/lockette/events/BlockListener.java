@@ -56,13 +56,13 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
         if (owner.equals("") || owner.equalsIgnoreCase(Util.truncate(player.getName())))
             return;
         if (Perm.override(player, Perm.admin_break)) {
-            plugin.sendBroadcast(Perm.admin_broadcast_break,
-                                 String.format(Config.msg_admin_break, player.getName(), owner),
-                                 ChatColor.RED);
+            Util.sendBroadcast(Perm.admin_broadcast_break,
+                               String.format(Config.msg_admin_break, player.getName(), owner),
+                               ChatColor.RED);
             return;
         }
         event.setCancelled(true);
-        plugin.sendMessage(player, Config.msg_deny_block_break, ChatColor.RED);
+        Util.sendMessage(player, Config.msg_deny_block_break, ChatColor.RED);
     }
 
     @Override
@@ -83,11 +83,11 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
         if (type.equals(Material.CHEST)) {
             if (!onChestPlace(player, block)) {
                 event.setCancelled(true);
-                plugin.sendMessage(player, Config.msg_deny_chest_expansion, ChatColor.RED);
+                Util.sendMessage(player, Config.msg_deny_chest_expansion, ChatColor.RED);
             } else {
                 if (!reminder.contains(player)) {
                     reminder.add(player);
-                    plugin.sendMessage(player, Config.msg_reminder_lock_your_chests, ChatColor.GOLD);
+                    Util.sendMessage(player, Config.msg_reminder_lock_your_chests, ChatColor.GOLD);
                 }
             }
         } else if (data instanceof Door) {
@@ -97,12 +97,12 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
                 block.setType(Material.AIR);
                 block.getRelative(BlockFace.UP).setType(Material.SAND);
                 block.getRelative(BlockFace.UP).setType(Material.AIR);
-                plugin.sendMessage(player, Config.msg_deny_door_expansion, ChatColor.RED);
+                Util.sendMessage(player, Config.msg_deny_door_expansion, ChatColor.RED);
             }
         } else if (data instanceof TrapDoor) {
             if (!onTrapDoorPlace(player, against)) {
                 event.setCancelled(true);
-                plugin.sendMessage(player, Config.msg_deny_trapdoor_placement, ChatColor.RED);
+                Util.sendMessage(player, Config.msg_deny_trapdoor_placement, ChatColor.RED);
             }
         }
     }
@@ -183,7 +183,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
                     if (lines[1].equals("")) {
                         lines[1] = Util.truncate(player.getName());
                     } else if (plugin.getServer().getPlayer(lines[1]) == null) {
-                        plugin.sendMessage(player, String.format(Config.msg_warning_player_not_found, lines[1]), ChatColor.YELLOW);
+                        Util.sendMessage(player, String.format(Config.msg_warning_player_not_found, lines[1]), ChatColor.YELLOW);
                     }
                 }
             }
@@ -195,7 +195,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
         } else {
             if (status.equals(""))
                 status = Config.msg_deny_sign_private_nothing_nearby;
-            plugin.sendMessage(player, status, ChatColor.RED);
+            Util.sendMessage(player, status, ChatColor.RED);
             event.setCancelled(true);
             block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(Material.SIGN, 1));
             block.setType(Material.AIR);

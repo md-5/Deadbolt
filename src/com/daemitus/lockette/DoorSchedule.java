@@ -2,30 +2,25 @@ package com.daemitus.lockette;
 
 import java.util.PriorityQueue;
 import java.util.Set;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 
 public class DoorSchedule implements Runnable {
 
-    private final Lockette plugin;
     private int taskID = -1;
-    private final PriorityQueue<DoorTask> taskList;
+    private final PriorityQueue<DoorTask> taskList = new PriorityQueue<DoorTask>();
 
-    public DoorSchedule(final Lockette plugin) {
-        this.plugin = plugin;
-        taskList = new PriorityQueue<DoorTask>();
-    }
-
-    public boolean start() {
+    public boolean start(final Lockette plugin) {
         if (taskID != -1)
             return false;
-        taskID = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 100L, 10L);
+        taskID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this, 100L, 10L);
         return taskID != -1;
     }
 
     public boolean stop() {
         if (taskID == -1)
             return false;
-        plugin.getServer().getScheduler().cancelTask(taskID);
+        Bukkit.getServer().getScheduler().cancelTask(taskID);
         taskID = -1;
 
         while (!taskList.isEmpty()) {

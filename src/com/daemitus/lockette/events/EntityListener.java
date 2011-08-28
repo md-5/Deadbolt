@@ -40,7 +40,7 @@ public class EntityListener extends org.bukkit.event.entity.EntityListener {
                                                                              Config.broadcastTNTRadius,
                                                                              Config.broadcastTNTRadius)) {
                         if (entity instanceof Player) {
-                            plugin.sendMessage((Player) entity, Config.msg_tnt_fizzle, ChatColor.YELLOW);
+                            Util.sendMessage((Player) entity, Config.msg_tnt_fizzle, ChatColor.YELLOW);
                         }
                     }
                 }

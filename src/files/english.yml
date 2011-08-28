@@ -4,6 +4,8 @@ signtext_moreusers: more users
 signtext_everyone: everyone
 signtext_timer: timer
 console: This command requires ingame usage
+console_error_scheduler_start: Lockette - Automatic door scheduler failed to start
+console_error_scheduler_stop: Lockette - Automatic door scheduler failed to stop
 cmd_sign_selected: Sign selected, use /lockette <line number> <text>
 cmd_sign_not_selected: Nothing selected, right click a valid sign first
 cmd_bad_format: Bad format, use /lockette <line number> <text>

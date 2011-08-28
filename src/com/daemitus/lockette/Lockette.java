@@ -3,9 +3,8 @@ package com.daemitus.lockette;
 import com.daemitus.lockette.events.BlockListener;
 import com.daemitus.lockette.events.EntityListener;
 import com.daemitus.lockette.events.PlayerListener;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
@@ -19,8 +18,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Lockette extends JavaPlugin {
 
     public static final Logger logger = Logger.getLogger("Minecraft");
-    private final HashMap<Player, Block> selectedSign = new HashMap<Player, Block>();
-    private static DoorSchedule doorSchedule;
     private PluginManager pm;
     private Config cm;
 
@@ -40,8 +37,10 @@ public class Lockette extends JavaPlugin {
         cm = new Config(this);
         cm.load();
 
-        doorSchedule = new DoorSchedule(this);
-        doorSchedule.start();
+        boolean started = Util.doorSchedule.start(this);
+        if (!started) {
+            logger.log(Level.WARNING, Config.console_error_scheduler_start);
+        }
     }
 
     public void onDisable() {
@@ -58,24 +57,24 @@ public class Lockette extends JavaPlugin {
             return true;
         } else {
             Player player = (Player) sender;
-            Block block = getSelectedSign(player);
+            Block block = Util.selectedSign.get(player);
             if (block == null) {
-                this.sendMessage(player, Config.cmd_sign_not_selected, ChatColor.YELLOW);
+                Util.sendMessage(player, Config.cmd_sign_not_selected, ChatColor.YELLOW);
             } else if (args.length < 2) {
-                this.sendMessage(player, Config.cmd_bad_format, ChatColor.RED);
+                Util.sendMessage(player, Config.cmd_bad_format, ChatColor.RED);
             } else {
                 try {
                     int lineNum = Integer.valueOf(args[0]);
                     Sign sign = (Sign) block.getState();
                     String text = Util.stripColor(sign.getLine(0));
                     if (lineNum == 1) {
-                        this.sendMessage(player, Config.cmd_identifier_not_changeable, ChatColor.RED);
+                        Util.sendMessage(player, Config.cmd_identifier_not_changeable, ChatColor.RED);
                     } else if ((text.equalsIgnoreCase(Config.signtext_private)
                                     || text.equalsIgnoreCase(Config.signtext_private_locale))
                                    && lineNum == 2) {
-                        this.sendMessage(player, Config.cmd_owner_not_changeable, ChatColor.RED);
+                        Util.sendMessage(player, Config.cmd_owner_not_changeable, ChatColor.RED);
                     } else if (lineNum < 1 || lineNum > 4) {
-                        this.sendMessage(player, Config.cmd_line_num_out_of_range, ChatColor.RED);
+                        Util.sendMessage(player, Config.cmd_line_num_out_of_range, ChatColor.RED);
                     } else {
                         String newText = "";
                         for (int i = 1; i < args.length; i++) {
@@ -88,56 +87,25 @@ public class Lockette extends JavaPlugin {
                         sign.update();
                     }
                 } catch (NumberFormatException ex) {
-                    this.sendMessage(player, Config.cmd_bad_format, ChatColor.RED);
+                    Util.sendMessage(player, Config.cmd_bad_format, ChatColor.RED);
                 }
             }
         }
         return true;
     }
-    //------------------------------------------------------------------------//
-    private final String pluginTag = "Lockette: ";
-
-    public void sendMessage(Player player, String msg, ChatColor color) {
-        if (msg.equals(""))
-            return;
-        player.sendMessage(color + pluginTag + msg);
-    }
-
-    public void sendBroadcast(String perm, String msg, ChatColor color) {
-        if (msg.equals(""))
-            return;
-        for (Player player : this.getServer().getOnlinePlayers()) {
-            if (player.hasPermission(perm))
-                player.sendMessage(color + pluginTag + msg);
-        }
-    }
 
     //------------------------------------------------------------------------//
-    public void scheduleDoor(Set<Block> doorBlocks, int delay) {
-        doorSchedule.add(doorBlocks, delay);
-    }
-
     public void stopDoorSchedule() {
-        if (doorSchedule != null) {
-            selectedSign.clear();
-            doorSchedule.stop();
+        if (Util.doorSchedule != null) {
+            Util.selectedSign.clear();
+            boolean stopped = Util.doorSchedule.stop();
+            if (!stopped) {
+                logger.log(Level.WARNING, Config.console_error_scheduler_stop);
+            }
         }
     }
-
     //------------------------------------------------------------------------//
-    public Block getSelectedSign(Player player) {
-        return selectedSign.get(player);
-    }
 
-    public void setSelectedSign(Player player, Block block) {
-        selectedSign.put(player, block);
-    }
-
-    public void clearSelectedSign(Player player) {
-        selectedSign.remove(player);
-    }
-
-    //------------------------------------------------------------------------//
     /**
      * Check if <name> or [Everyone] is on any of the [Private] or [More Users] signs associated with <block>
      * @param name Name to be checked
@@ -201,5 +169,37 @@ public class Lockette extends JavaPlugin {
      */
     public static boolean isProtected(Block block) {
         return Util.isProtected(block);
+    }
+
+    /**
+     * Interacts with a (set) of doors, toggling their state if authorized.
+     * @param player The player who clicked
+     * @param block The block clicked
+     * @param override Disregard signs and toggle regardless
+     * @return Success or failure
+     */
+    public static boolean interactDoor(Player player, Block block, boolean override) {
+        return Util.interactDoor(player, block, override);
+    }
+
+    /**
+     * Interacts with a container, opening if authorized
+     * @param player The player who clicked
+     * @param block The block clicked
+     * @param override Disregard signs and toggle regardless
+     * @return Success or failure
+     */
+    public static boolean interactContainer(Player player, Block block, boolean override) {
+        return Util.interactContainer(player, block, override);
+    }
+
+    /**
+     * Interacts with a sign, selecting it for /lockette <line> <text> usage if authorized
+     * @param player The player who clicked
+     * @param block The block clicked
+     * @return Success or failure
+     */
+    public static boolean interactSign(Player player, Block block) {
+        return Util.interactSign(player, block);
     }
 }

@@ -39,6 +39,8 @@ public class Config {
     public static String signtext_everyone_locale = "everyone";
     public static String signtext_timer_locale = "timer";
     public static String console = "";                                  //"This command requires ingame usage";
+    public static String console_error_scheduler_start = "";            //"Automatic door scheduler failed to start"
+    public static String console_error_scheduler_stop = "";             //"Automatic door scheduler failed to stop"
     public static String cmd_sign_selected = "";                        //"Sign selected, use /lockette <line number> <text>";
     public static String cmd_sign_not_selected = "";                    //"Nothing selected, right click a valid sign first";
     public static String cmd_bad_format = "";                           //"Bad format, use /lockette <line number> <text>";

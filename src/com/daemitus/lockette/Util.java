@@ -2,15 +2,20 @@ package com.daemitus.lockette;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
 import org.bukkit.material.Door;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.TrapDoor;
@@ -19,9 +24,13 @@ public class Util {
 
     public static final Set<BlockFace> horizontalBlockFaces = EnumSet.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
     public static final Set<BlockFace> verticalBlockFaces = EnumSet.of(BlockFace.UP, BlockFace.DOWN);
+    public static final Map<Player, Block> selectedSign = new HashMap<Player, Block>();
+    private static final String pluginTag = "Lockette: ";
     private static final String patternStripColor = "(?i)§[0-9a-zA-Z]";
     private static final String patternNormalTooLong = ".{16,}";
     private static final String patternBracketTooLong = "\\[.{14,}\\]";
+    private static final String timerPattern = "\\[.{1,11}:[123456789]\\]";
+    public static DoorSchedule doorSchedule = new DoorSchedule();
 
     /**
      * Check if <block> is protected or not
@@ -295,5 +304,165 @@ public class Util {
         if (text.matches(patternNormalTooLong))
             return text.substring(0, 15);
         return text;
+    }
+
+    /**
+     * Interacts with a (set) of doors, toggling their state if authorized.
+     * @param player The player who clicked
+     * @param block The block clicked
+     * @param override Disregard signs and toggle regardless
+     * @return Success or failure
+     */
+    public static boolean interactDoor(Player player, Block block, boolean override) {
+        Block owner = Util.getOwnerSign(block);
+        if (owner == null)
+            return true;
+        if (!override) {
+            if (!Util.isAuthorized(player.getName(), block))
+                if (Perm.override(player, Perm.admin_bypass)) {
+                    sendMessage(player, String.format(Config.msg_admin_bypass, ((Sign) owner.getState()).getLine(1)), ChatColor.RED);
+                } else
+                    return false;
+        }
+        Block ownerAttached = Util.getBlockSignAttachedTo(owner);
+        int delay = getDelayFromSign((Sign) owner.getState());
+        Set<Block> doorBlocks = new HashSet<Block>();
+        doorBlocks = toggleDoor(block, ownerAttached, isNaturalOpen(block));
+        if (Config.timerDoorsAlwaysOn)
+            doorSchedule.add(doorBlocks, delay == 0 ? Config.timerDoorsAlwaysOnDelay : delay);
+        else if (delay > 0) {
+            doorSchedule.add(doorBlocks, delay);
+        }
+        return true;
+    }
+
+    private static Set<Block> toggleDoor(Block block, Block keyBlock, boolean naturalOpen) {
+        Set<Block> set = new HashSet<Block>();
+        set.add(block);
+        if (!naturalOpen)
+            toggleSingleBlock(block);
+
+        for (BlockFace bf : Util.verticalBlockFaces) {
+            Block verticalBlock = block.getRelative(bf);
+            if (verticalBlock.getType().equals(block.getType())) {
+                set.add(verticalBlock);
+                if (!naturalOpen)
+                    toggleSingleBlock(verticalBlock);
+            }
+        }
+
+        if (keyBlock != null) {
+            for (BlockFace bf : Util.horizontalBlockFaces) {
+                Block adjacent = block.getRelative(bf);
+                if (adjacent.getType().equals(block.getType())
+                    && ((adjacent.getX() == keyBlock.getX() && adjacent.getZ() == keyBlock.getZ())
+                        || (block.getX() == keyBlock.getX() && block.getZ() == keyBlock.getZ())))
+                    set.addAll(toggleDoor(adjacent, null, false));
+            }
+        }
+        return set;
+    }
+
+    private static Block toggleSingleBlock(Block block) {
+        block.setData((byte) (block.getData() ^ 0x4));
+        return block;
+    }
+
+    private static boolean isNaturalOpen(Block block) {
+        switch (block.getType()) {
+            case WOODEN_DOOR:
+                return true;
+            case TRAP_DOOR:
+                return true;
+            case IRON_DOOR_BLOCK:
+                return false;
+            default:
+                return true;
+        }
+    }
+
+    private static int getDelayFromSign(Sign sign) {
+        for (int i = 2; i < 4; i++) {
+            String text = Util.stripColor(sign.getLine(i));
+            if (!text.matches(timerPattern))
+                continue;
+
+            String word = text.substring(1, text.length() - 3);
+            if (!word.equalsIgnoreCase(Config.signtext_timer) && !word.equalsIgnoreCase(Config.signtext_timer_locale))
+                continue;
+
+            return Integer.valueOf(text.substring(text.length() - 2, text.length() - 1));
+        }
+        return 0;
+    }
+
+    /**
+     * Interacts with a container, opening if authorized
+     * @param player The player who clicked
+     * @param block The block clicked
+     * @param override Disregard signs and toggle regardless
+     * @return Success or failure
+     */
+    public static boolean interactContainer(Player player, Block block, boolean override) {
+        if (override)
+            return true;
+        String owner = Util.getOwnerName(block);
+        if (owner.equals(""))
+            return true;
+        if (!Util.isAuthorized(player.getName(), block))
+            if (Perm.override(player, Perm.admin_snoop))
+                Util.sendBroadcast(Perm.admin_broadcast_snoop,
+                                   String.format(Config.msg_admin_snoop, player.getName(), owner),
+                                   ChatColor.RED);
+            else
+                return false;
+        return true;
+    }
+
+    /**
+     * Interacts with a sign, selecting it for /lockette <line> <text> usage if authorized
+     * @param player The player who clicked
+     * @param block The block clicked
+     * @return Success or failure
+     */
+    public static boolean interactSign(Player player, Block block) {
+        String owner = Util.getOwnerName(block);
+        if (owner.equals(""))
+            return false;
+        if (!owner.equalsIgnoreCase(player.getName()))
+            if (Config.adminSign && Perm.override(player, Perm.admin_signs))
+                Util.sendMessage(player, String.format(Config.msg_admin_signs, owner), ChatColor.RED);
+            else
+                return false;
+        Util.sendMessage(player, Config.cmd_sign_selected, ChatColor.GOLD);
+        selectedSign.put(player, block);
+        return true;
+    }
+
+    /**
+     * Send <msg> to <player> in <color>
+     * @param player Player to send <msg> to
+     * @param msg The message to be sent
+     * @param color Message coloring
+     */
+    public static void sendMessage(Player player, String msg, ChatColor color) {
+        if (msg.equals(""))
+            return;
+        player.sendMessage(color + pluginTag + msg);
+    }
+
+    /**
+     * Send <msg> to all players with <perm> in <color>
+     * @param perm The permission to check
+     * @param msg The message to be sent
+     * @param color Message coloring
+     */
+    public static void sendBroadcast(String perm, String msg, ChatColor color) {
+        if (msg.equals(""))
+            return;
+        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+            if (player.hasPermission(perm))
+                player.sendMessage(color + pluginTag + msg);
+        }
     }
 }
