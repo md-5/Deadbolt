@@ -27,8 +27,6 @@ public class Config {
     public static boolean adminBypass = true;
     public static boolean adminSign = true;
     public static boolean adminSnoop = true;
-    public static boolean usePermissions = true;
-    public static boolean useOpList = false;
     //------------------------------------------------------------------------//
     public static final String signtext_private = "[private]";
     public static final String signtext_moreusers = "[more users]";
@@ -38,6 +36,7 @@ public class Config {
     public static String signtext_moreusers_locale = "more users";
     public static String signtext_everyone_locale = "everyone";
     public static String signtext_timer_locale = "timer";
+    public static String console_scheduler_stop = "";                   //"Automatic door scheduler shutdown successfully"
     public static String console_error_scheduler_start = "";            //"Automatic door scheduler failed to start"
     public static String console_error_scheduler_stop = "";             //"Automatic door scheduler failed to stop"
     public static String cmd_help_editsign = "";                        //"/lockette <line number> <text> - Edit signs on locked containers, right click a sign first to select it"
@@ -94,8 +93,6 @@ public class Config {
         Configuration config = new Configuration(configFile);
         config.load();
 
-        usePermissions = config.getBoolean("use-Permissions", usePermissions);
-        useOpList = config.getBoolean("use-OP-list", useOpList);
         adminBreak = config.getBoolean("allow-admin-break", adminBreak);
         adminBypass = config.getBoolean("allow-admin-bypass", adminBypass);
         adminSnoop = config.getBoolean("allow-admin-snoop", adminSnoop);

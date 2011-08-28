@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -25,7 +26,7 @@ public class Util {
     public static final Set<BlockFace> horizontalBlockFaces = EnumSet.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
     public static final Set<BlockFace> verticalBlockFaces = EnumSet.of(BlockFace.UP, BlockFace.DOWN);
     public static final Map<Player, Block> selectedSign = new HashMap<Player, Block>();
-    private static final String pluginTag = "Lockette: ";
+    public static final String pluginTag = "Lockette: ";
     private static final String patternStripColor = "(?i)§[0-9a-zA-Z]";
     private static final String patternNormalTooLong = ".{16,}";
     private static final String patternBracketTooLong = "\\[.{14,}\\]";
@@ -319,7 +320,7 @@ public class Util {
             return true;
         if (!override) {
             if (!Util.isAuthorized(player.getName(), block))
-                if (Perm.override(player, Perm.admin_bypass)) {
+                if (player.hasPermission(Perm.admin_bypass)) {
                     sendMessage(player, String.format(Config.msg_admin_bypass, ((Sign) owner.getState()).getLine(1)), ChatColor.RED);
                 } else
                     return false;
@@ -410,11 +411,12 @@ public class Util {
         if (owner.equals(""))
             return true;
         if (!Util.isAuthorized(player.getName(), block))
-            if (Perm.override(player, Perm.admin_snoop))
+            if (player.hasPermission(Perm.admin_snoop)) {
                 Util.sendBroadcast(Perm.admin_broadcast_snoop,
                                    String.format(Config.msg_admin_snoop, player.getName(), owner),
                                    ChatColor.RED);
-            else
+                Lockette.logger.log(Level.INFO, String.format(Util.pluginTag + Config.msg_admin_snoop, player.getName(), owner));
+            } else
                 return false;
         return true;
     }
@@ -430,7 +432,7 @@ public class Util {
         if (owner.equals(""))
             return false;
         if (!owner.equalsIgnoreCase(player.getName()))
-            if (Config.adminSign && Perm.override(player, Perm.admin_signs))
+            if (Config.adminSign && player.hasPermission(Perm.admin_signs))
                 Util.sendMessage(player, String.format(Config.msg_admin_signs, owner), ChatColor.RED);
             else
                 return false;

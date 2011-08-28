@@ -3,6 +3,7 @@ signtext_private: private
 signtext_moreusers: more users
 signtext_everyone: everyone
 signtext_timer: timer
+console_scheduler_stop: Automatic door scheduler shutdown successfully
 console_error_scheduler_start: Lockette - Automatic door scheduler failed to start
 console_error_scheduler_stop: Lockette - Automatic door scheduler failed to stop
 cmd_help_editsign: /lockette <line number> <text> - Edit signs on locked containers, right click a sign first to select it

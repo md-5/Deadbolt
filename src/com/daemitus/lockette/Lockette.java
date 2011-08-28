@@ -38,10 +38,11 @@ public class Lockette extends JavaPlugin {
         cm = new Config(this);
         cm.load();
 
-        boolean started = Util.doorSchedule.start(this);
-        if (!started) {
+        if (!Util.doorSchedule.start(this)) {
             logger.log(Level.WARNING, Config.console_error_scheduler_start);
         }
+
+        Lockette.logger.log(Level.INFO, "Lockette v%1$s ready to protect", this.getDescription().getVersion());
     }
 
     public void onDisable() {
@@ -141,6 +142,8 @@ public class Lockette extends JavaPlugin {
         Util.selectedSign.clear();
         if (!Util.doorSchedule.stop()) {
             logger.log(Level.WARNING, Config.console_error_scheduler_stop);
+        } else {
+            logger.log(Level.INFO, Config.console_scheduler_stop);
         }
     }
     //------------------------------------------------------------------------//
