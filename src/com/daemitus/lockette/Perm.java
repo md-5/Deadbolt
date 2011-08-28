@@ -14,6 +14,7 @@ public class Perm {
     public static final String admin_bypass = "lockette.admin.bypass";
     public static final String admin_signs = "lockette.admin.signs";
     public static final String admin_snoop = "lockette.admin.snoop";
+    public static final String command_reload = "lockette.command.reload";
     public static final String admin_broadcast_break = "lockette.broadcast.break";
     public static final String admin_broadcast_snoop = "lockette.broadcast.snoop";
 

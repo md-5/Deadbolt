@@ -38,15 +38,21 @@ public class Config {
     public static String signtext_moreusers_locale = "more users";
     public static String signtext_everyone_locale = "everyone";
     public static String signtext_timer_locale = "timer";
-    public static String console = "";                                  //"This command requires ingame usage";
     public static String console_error_scheduler_start = "";            //"Automatic door scheduler failed to start"
     public static String console_error_scheduler_stop = "";             //"Automatic door scheduler failed to stop"
+    public static String cmd_help_editsign = "";                        //"/lockette <line number> <text> - Edit signs on locked containers, right click a sign first to select it"
+    public static String cmd_help_reload = "";                          //"/lockette reload - Reload the config.yml and <language>.yml files"
+    public static String cmd_reload = "";                               //"Reloading settings..."
+    public static String cmd_sign_updated = "";                         //"Sign updated"
     public static String cmd_sign_selected = "";                        //"Sign selected, use /lockette <line number> <text>";
+    public static String cmd_sign_selected_error = "";                  //"Selected sign has an error. Right click it again"
     public static String cmd_sign_not_selected = "";                    //"Nothing selected, right click a valid sign first";
-    public static String cmd_bad_format = "";                           //"Bad format, use /lockette <line number> <text>";
     public static String cmd_identifier_not_changeable = "";            //"Break and replace to change the identifier on line 1";
     public static String cmd_owner_not_changeable = "";                 //"Break and replace to change the owner on line 2";
     public static String cmd_line_num_out_of_range = "";                //"Bad format, your line number should be 2,3,4";
+    public static String cmd_command_not_found = "";                    //"No command found, use "/lockette" for options"
+    public static String cmd_console_reload = "";                       //"Lockette - Reloading settings..."
+    public static String cmd_console_command_not_found = "";            //"Lockette - No command found, use "lockette" for options"
     public static String msg_admin_break = "";                          //"(Admin) %1$s broke a block owned by %2$s";
     public static String msg_admin_bypass = "";                         //"Bypassed a door owned by %1$s, make sure to shut it";
     public static String msg_admin_signs = "";                          //"Selected a sign owned by %1$s";
@@ -58,15 +64,15 @@ public class Config {
     public static String msg_deny_chest_expansion = "";                 //"You don't own the adjacent chest";
     public static String msg_deny_door_expansion = "";                  //"You don't own the adjacent door";
     public static String msg_deny_trapdoor_placement = "";              //"You don't own the adjacent hinge block";
+    public static String msg_deny_sign_private_nothing_nearby = "";     //"Nothing nearby to protect";
+    public static String msg_deny_sign_private_already_owned = "";      //"This block is already protected";
+    public static String msg_deny_sign_moreusers_already_owned = "";    //"You don't own this block";
+    public static String msg_deny_sign_moreusers_no_private = "";       //"No sign with [Private] nearby";
     public static String msg_deny_chest_perm = "";                      //"You are not authorized to protect chests";
     public static String msg_deny_dispenser_perm = "";                  //"You are not authorized to protect dispensers";
     public static String msg_deny_furnace_perm = "";                    //"You are not authorized to protect furnaces";
     public static String msg_deny_door_perm = "";                       //"You are not authorized to protect doors";
     public static String msg_deny_trapdoor_perm = "";                   //"You are not authorized to protect trap doors";
-    public static String msg_deny_sign_private_nothing_nearby = "";     //"Nothing nearby to protect";
-    public static String msg_deny_sign_private_already_owned = "";      //"This block is already protected";
-    public static String msg_deny_sign_moreusers_already_owned = "";    //"You don't own this block";
-    public static String msg_deny_sign_moreusers_no_private = "";       //"No sign with [Private] nearby";
     public static String msg_warning_player_not_found = "";             //"%1$s is not online, make sure you have the correct name";
     public static String msg_tnt_fizzle = "";                           //"TNT tried to explode too close to a protected block";
     public static String msg_reminder_lock_your_chests = "";            //"Place a sign headed [Private] next to your chest to lock it"
@@ -88,19 +94,21 @@ public class Config {
         Configuration config = new Configuration(configFile);
         config.load();
 
-        timerDoorsAlwaysOn = config.getBoolean("timer-doors-always-on", timerDoorsAlwaysOn);
-        timerDoorsAlwaysOnDelay = config.getInt("timer-doors-always-on-delay", timerDoorsAlwaysOnDelay);
+        usePermissions = config.getBoolean("use-Permissions", usePermissions);
+        useOpList = config.getBoolean("use-OP-list", useOpList);
+        adminBreak = config.getBoolean("allow-admin-break", adminBreak);
+        adminBypass = config.getBoolean("allow-admin-bypass", adminBypass);
+        adminSnoop = config.getBoolean("allow-admin-snoop", adminSnoop);
+        adminSign = config.getBoolean("allow-admin-sign", adminSign);
         explosionProtection = config.getBoolean("explosion-protection", explosionProtection);
         broadcastTNT = config.getBoolean("broadcast-tnt-fizzle", broadcastTNT);
         broadcastTNTRadius = config.getInt("broadcast-tnt-fizzle-radius", broadcastTNTRadius);
         pistonProtection = config.getBoolean("piston-protection", pistonProtection);
         redstoneProtection = config.getBoolean("redstone-protection", redstoneProtection);
-        adminBreak = config.getBoolean("allow-admin-break", adminBreak);
-        adminBypass = config.getBoolean("allow-admin-bypass", adminBypass);
-        adminSnoop = config.getBoolean("allow-admin-snoop", adminSnoop);
-        adminSign = config.getBoolean("allow-admin-sign", adminSign);
-        usePermissions = config.getBoolean("use-Permissions", usePermissions);
-        useOpList = config.getBoolean("use-OP-list", useOpList);
+        timerDoorsAlwaysOn = config.getBoolean("timer-doors-always-on", timerDoorsAlwaysOn);
+        timerDoorsAlwaysOnDelay = config.getInt("timer-doors-always-on-delay", timerDoorsAlwaysOnDelay);
+
+
         String language = config.getString("language");
 
         if (language == null)
@@ -131,13 +139,21 @@ public class Config {
                 + (signtext_everyone_locale.endsWith("]") ? "" : "]"));
 
         signtext_timer_locale = locale.getString("signtext_timer", signtext_timer_locale);
-        console = locale.getString("console", console);
+        console_error_scheduler_start = locale.getString("console_error_scheduler_start", console_error_scheduler_start);
+        console_error_scheduler_stop = locale.getString("console_error_scheduler_stop", console_error_scheduler_stop);
+        cmd_help_editsign = locale.getString("cmd_help_editsign", cmd_help_editsign);
+        cmd_help_reload = locale.getString("cmd_help_reload", cmd_help_reload);
+        cmd_reload = locale.getString("cmd_reload", cmd_reload);
+        cmd_sign_updated = locale.getString("cmd_sign_updated", cmd_sign_updated);
         cmd_sign_selected = locale.getString("cmd_sign_selected", cmd_sign_selected);
+        cmd_sign_selected_error = locale.getString("cmd_sign_selected_error", cmd_sign_selected_error);
         cmd_sign_not_selected = locale.getString("cmd_sign_not_selected", cmd_sign_not_selected);
-        cmd_bad_format = locale.getString("cmd_bad_format", cmd_bad_format);
         cmd_identifier_not_changeable = locale.getString("cmd_identifier_not_changeable", cmd_identifier_not_changeable);
         cmd_owner_not_changeable = locale.getString("cmd_owner_not_changeable", cmd_owner_not_changeable);
         cmd_line_num_out_of_range = locale.getString("cmd_line_num_out_of_range", cmd_line_num_out_of_range);
+        cmd_command_not_found = locale.getString("cmd_command_not_found", cmd_command_not_found);
+        cmd_console_reload = locale.getString("cmd_console_reload", cmd_console_reload);
+        cmd_console_command_not_found = locale.getString("cmd_console_command_not_found", cmd_console_command_not_found);
         msg_admin_break = locale.getString("msg_admin_break", msg_admin_break);
         msg_admin_bypass = locale.getString("msg_admin_bypass", msg_admin_bypass);
         msg_admin_signs = locale.getString("msg_admin_signs", msg_admin_signs);
@@ -151,13 +167,13 @@ public class Config {
         msg_deny_trapdoor_placement = locale.getString("msg_deny_trapdoor_placement", msg_deny_trapdoor_placement);
         msg_deny_sign_private_nothing_nearby = locale.getString("msg_deny_sign_private_nothing_nearby");//, msg_deny_sign_private_nothing_nearby);
         msg_deny_sign_private_already_owned = locale.getString("msg_deny_sign_private_already_owned", msg_deny_sign_private_already_owned);
+        msg_deny_sign_moreusers_already_owned = locale.getString("msg_deny_sign_moreusers_already_owned", msg_deny_sign_moreusers_already_owned);
+        msg_deny_sign_moreusers_no_private = locale.getString("msg_deny_sign_moreusers_no_private", msg_deny_sign_moreusers_no_private);
         msg_deny_chest_perm = locale.getString("msg_deny_chest_perm", msg_deny_chest_perm);
         msg_deny_dispenser_perm = locale.getString("msg_deny_dispenser_perm", msg_deny_dispenser_perm);
         msg_deny_furnace_perm = locale.getString("msg_deny_furnace_perm", msg_deny_furnace_perm);
         msg_deny_door_perm = locale.getString("msg_deny_door_perm", msg_deny_door_perm);
         msg_deny_trapdoor_perm = locale.getString("msg_deny_trapdoor_perm", msg_deny_trapdoor_perm);
-        msg_deny_sign_moreusers_already_owned = locale.getString("msg_deny_sign_moreusers_already_owned", msg_deny_sign_moreusers_already_owned);
-        msg_deny_sign_moreusers_no_private = locale.getString("msg_deny_sign_moreusers_no_private", msg_deny_sign_moreusers_no_private);
         msg_warning_player_not_found = locale.getString("msg_warning_player_not_found", msg_warning_player_not_found);
         msg_tnt_fizzle = locale.getString("msg_tnt_fizzle", msg_tnt_fizzle);
         msg_reminder_lock_your_chests = locale.getString("msg_reminder_lock_your_chests", msg_reminder_lock_your_chests);
