@@ -319,7 +319,7 @@ public class Util {
             return true;
         if (!override) {
             if (!Util.isAuthorized(player.getName(), block))
-                if (Perm.override(player, Perm.admin_bypass)) {
+                if (player.hasPermission(Perm.admin_bypass)) {
                     sendMessage(player, String.format(Config.msg_admin_bypass, ((Sign) owner.getState()).getLine(1)), ChatColor.RED);
                 } else
                     return false;
@@ -410,7 +410,7 @@ public class Util {
         if (owner.equals(""))
             return true;
         if (!Util.isAuthorized(player.getName(), block))
-            if (Perm.override(player, Perm.admin_snoop))
+            if (player.hasPermission(Perm.admin_snoop))
                 Util.sendBroadcast(Perm.admin_broadcast_snoop,
                                    String.format(Config.msg_admin_snoop, player.getName(), owner),
                                    ChatColor.RED);
@@ -430,7 +430,7 @@ public class Util {
         if (owner.equals(""))
             return false;
         if (!owner.equalsIgnoreCase(player.getName()))
-            if (Config.adminSign && Perm.override(player, Perm.admin_signs))
+            if (Config.adminSign && player.hasPermission(Perm.admin_signs))
                 Util.sendMessage(player, String.format(Config.msg_admin_signs, owner), ChatColor.RED);
             else
                 return false;

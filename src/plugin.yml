@@ -10,6 +10,7 @@ permissions:
 #------------------------------------------------------------------------------#
     lockette.*:
         description: All user and admin functionality INCLUDING broadcasts and commands
+        default: op
         children:
             lockette.user.*: true
             lockette.admin.*: true
@@ -18,11 +19,13 @@ permissions:
 #------------------------------------------------------------------------------#
     lockette.user.*:
         description: All user functionality
+        default: true
         children:
             lockette.user.create.*: true
 #------------------------------------------------------------------------------#
     lockette.user.create.*:
         description: Allows protection of all chests, dispensers, furnaces, doors, and trapdoors
+        default: true
         children:
             lockette.user.create.chest: true
             lockette.user.create.dispenser: true
@@ -31,17 +34,23 @@ permissions:
             lockette.user.create.trapdoor: true
     lockette.user.create.chest:
         description: Allows user protection of chests
+        default: true
     lockette.user.create.dispenser:
         description: Allows user protection of dispensers
+        default: true
     lockette.user.create.door:
         description: Allows user protection of doors
+        default: true
     lockette.user.create.furnace:
         description: Allows user protection of furnaces
+        default: true
     lockette.user.create.trapdoor:
         description: Allows user protection of trapdoors
+        default: true
 #------------------------------------------------------------------------------#
     lockette.admin.*:
         description: Allows for all admin functionality
+        default: op
         children:
             lockette.admin.create: true
             lockette.admin.break: true
@@ -50,29 +59,39 @@ permissions:
             lockette.admin.snoop: true
     lockette.admin.create:
         description: Allows admin protection of all for other users
+        default: op
     lockette.admin.break:
         description: Allows admin breaking of protected blocks
+        default: op
     lockette.admin.bypass:
         description: Allows admin usage of protected doors and trapdoors
+        default: op
     lockette.admin.signs:
         description: Allows admin usage of commands on user signs
+        default: op
     lockette.admin.snoop:
         description: Allows admin usage of protected chests, dispensers, and furnaces
+        default: op
 #------------------------------------------------------------------------------#
     lockette.command.*:
-      description: Allows use of all priviledged commands
-      children:
-          lockette.command.reload: true
+        description: Allows use of all priviledged commands
+        default: op
+        children:
+            lockette.command.reload: true
     lockette.command.reload:
         description: Allows admin usage of /lockette reload
+        default: op
 #------------------------------------------------------------------------------#
     lockette.broadcast.*:
-      description: Recieves all notifications of admin overrides
-      children:
-          lockette.broadcast.break: true
-          lockette.broadcast.snoop: true
+        description: Receives all notifications of admin overrides
+        default: true
+        children:
+            lockette.broadcast.break: true
+            lockette.broadcast.snoop: true
     lockette.broadcast.break:
-      description: Receives notifications of admin override block breaks
+        description: Receives notifications of admin override block breaks
+        default: true
     lockette.broadcast.snoop:
-      description: receives notifications of admin override container snoops
+        description: receives notifications of admin override container snoops
+        default: true
 #------------------------------------------------------------------------------#

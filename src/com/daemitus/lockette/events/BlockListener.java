@@ -55,7 +55,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
         String owner = Util.getOwnerName(block);
         if (owner.equals("") || owner.equalsIgnoreCase(Util.truncate(player.getName())))
             return;
-        if (Perm.override(player, Perm.admin_break)) {
+        if (player.hasPermission(Perm.admin_break)) {
             Util.sendBroadcast(Perm.admin_broadcast_break,
                                String.format(Config.msg_admin_break, player.getName(), owner),
                                ChatColor.RED);
@@ -177,7 +177,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
         String lines[] = event.getLines();
         if (status.equals("valid")) {
             if (isPrivate) {
-                boolean isAdminAuth = Perm.override(player, Perm.admin_create);
+                boolean isAdminAuth = player.hasPermission(Perm.admin_create);
                 if (!isAdminAuth) {
                     lines[1] = Util.truncate(player.getName());
                 } else {
@@ -218,24 +218,24 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
                 //check against the block it is immediately on
                 switch (against.getType()) {
                     case CHEST:
-                        return Perm.override(player, Perm.user_create_chest) ? "valid" : Config.msg_deny_chest_perm;
+                        return player.hasPermission(Perm.user_create_chest) ? "valid" : Config.msg_deny_chest_perm;
                     case DISPENSER:
-                        return Perm.override(player, Perm.user_create_dispenser) ? "valid" : Config.msg_deny_dispenser_perm;
+                        return player.hasPermission(Perm.user_create_dispenser) ? "valid" : Config.msg_deny_dispenser_perm;
                     case FURNACE:
-                        return Perm.override(player, Perm.user_create_furnace) ? "valid" : Config.msg_deny_furnace_perm;
+                        return player.hasPermission(Perm.user_create_furnace) ? "valid" : Config.msg_deny_furnace_perm;
                     case BURNING_FURNACE:
-                        return Perm.override(player, Perm.user_create_furnace) ? "valid" : Config.msg_deny_furnace_perm;
+                        return player.hasPermission(Perm.user_create_furnace) ? "valid" : Config.msg_deny_furnace_perm;
                     case WOODEN_DOOR:
-                        return Perm.override(player, Perm.user_create_door) ? "valid" : Config.msg_deny_door_perm;
+                        return player.hasPermission(Perm.user_create_door) ? "valid" : Config.msg_deny_door_perm;
                     case IRON_DOOR_BLOCK:
-                        return Perm.override(player, Perm.user_create_door) ? "valid" : Config.msg_deny_door_perm;
+                        return player.hasPermission(Perm.user_create_door) ? "valid" : Config.msg_deny_door_perm;
                 }
 
                 //check for doors above/below
                 for (BlockFace bf : Util.verticalBlockFaces) {
                     Block vertical = against.getRelative(bf);
                     if (vertical.getState().getData() instanceof Door)
-                        return Perm.override(player, Perm.user_create_door) ? "valid" : Config.msg_deny_door_perm;
+                        return player.hasPermission(Perm.user_create_door) ? "valid" : Config.msg_deny_door_perm;
                 }
 
                 //look for trap doors nearby
@@ -246,7 +246,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
                     if (data instanceof TrapDoor) {
                         TrapDoor trapDoor = (TrapDoor) data;
                         if (adjacent.getRelative(trapDoor.getAttachedFace()).equals(against)) {
-                            return Perm.override(player, Perm.user_create_trapdoor) ? "valid" : Config.msg_deny_trapdoor_perm;
+                            return player.hasPermission(Perm.user_create_trapdoor) ? "valid" : Config.msg_deny_trapdoor_perm;
                         }
                     }
                 }
@@ -255,7 +255,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
             if (owner.equals("")) {
                 return Config.msg_deny_sign_moreusers_no_private;
             } else if (!owner.equalsIgnoreCase(Util.truncate(player.getName()))) {
-                if (Perm.override(player, Perm.admin_create)) {
+                if (player.hasPermission(Perm.admin_create)) {
                     return "valid";
                 } else {
                     return Config.msg_deny_sign_moreusers_already_owned;
