@@ -22,7 +22,7 @@ public class EntityListener extends org.bukkit.event.entity.EntityListener {
     }
 
     public void registerEvents(final PluginManager pm) {
-        pm.registerEvent(Type.ENTITY_EXPLODE, this, Priority.Normal, plugin);
+        pm.registerEvent(Type.ENTITY_EXPLODE, this, Priority.Lowest, plugin);
     }
 
     @Override

@@ -4,13 +4,14 @@ import com.daemitus.lockette.Config;
 import com.daemitus.lockette.Lockette;
 import com.daemitus.lockette.Perm;
 import com.daemitus.lockette.Util;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.ContainerBlock;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
@@ -28,6 +29,7 @@ import org.bukkit.plugin.PluginManager;
 
 public class BlockListener extends org.bukkit.event.block.BlockListener {
 
+    private final Set<Player> reminder = new HashSet<Player>();
     private final Lockette plugin;
 
     public BlockListener(final Lockette plugin) {
@@ -35,11 +37,11 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
     }
 
     public void registerEvents(final PluginManager pm) {
-        pm.registerEvent(Type.BLOCK_BREAK, this, Priority.Normal, plugin);
+        pm.registerEvent(Type.BLOCK_BREAK, this, Priority.Low, plugin);
         pm.registerEvent(Type.BLOCK_PLACE, this, Priority.Normal, plugin);
-        pm.registerEvent(Type.REDSTONE_CHANGE, this, Priority.Normal, plugin);
+        pm.registerEvent(Type.REDSTONE_CHANGE, this, Priority.Low, plugin);
         pm.registerEvent(Type.SIGN_CHANGE, this, Priority.Normal, plugin);
-        pm.registerEvent(Type.BLOCK_PISTON_RETRACT, this, Priority.Normal, plugin);
+        pm.registerEvent(Type.BLOCK_PISTON_RETRACT, this, Priority.Low, plugin);
     }
 
     @Override
@@ -80,6 +82,11 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
             if (!onChestPlace(player, block)) {
                 event.setCancelled(true);
                 plugin.sendMessage(player, Config.msg_deny_chest_expansion, ChatColor.RED);
+            } else {
+                if (!reminder.contains(player)) {
+                    reminder.add(player);
+                    plugin.sendMessage(player, Config.msg_reminder_lock_your_chests, ChatColor.GOLD);
+                }
             }
         } else if (data instanceof Door) {
             if (!onDoorPlace(player, block)) {

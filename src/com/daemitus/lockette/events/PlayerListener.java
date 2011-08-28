@@ -19,6 +19,7 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.material.Door;
 import org.bukkit.material.MaterialData;
@@ -167,8 +168,8 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
     }
 
     public boolean interactContainer(Player player, Block block) {
-        Block owner = Util.getOwnerSign(block);
-        if (owner == null)
+        String owner = Util.getOwnerName(block);
+        if (owner.equals(""))
             return true;
         if (!Util.isAuthorized(player.getName(), block))
             if (Perm.override(player, Perm.admin_snoop))

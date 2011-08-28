@@ -3,6 +3,8 @@ package com.daemitus.lockette;
 import com.daemitus.lockette.events.BlockListener;
 import com.daemitus.lockette.events.EntityListener;
 import com.daemitus.lockette.events.PlayerListener;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
@@ -50,7 +52,8 @@ public class Lockette extends JavaPlugin {
         //todo maybe re-imp the /lockette reload command?
         //todo look into cleaning this up
         if (!(sender instanceof Player)) {
-            sender.sendMessage(Config.console);
+            if (!Config.console.equals(""))
+                sender.sendMessage("[Lockette] " + Config.console);
             return true;
         } else {
             Player player = (Player) sender;
@@ -104,7 +107,7 @@ public class Lockette extends JavaPlugin {
             return;
         for (Player player : this.getServer().getOnlinePlayers()) {
             if (player.hasPermission(perm))
-                player.sendMessage(msg);
+                player.sendMessage(color + pluginTag + msg);
         }
     }
     //------------------------------------------------------------------------//
@@ -114,7 +117,9 @@ public class Lockette extends JavaPlugin {
     }
 
     public static void stopDoorSchedule() {
-        Util.clearSelectedSigns();
-        doorSchedule.stop();
+        if (doorSchedule != null) {
+            Util.clearSelectedSigns();
+            doorSchedule.stop();
+        }
     }
 }
