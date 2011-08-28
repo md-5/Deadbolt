@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
@@ -41,6 +42,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
         pm.registerEvent(Type.BLOCK_PLACE, this, Priority.Normal, plugin);
         pm.registerEvent(Type.REDSTONE_CHANGE, this, Priority.Low, plugin);
         pm.registerEvent(Type.SIGN_CHANGE, this, Priority.Normal, plugin);
+        pm.registerEvent(Type.BLOCK_PISTON_EXTEND, this, Priority.Low, plugin);
         pm.registerEvent(Type.BLOCK_PISTON_RETRACT, this, Priority.Low, plugin);
     }
 
@@ -280,6 +282,20 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
             || names.contains(Config.signtext_everyone_locale))
             return;
         event.setNewCurrent(event.getOldCurrent());
+    }
+
+    @Override
+    public void onBlockPistonExtend(BlockPistonExtendEvent event) {
+        if (event.isCancelled())
+            return;
+        if (!Config.pistonProtection)
+            return;
+        for (Block block : event.getBlocks()) {
+            if (Util.isProtected(block)) {
+                event.setCancelled(true);
+                return;
+            }
+        }
     }
 
     @Override

@@ -4,7 +4,7 @@ import com.daemitus.lockette.events.BlockListener;
 import com.daemitus.lockette.events.EntityListener;
 import com.daemitus.lockette.events.PlayerListener;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
@@ -19,6 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Lockette extends JavaPlugin {
 
     public static final Logger logger = Logger.getLogger("Minecraft");
+    private final HashMap<Player, Block> selectedSign = new HashMap<Player, Block>();
     private static DoorSchedule doorSchedule;
     private PluginManager pm;
     private Config cm;
@@ -57,7 +58,7 @@ public class Lockette extends JavaPlugin {
             return true;
         } else {
             Player player = (Player) sender;
-            Block block = Util.getSelectedSign(player);
+            Block block = getSelectedSign(player);
             if (block == null) {
                 this.sendMessage(player, Config.cmd_sign_not_selected, ChatColor.YELLOW);
             } else if (args.length < 2) {
@@ -110,16 +111,95 @@ public class Lockette extends JavaPlugin {
                 player.sendMessage(color + pluginTag + msg);
         }
     }
-    //------------------------------------------------------------------------//
 
-    public static void scheduleDoor(Set<Block> doorBlocks, int delay) {
+    //------------------------------------------------------------------------//
+    public void scheduleDoor(Set<Block> doorBlocks, int delay) {
         doorSchedule.add(doorBlocks, delay);
     }
 
-    public static void stopDoorSchedule() {
+    public void stopDoorSchedule() {
         if (doorSchedule != null) {
-            Util.clearSelectedSigns();
+            selectedSign.clear();
             doorSchedule.stop();
         }
+    }
+
+    //------------------------------------------------------------------------//
+    public Block getSelectedSign(Player player) {
+        return selectedSign.get(player);
+    }
+
+    public void setSelectedSign(Player player, Block block) {
+        selectedSign.put(player, block);
+    }
+
+    public void clearSelectedSign(Player player) {
+        selectedSign.remove(player);
+    }
+
+    //------------------------------------------------------------------------//
+    /**
+     * Check if <name> or [Everyone] is on any of the [Private] or [More Users] signs associated with <block>
+     * @param name Name to be checked
+     * @param block Block to be checked
+     * @return If <name> is authorized to use <block>
+     */
+    public static boolean isAuthorized(String name, Block block) {
+        return Util.isAuthorized(name, block);
+    }
+
+    /**
+     * Check if <block> is protected by <name> or not
+     * @param name Name to be checked
+     * @param block Block to be checked
+     * @return If <name> owns <block>
+     */
+    public static boolean isOwner(String name, Block block) {
+        return Util.isOwner(name, block);
+    }
+
+    /**
+     * Retrieves all names authorized to interact with <block>
+     * @param block Block to be checked
+     * @return A List<String> containing everything on any [Private] or [More Users] signs associated with <block>
+     */
+    public static List<String> getAllNames(Block block) {
+        return Util.getAllNames(block);
+    }
+
+    /**
+     * Retrieve the block a given wallsign is attached to
+     * @param block The wallsign to be checked
+     * @return The block that the wallsign in attached to
+     */
+    public static Block getBlockSignAttachedTo(Block block) {
+        return Util.getBlockSignAttachedTo(block);
+    }
+
+    /**
+     * Retrieves owner of <block>
+     * @param block Block to be checked
+     * @return The text on the line below [Private] on the sign associated with <block>. "" if unprotected
+     */
+    public static String getOwnerName(Block block) {
+        return Util.getOwnerName(block);
+    }
+
+    /**
+     * Retrieves the sign block associated with <block>
+     * @param block Block to be checked
+     * @return The sign block associated with <block>. Null if unprotected
+     */
+    public static Block getOwnerSign(Block block) {
+        return Util.getOwnerSign(block);
+    }
+
+    /**
+     * Check if <block> is protected or not
+     * @param block The block to be checked
+     * @return If <block> is owned
+     */
+    public static boolean isProtected(Block block) {
+        return Util.isProtected(block);
     }
 }

@@ -11,7 +11,7 @@ cmd_identifier_not_changeable: Break and replace to change the identifier on lin
 cmd_owner_not_changeable: Break and replace to change the owner on line 2
 cmd_line_num_out_of_range: Bad format, your line number should be 2,3,4
 msg_admin_break: (Admin) %1$s broke a block owned by %2$s!
-msg_admin_bypass: Bypassed a door owned by %1$s, make sure to shut it
+msg_admin_bypass: Bypassed a door owned by %1$s, be sure to shut it
 msg_admin_signs: Selected a sign owned by %1$s!
 msg_admin_snoop: (Admin) %1$s snooped around in a container owned by %2$s
 msg_deny_door_access: Access denied

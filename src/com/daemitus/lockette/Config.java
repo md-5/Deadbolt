@@ -74,6 +74,11 @@ public class Config {
         this.plugin = plugin;
     }
 
+    /**
+     * Loads config.yml and associated <language>.yml contained within.
+     * It will try to download from GitHub if either is missing and
+     * defaults to english.yml if the node is not found.
+     */
     public void load() {
         File configFile = new File(plugin.getDataFolder() + File.separator + "config.yml");
         if (!configFile.exists())
@@ -104,7 +109,7 @@ public class Config {
         loadMessages(langfile);
     }
 
-    public void loadMessages(File langfile) {
+    private void loadMessages(File langfile) {
         Configuration locale = new Configuration(langfile);
         locale.load();
         signtext_private_locale = locale.getString("signtext_private", signtext_private);

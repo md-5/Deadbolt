@@ -31,5 +31,5 @@ redstone-protection: true
 
 #Force doors to automatically toggle after <delay>,
 #or by [Timer:#] if on the sign
-timer-doors-always-on: true
+timer-doors-always-on: false
 timer-doors-always-on-delay: 3

@@ -19,7 +19,6 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.material.Door;
 import org.bukkit.material.MaterialData;
@@ -29,7 +28,7 @@ import org.bukkit.plugin.PluginManager;
 public class PlayerListener extends org.bukkit.event.player.PlayerListener {
 
     private final Lockette plugin;
-    private static final String patternTimer = "\\[.{1,11}:[123456789]\\]";
+    private final String timerPattern = "\\[.{1,11}:[123456789]\\]";
 
     public PlayerListener(final Lockette plugin) {
         this.plugin = plugin;
@@ -83,7 +82,7 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
 
     @Override
     public void onPlayerQuit(PlayerQuitEvent event) {
-        Util.clearSelectedSign(event.getPlayer());
+        plugin.clearSelectedSign(event.getPlayer());
     }
 
     public boolean interactDoor(Player player, Block block) {
@@ -91,18 +90,18 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
         if (owner == null)
             return true;
         if (!Util.isAuthorized(player.getName(), block))
-            if (Perm.override(player, Perm.admin_bypass))
-                plugin.sendMessage(player, String.format(Config.msg_admin_bypass, owner), ChatColor.RED);
-            else
+            if (Perm.override(player, Perm.admin_bypass)) {
+                plugin.sendMessage(player, String.format(Config.msg_admin_bypass, ((Sign) owner.getState()).getLine(1)), ChatColor.RED);
+            } else
                 return false;
         Block ownerAttached = Util.getBlockSignAttachedTo(owner);
         int delay = getDelayFromSign((Sign) owner.getState());
         Set<Block> doorBlocks = new HashSet<Block>();
         doorBlocks = toggleDoor(block, ownerAttached, isNaturalOpen(block));
         if (Config.timerDoorsAlwaysOn)
-            Lockette.scheduleDoor(doorBlocks, delay == 0 ? Config.timerDoorsAlwaysOnDelay : delay);
+            plugin.scheduleDoor(doorBlocks, delay == 0 ? Config.timerDoorsAlwaysOnDelay : delay);
         else if (delay > 0) {
-            Lockette.scheduleDoor(doorBlocks, delay);
+            plugin.scheduleDoor(doorBlocks, delay);
         }
         return true;
     }
@@ -155,7 +154,7 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
     private int getDelayFromSign(Sign sign) {
         for (int i = 2; i < 4; i++) {
             String text = Util.stripColor(sign.getLine(i));
-            if (!text.matches(patternTimer))
+            if (!text.matches(timerPattern))
                 continue;
 
             String word = text.substring(1, text.length() - 3);
@@ -191,7 +190,7 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
             else
                 return false;
         plugin.sendMessage(player, Config.cmd_sign_selected, ChatColor.GOLD);
-        Util.setSelectedSign(player, block);
+        plugin.setSelectedSign(player, block);
         return true;
     }
 }

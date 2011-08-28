@@ -2,7 +2,6 @@ package com.daemitus.lockette;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,7 +11,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ContainerBlock;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Player;
 import org.bukkit.material.Door;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.TrapDoor;
@@ -21,26 +19,50 @@ public class Util {
 
     public static final Set<BlockFace> horizontalBlockFaces = EnumSet.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
     public static final Set<BlockFace> verticalBlockFaces = EnumSet.of(BlockFace.UP, BlockFace.DOWN);
-    private static final HashMap<Player, Block> selectedSign = new HashMap<Player, Block>();
     private static final String patternStripColor = "(?i)§[0-9a-zA-Z]";
     private static final String patternNormalTooLong = ".{16,}";
     private static final String patternBracketTooLong = "\\[.{14,}\\]";
 
+    /**
+     * Check if <block> is protected or not
+     * @param block The block to be checked
+     * @return If <block> is owned
+     */
     public static boolean isProtected(Block block) {
         return getOwnerSign(block) != null;
     }
 
+    /**
+     * Check if <block> is protected by <name> or not
+     * @param name Name to be checked
+     * @param block Block to be checked
+     * @return If <name> owns <block>
+     */
     public static boolean isOwner(String name, Block block) {
         return truncate(name).equalsIgnoreCase(getOwnerName(block));
     }
 
+    /**
+     * Check if <name> or [Everyone] is on any of the [Private] or [More Users] signs associated with <block>
+     * @param name Name to be checked
+     * @param block Block to be checked
+     * @return If <name> is authorized to use <block>
+     */
     public static boolean isAuthorized(String name, Block block) {
         List<String> names = getAllNames(block);
-        return !names.isEmpty() && (names.contains(truncate(name).toLowerCase())
-                                    || names.contains(Config.signtext_everyone)
-                                    || names.contains(Config.signtext_everyone_locale));
+        if (names.isEmpty())
+            return true;
+        else
+            return names.contains(truncate(name).toLowerCase())
+                   || names.contains(Config.signtext_everyone)
+                   || names.contains(Config.signtext_everyone_locale);
     }
 
+    /**
+     * Retrieves owner of <block>
+     * @param block Block to be checked
+     * @return The text on the line below [Private] on the sign associated with <block>. "" if unprotected
+     */
     public static String getOwnerName(Block block) {
         Block owner = getOwnerSign(block);
         if (owner == null)
@@ -50,6 +72,11 @@ public class Util {
         return text;
     }
 
+    /**
+     * Retrieves the sign block associated with <block>
+     * @param block Block to be checked
+     * @return The sign block associated with <block>. Null if unprotected
+     */
     public static Block getOwnerSign(Block block) {
         Material type = block.getType();
         BlockState state = block.getState();
@@ -135,6 +162,11 @@ public class Util {
         return null;
     }
 
+    /**
+     * Retrieves all names authorized to interact with <block>
+     * @param block Block to be checked
+     * @return A List<String> containing everything on any [Private] or [More Users] signs associated with <block>
+     */
     public static List<String> getAllNames(Block block) {
         Set<Block> signs = getAllSigns(block);
         List<String> names = new ArrayList<String>();
@@ -223,6 +255,11 @@ public class Util {
         return signSet;
     }
 
+    /**
+     * Retrieve the block a given wallsign is attached to
+     * @param block The wallsign to be checked
+     * @return The block that the wallsign in attached to
+     */
     public static Block getBlockSignAttachedTo(Block block) {
         if (block.getType().equals(Material.WALL_SIGN))
             switch (block.getData()) {
@@ -238,31 +275,25 @@ public class Util {
         return null;
     }
 
-    public static String stripColor(String line) {
-        return line.replaceAll(patternStripColor, "");
+    /**
+     * Removes any color codes from <text>, i.e. §4, §e using "(?i)§[0-9a-zA-Z]"
+     * @param text String to be parsed
+     * @return A String without any color codes present
+     */
+    public static String stripColor(String text) {
+        return text.replaceAll(patternStripColor, "");
     }
 
+    /**
+     * Verifies that <text> is 15 or less characters to fit a sign. 13 characters if <text> begins and ends with square brackets.
+     * @param text String to be parsed
+     * @return A String formatted to fit a sign
+     */
     public static String truncate(String text) {
         if (text.matches(patternBracketTooLong))
             return "[" + text.substring(1, 14) + "]";
         if (text.matches(patternNormalTooLong))
             return text.substring(0, 15);
         return text;
-    }
-
-    public static Block getSelectedSign(Player player) {
-        return selectedSign.get(player);
-    }
-
-    public static void setSelectedSign(Player player, Block block) {
-        selectedSign.put(player, block);
-    }
-
-    public static void clearSelectedSign(Player player) {
-        selectedSign.remove(player);
-    }
-
-    public static void clearSelectedSigns() {
-        selectedSign.clear();
     }
 }

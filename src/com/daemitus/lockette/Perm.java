@@ -17,15 +17,31 @@ public class Perm {
     public static final String admin_broadcast_break = "lockette.broadcast.break";
     public static final String admin_broadcast_snoop = "lockette.broadcast.snoop";
 
-
+    /**
+     * Check if a player is either an op, or has the permission and if either is enabled
+     * @param player Player to be checked
+     * @param perm Permission node to be checked
+     * @return (useOpList && player.isOp()) || (usePermissions && player.hasPermission(perm))
+     */
     public static boolean override(Player player, String perm) {
         return isOp(player) || hasPerm(player, perm);
     }
 
+    /**
+     * Check if a player is in ops.txt and if using the list is enabled
+     * @param player Player to be checked
+     * @return useOpList && player.isOp()
+     */
     public static boolean isOp(Player player) {
         return Config.useOpList && player.isOp();
     }
 
+    /**
+     * Check if a player has the super perm and if using super permissions is enabled
+     * @param player Player to be checked
+     * @param perm Permission node to be checked
+     * @return usePermissions && player.hasPermission(perm)
+     */
     public static boolean hasPerm(Player player, String perm) {
         return Config.usePermissions && player.hasPermission(perm);
     }
