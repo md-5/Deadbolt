@@ -1,0 +1,2 @@
+Lockette v1.0 - The sign-based container and door lock for Bukkit!
+The purpose of this plugin is to restrict access to the contents of chests, dispensers, furnaces, doors, and trapdoors without the use of a database to track containers.
