@@ -1,5 +1,7 @@
 package com.daemitus.lockette;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -15,11 +17,9 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.ContainerBlock;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.material.Door;
-import org.bukkit.material.MaterialData;
 import org.bukkit.material.TrapDoor;
 import org.bukkit.permissions.Permission;
 
@@ -33,6 +33,7 @@ public class Util {
     private static final String patternNormalTooLong = ".{16,}";
     private static final String patternBracketTooLong = "\\[.{14,}\\]";
     private static final String timerPattern = "\\[.{1,11}:[123456789]\\]";
+    private static final Set<Object> objects = new HashSet<Object>();
     public static DoorSchedule doorSchedule = new DoorSchedule();
 
     /**
@@ -60,14 +61,53 @@ public class Util {
      * @param block Block to be checked
      * @return If <name> is authorized to use <block>
      */
-    public static boolean isAuthorized(String name, Block block) {
+    public static boolean isAuthorized(Player player, Block block) {
         List<String> names = getAllNames(block);
         if (names.isEmpty())
             return true;
         else
-            return names.contains(truncate(name))
+            return names.contains(truncate(player.getName()))
                    || names.contains(Config.signtext_everyone)
-                   || names.contains(Config.signtext_everyone_locale);
+                   || names.contains(Config.signtext_everyone_locale)
+                   || queryBridges(player, names);
+    }
+
+    /**
+     * Register a bridge with Lockette for use in authorizing users to interact with various protected blocks.
+     * <br>
+     * <br>Required method: <pre>isAuthorized(Player, List&lt;String&gt;) {return boolean}</pre>
+     * <br>Player: player to be checked
+     * <br>List<String>: All names contained on any associated [Private] or [More Users] signs
+     * @param bridge Class to be added
+     * @return Success or failure
+     */
+    public static boolean registerBridge(Object bridge) {
+        return objects.add(bridge);
+    }
+
+    private static boolean queryBridges(Player player, List<String> names) {
+        for (Object obj : objects) {
+            try {
+                Method method = obj.getClass().getMethod("isAuthorized", Player.class, List.class);
+                Object result = method.invoke(obj, player, names);
+                boolean authorized = (Boolean) result;
+                if (authorized)
+                    return true;
+            } catch (NoSuchMethodException ex) {
+                Lockette.logger.log(Level.SEVERE, "Lockette: " + obj.getClass().getName() + " has no method \"isAuthorized(Player, List)\"", ex);
+            } catch (SecurityException ex) {
+                Lockette.logger.log(Level.SEVERE, "Lockette: " + obj.getClass().getName() + " Security Exception", ex);
+            } catch (IllegalAccessException ex) {
+                Lockette.logger.log(Level.SEVERE, "Lockette: " + obj.getClass().getName() + " Illegal Access Exception ", ex);
+            } catch (IllegalArgumentException ex) {
+                Lockette.logger.log(Level.SEVERE, "Lockette: " + obj.getClass().getName() + " arguments are not of type (Player, List)", ex);
+            } catch (InvocationTargetException ex) {
+                Lockette.logger.log(Level.SEVERE, "Lockette: " + obj.getClass().getName() + " Invocation Target Exception", ex);
+            } catch (ClassCastException ex) {
+                Lockette.logger.log(Level.SEVERE, "Lockette: " + obj.getClass().getName() + " has a return other than boolean", ex);
+            }
+        }
+        return false;
     }
 
     /**
@@ -276,7 +316,7 @@ public class Util {
         if (owner == null)
             return true;
         if (!override) {
-            if (!Util.isAuthorized(player.getName(), block))
+            if (!Util.isAuthorized(player, block))
                 if (player.hasPermission(Perm.admin_bypass)) {
                     sendMessage(player, String.format(Config.msg_admin_bypass, ((Sign) owner.getState()).getLine(1)), ChatColor.RED);
                 } else
@@ -368,7 +408,7 @@ public class Util {
         String owner = Util.getOwnerName(block);
         if (owner.equals(""))
             return true;
-        if (!Util.isAuthorized(player.getName(), block))
+        if (!Util.isAuthorized(player, block))
             if (player.hasPermission(Perm.admin_snoop)) {
                 Util.sendBroadcast(Perm.admin_broadcast_snoop,
                                    String.format(Config.msg_admin_snoop, player.getName(), owner),

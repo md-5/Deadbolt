@@ -150,12 +150,12 @@ public class Lockette extends JavaPlugin {
 
     /**
      * Check if <name> or [Everyone] is on any of the [Private] or [More Users] signs associated with <block>
-     * @param name Name to be checked
+     * @param player Player to be checked
      * @param block Block to be checked
      * @return If <name> is authorized to use <block>
      */
-    public static boolean isAuthorized(String name, Block block) {
-        return Util.isAuthorized(name, block);
+    public static boolean isAuthorized(Player player, Block block) {
+        return Util.isAuthorized(player, block);
     }
 
     /**
@@ -243,5 +243,18 @@ public class Lockette extends JavaPlugin {
      */
     public static boolean interactSign(Player player, Block block) {
         return Util.interactSign(player, block);
+    }
+
+    /**
+     * Register a bridge with Lockette for use in authorizing users to interact with various protected blocks.
+     * <br>
+     * <br>Required method: <pre>isAuthorized(Player, List&lt;String&gt;) {return boolean}</pre>
+     * <br>Player: player to be checked
+     * <br>List<String>: All names contained on any associated [Private] or [More Users] signs
+     * @param bridge Class to be added
+     * @return Success or failure
+     */
+    public static boolean registerBridge(Object bridge) {
+        return Util.registerBridge(bridge);
     }
 }
