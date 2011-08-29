@@ -118,7 +118,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
                 continue;
             String owner = Util.getOwnerName(adjacent);
             if (owner.equals("") || owner.equals(Util.truncate(player.getName())))
-                return true;
+                continue;
             return false;
         }
         return true;
