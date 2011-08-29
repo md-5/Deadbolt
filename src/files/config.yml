@@ -33,3 +33,6 @@ redstone-protection: true
 #or by [Timer:#] if on the sign
 timer-doors-always-on: false
 timer-doors-always-on-delay: 3
+
+#Make iron doors toggled by Lockette have the same sound as wooden doors
+iron-door-sounds: false

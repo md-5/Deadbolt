@@ -60,11 +60,12 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
             Util.sendBroadcast(Perm.admin_broadcast_break,
                                String.format(Config.msg_admin_break, player.getName(), owner),
                                ChatColor.RED);
-            Lockette.logger.log(Level.INFO, String.format("Lockette - " + Config.msg_admin_break, player.getName(), owner));
+            Lockette.logger.log(Level.INFO, String.format("Lockette: " + Config.msg_admin_break, player.getName(), owner));
             return;
         }
-
+        Sign sign = (Sign) block.getState();
         event.setCancelled(true);
+        sign.update(true);
         Util.sendMessage(player, Config.msg_deny_block_break, ChatColor.RED);
     }
 
@@ -170,9 +171,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
             block.setType(Material.WALL_SIGN);
             for (byte data = 2; !status.equals("valid") && data < 6; data++) {
                 block.setData(data);
-                String temp = checkWallSign(player, block, isPrivate);
-                if (!temp.equals(""))
-                    status = temp;
+                status = checkWallSign(player, block, isPrivate);
             }
         }
 
@@ -231,6 +230,8 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
                         return player.hasPermission(Perm.user_create_door) ? "valid" : Config.msg_deny_door_perm;
                     case IRON_DOOR_BLOCK:
                         return player.hasPermission(Perm.user_create_door) ? "valid" : Config.msg_deny_door_perm;
+                    case TRAP_DOOR:
+                        return player.hasPermission(Perm.user_create_trapdoor) ? "valid" : Config.msg_deny_trapdoor_perm;
                 }
 
                 //check for doors above/below

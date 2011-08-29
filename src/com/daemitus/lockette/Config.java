@@ -27,53 +27,54 @@ public class Config {
     public static boolean adminBypass = true;
     public static boolean adminSign = true;
     public static boolean adminSnoop = true;
+    public static boolean doorSounds = false;
     //------------------------------------------------------------------------//
     public static final String signtext_private = "[private]";
     public static final String signtext_moreusers = "[more users]";
     public static final String signtext_everyone = "[everyone]";
     public static final String signtext_timer = "timer";
-    public static String signtext_private_locale = "private";
-    public static String signtext_moreusers_locale = "more users";
-    public static String signtext_everyone_locale = "everyone";
-    public static String signtext_timer_locale = "timer";
-    public static String console_error_scheduler_start = "";            //"Automatic door scheduler failed to start"
-    public static String console_error_scheduler_stop = "";             //"Automatic door scheduler failed to stop"
-    public static String cmd_help_editsign = "";                        //"/lockette <line number> <text> - Edit signs on locked containers, right click a sign first to select it"
-    public static String cmd_help_reload = "";                          //"/lockette reload - Reload the config.yml and <language>.yml files"
-    public static String cmd_reload = "";                               //"Reloading settings..."
-    public static String cmd_sign_updated = "";                         //"Sign updated"
-    public static String cmd_sign_selected = "";                        //"Sign selected, use /lockette <line number> <text>";
-    public static String cmd_sign_selected_error = "";                  //"Selected sign has an error. Right click it again"
-    public static String cmd_sign_not_selected = "";                    //"Nothing selected, right click a valid sign first";
-    public static String cmd_identifier_not_changeable = "";            //"Break and replace to change the identifier on line 1";
-    public static String cmd_owner_not_changeable = "";                 //"Break and replace to change the owner on line 2";
-    public static String cmd_line_num_out_of_range = "";                //"Bad format, your line number should be 2,3,4";
-    public static String cmd_command_not_found = "";                    //"No command found, use "/lockette" for options"
-    public static String cmd_console_reload = "";                       //"Lockette - Reloading settings..."
-    public static String cmd_console_command_not_found = "";            //"Lockette - No command found, use "lockette" for options"
-    public static String msg_admin_break = "";                          //"(Admin) %1$s broke a block owned by %2$s";
-    public static String msg_admin_bypass = "";                         //"Bypassed a door owned by %1$s, make sure to shut it";
-    public static String msg_admin_signs = "";                          //"Selected a sign owned by %1$s";
-    public static String msg_admin_snoop = "";                          //"(Admin) %1$s snooped around in a container owned by %2$s";
-    public static String msg_deny_door_access = "";                     //"Access denied";
-    public static String msg_deny_container_access = "";                //"Access denied";
-    public static String msg_deny_sign_selection = "";                  //"You don't own this sign";
-    public static String msg_deny_block_break = "";                     //"You don't own this block";
-    public static String msg_deny_chest_expansion = "";                 //"You don't own the adjacent chest";
-    public static String msg_deny_door_expansion = "";                  //"You don't own the adjacent door";
-    public static String msg_deny_trapdoor_placement = "";              //"You don't own the adjacent hinge block";
-    public static String msg_deny_sign_private_nothing_nearby = "";     //"Nothing nearby to protect";
-    public static String msg_deny_sign_private_already_owned = "";      //"This block is already protected";
-    public static String msg_deny_sign_moreusers_already_owned = "";    //"You don't own this block";
-    public static String msg_deny_sign_moreusers_no_private = "";       //"No sign with [Private] nearby";
-    public static String msg_deny_chest_perm = "";                      //"You are not authorized to protect chests";
-    public static String msg_deny_dispenser_perm = "";                  //"You are not authorized to protect dispensers";
-    public static String msg_deny_furnace_perm = "";                    //"You are not authorized to protect furnaces";
-    public static String msg_deny_door_perm = "";                       //"You are not authorized to protect doors";
-    public static String msg_deny_trapdoor_perm = "";                   //"You are not authorized to protect trap doors";
-    public static String msg_warning_player_not_found = "";             //"%1$s is not online, make sure you have the correct name";
-    public static String msg_tnt_fizzle = "";                           //"TNT tried to explode too close to a protected block";
-    public static String msg_reminder_lock_your_chests = "";            //"Place a sign headed [Private] next to your chest to lock it"
+    /*  1 */ public static String signtext_private_locale = "private";
+    /*  2 */ public static String signtext_moreusers_locale = "more users";
+    /*  3 */ public static String signtext_everyone_locale = "everyone";
+    /*  4 */ public static String signtext_timer_locale = "timer";
+    /*  5 */ public static String console_error_scheduler_start = "Automatic door scheduler failed to start";
+    /*  6 */ public static String console_error_scheduler_stop = "Automatic door scheduler failed to stop";
+    /*  7 */ public static String cmd_help_editsign = "/lockette <line number> <text> - Edit signs on locked containers, right click a sign first to select it";
+    /*  8 */ public static String cmd_help_reload = "/lockette reload - Reload the config.yml and <language>.yml files";
+    /*  9 */ public static String cmd_reload = "Reloading settings...";
+    /* 10 */ public static String cmd_sign_updated = "Sign updated";
+    /* 11 */ public static String cmd_sign_selected = "Sign selected, use /lockette <line number> <text>";
+    /* 12 */ public static String cmd_sign_selected_error = "Selected sign has an error. Right click it again";
+    /* 13 */ public static String cmd_sign_not_selected = "Nothing selected, right click a valid sign first";
+    /* 14 */ public static String cmd_identifier_not_changeable = "Break and replace to change the identifier on line 1";
+    /* 15 */ public static String cmd_owner_not_changeable = "Break and replace to change the owner on line 2";
+    /* 16 */ public static String cmd_line_num_out_of_range = "Bad format, your line number should be 2,3,4";
+    /* 17 */ public static String cmd_command_not_found = "No command found, use \"/lockette\" for options";
+    /* 18 */ public static String cmd_console_reload = "Lockette - Reloading settings...";
+    /* 19 */ public static String cmd_console_command_not_found = "Lockette - No command found, use \"lockette\" for options";
+    /* 20 */ public static String msg_admin_break = "(Admin) %1$s broke a block owned by %2$s";
+    /* 21 */ public static String msg_admin_bypass = "Bypassed a door owned by %1$s, make sure to shut it";
+    /* 22 */ public static String msg_admin_signs = "Selected a sign owned by %1$s";
+    /* 23 */ public static String msg_admin_snoop = "(Admin) %1$s snooped around in a container owned by %2$s";
+    /* 24 */ public static String msg_deny_door_access = "Access denied";
+    /* 25 */ public static String msg_deny_container_access = "Access denied";
+    /* 26 */ public static String msg_deny_sign_selection = "You don't own this sign";
+    /* 27 */ public static String msg_deny_block_break = "You don't own this block";
+    /* 28 */ public static String msg_deny_chest_expansion = "You don't own the adjacent chest";
+    /* 29 */ public static String msg_deny_door_expansion = "You don't own the adjacent door";
+    /* 30 */ public static String msg_deny_trapdoor_placement = "You don't own the adjacent hinge block";
+    /* 31 */ public static String msg_deny_sign_private_nothing_nearby = "Nothing nearby to protect";
+    /* 32 */ public static String msg_deny_sign_private_already_owned = "This block is already protected";
+    /* 33 */ public static String msg_deny_sign_moreusers_already_owned = "You don't own this block";
+    /* 34 */ public static String msg_deny_sign_moreusers_no_private = "No sign with [Private] nearby";
+    /* 35 */ public static String msg_deny_chest_perm = "You are not authorized to protect chests";
+    /* 36 */ public static String msg_deny_dispenser_perm = "You are not authorized to protect dispensers";
+    /* 37 */ public static String msg_deny_furnace_perm = "You are not authorized to protect furnaces";
+    /* 38 */ public static String msg_deny_door_perm = "You are not authorized to protect doors";
+    /* 39 */ public static String msg_deny_trapdoor_perm = "You are not authorized to protect trap doors";
+    /* 40 */ public static String msg_warning_player_not_found = "%1$s is not online, make sure you have the correct name";
+    /* 41 */ public static String msg_tnt_fizzle = "TNT tried to explode too close to a protected block";
+    /* 42 */ public static String msg_reminder_lock_your_chests = "Place a sign headed [Private] next to your chest to lock it";
     //------------------------------------------------------------------------//
 
     public Config(final Lockette plugin) {
@@ -103,7 +104,7 @@ public class Config {
         redstoneProtection = config.getBoolean("redstone-protection", redstoneProtection);
         timerDoorsAlwaysOn = config.getBoolean("timer-doors-always-on", timerDoorsAlwaysOn);
         timerDoorsAlwaysOnDelay = config.getInt("timer-doors-always-on-delay", timerDoorsAlwaysOnDelay);
-
+        doorSounds = config.getBoolean("iron-door-sounds", doorSounds);
 
         String language = config.getString("language");
 
@@ -177,6 +178,8 @@ public class Config {
 
     private void downloadFile(String filename) {
         //Thanks to Southpaw018 - Cenotaph
+        if (!plugin.getDataFolder().exists())
+            plugin.getDataFolder().mkdirs();
         String datafile = plugin.getDataFolder().getPath() + File.separator + filename;
         String repofile = repo + filename;
         try {
@@ -186,13 +189,13 @@ public class Config {
             ReadableByteChannel rbc = Channels.newChannel(link.openStream());
             FileOutputStream fos = new FileOutputStream(download);
             fos.getChannel().transferFrom(rbc, 0, 1 << 24);
-            Lockette.logger.log(Level.INFO, "[Lockette] Downloaded file ".concat(datafile));
+            Lockette.logger.log(Level.INFO, "Lockette: Downloaded file ".concat(datafile));
         } catch (MalformedURLException ex) {
-            Lockette.logger.log(Level.WARNING, "[Lockette] Malformed URL ".concat(repofile));
+            Lockette.logger.log(Level.WARNING, "Lockette: Malformed URL ".concat(repofile));
         } catch (FileNotFoundException ex) {
-            Lockette.logger.log(Level.WARNING, "[Lockette] File not found ".concat(datafile));
+            Lockette.logger.log(Level.WARNING, "Lockette: File not found ".concat(datafile));
         } catch (IOException ex) {
-            Lockette.logger.log(Level.WARNING, "[Lockette] IOError downloading ".concat(repofile));
+            Lockette.logger.log(Level.WARNING, "Lockette: IOError downloading ".concat(repofile));
         }
     }
 }

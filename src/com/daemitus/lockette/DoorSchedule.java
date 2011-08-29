@@ -3,6 +3,7 @@ package com.daemitus.lockette;
 import java.util.PriorityQueue;
 import java.util.Set;
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.block.Block;
 
 public class DoorSchedule implements Runnable {
@@ -49,6 +50,8 @@ public class DoorSchedule implements Runnable {
     private void close(DoorTask task) {
         Block block = task.block;
         block.setData((byte) (block.getData() ^ 0x4));
+        if (Config.doorSounds)
+            block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 0);
     }
 
     private class DoorTask implements Comparable<DoorTask> {

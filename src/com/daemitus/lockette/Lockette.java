@@ -40,14 +40,15 @@ public class Lockette extends JavaPlugin {
 
         boolean started = Util.doorSchedule.start(this);
         if (!started) {
-            logger.log(Level.WARNING, Config.console_error_scheduler_start);
+            logger.log(Level.WARNING, String.format("Lockette: %1$s", Config.console_error_scheduler_start));
         }
 
-        logger.log(Level.INFO, "Lockette v%1$s enabled", this.getDescription().getVersion());
+        logger.log(Level.INFO, String.format("Lockette v%1$s enabled", this.getDescription().getVersion()));
     }
 
     public void onDisable() {
         stopDoorSchedule();
+        logger.log(Level.INFO, String.format("Lockette v%1$s disabled", this.getDescription().getVersion()));
     }
 
     @Override
@@ -131,10 +132,10 @@ public class Lockette extends JavaPlugin {
         if (arg == 0) {
             sender.sendMessage("Lockette v" + this.getDescription().getVersion() + " options: reload");
         } else if (arg == 1 && args[0].equals("reload")) {
-            sender.sendMessage(Config.cmd_console_reload);
+            sender.sendMessage("Lockette: " + Config.cmd_console_reload);
             cm.load();
         } else {
-            sender.sendMessage(Config.cmd_console_command_not_found);
+            sender.sendMessage("Lockette: " + Config.cmd_console_command_not_found);
         }
         return true;
     }
@@ -142,7 +143,7 @@ public class Lockette extends JavaPlugin {
     private void stopDoorSchedule() {
         Util.selectedSign.clear();
         if (!Util.doorSchedule.stop()) {
-            logger.log(Level.WARNING, Config.console_error_scheduler_stop);
+            logger.log(Level.WARNING, String.format("Lockette: %1$s", Config.console_error_scheduler_stop));
         }
     }
     //------------------------------------------------------------------------//

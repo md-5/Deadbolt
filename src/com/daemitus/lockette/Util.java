@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -20,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.material.Door;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.TrapDoor;
+import org.bukkit.permissions.Permission;
 
 public class Util {
 
@@ -63,7 +65,7 @@ public class Util {
         if (names.isEmpty())
             return true;
         else
-            return names.contains(truncate(name).toLowerCase())
+            return names.contains(truncate(name))
                    || names.contains(Config.signtext_everyone)
                    || names.contains(Config.signtext_everyone_locale);
     }
@@ -74,12 +76,17 @@ public class Util {
      * @return The text on the line below [Private] on the sign associated with <block>. "" if unprotected
      */
     public static String getOwnerName(Block block) {
-        Block owner = getOwnerSign(block);
-        if (owner == null)
-            return "";
-        Sign sign = (Sign) owner.getState();
-        String text = stripColor(sign.getLine(1));
-        return text;
+        Set<Block> set = getAllSigns(block);
+        for (Block b : set) {
+            if (b.getType().equals(Material.WALL_SIGN)) {
+                Sign sign = (Sign) b.getState();
+                String text = stripColor(sign.getLine(0));
+                if (text.equalsIgnoreCase(Config.signtext_private)
+                    || text.equalsIgnoreCase(Config.signtext_private_locale))
+                    return stripColor(sign.getLine(1));
+            }
+        }
+        return "";
     }
 
     /**
@@ -88,85 +95,14 @@ public class Util {
      * @return The sign block associated with <block>. Null if unprotected
      */
     public static Block getOwnerSign(Block block) {
-        Material type = block.getType();
-        BlockState state = block.getState();
-        MaterialData data = state.getData();
-        if (type.equals(Material.CHEST))
-            return getOwnerSign(block, true, false, false);
-        else if (state instanceof ContainerBlock)
-            return getOwnerSign(block, false, false, false);
-        else if (data instanceof Door)
-            return getOwnerSign(block, true, true, false);
-        else if (data instanceof TrapDoor)
-            return getOwnerSign(block, false, false, true);
-        else if (type.equals(Material.WALL_SIGN)) {
-            Sign sign = (Sign) block.getState();
-            String text = stripColor(sign.getLine(0));
-            if (text.equalsIgnoreCase(Config.signtext_private) || text.equalsIgnoreCase(Config.signtext_private_locale))
-                return block;
-            if (text.equalsIgnoreCase(Config.signtext_moreusers) || text.equalsIgnoreCase(Config.signtext_moreusers_locale)) {
-                Block attached = getBlockSignAttachedTo(block);
-                return getOwnerSign(attached);
-            }
-            return null;
-        } else {
-            Block check = getOwnerSign(block, false, false, false);
-            if (check == null) {
-                Block upBlock = block.getRelative(BlockFace.UP);
-                if (upBlock.getState().getData() instanceof Door)
-                    return getOwnerSign(upBlock);
-                Block downBlock = block.getRelative(BlockFace.DOWN);
-                if (downBlock.getState().getData() instanceof Door)
-                    return getOwnerSign(downBlock);
-            }
-            return check;
-        }
-    }
-
-    private static Block getOwnerSign(Block block, boolean iterateHorizontal, boolean iterateVertical, boolean trapDoor) {
-        if (trapDoor && block.getState().getData() instanceof TrapDoor) {
-            TrapDoor door = (TrapDoor) block.getState().getData();
-            block = block.getRelative(door.getAttachedFace());
-        }
-
-        for (BlockFace bf : horizontalBlockFaces) {
-            Block adjacent = block.getRelative(bf);
-
-            if (iterateHorizontal && adjacent.getType().equals(block.getType())) {
-                adjacent = getOwnerSign(adjacent, false, iterateVertical, false);
-                if (adjacent != null)
-                    return adjacent;
-                else
-                    continue;
-            }
-
-            if (!adjacent.getType().equals(Material.WALL_SIGN))
-                continue;
-            if ((bf.equals(BlockFace.NORTH) && adjacent.getData() != 4)
-                || (bf.equals(BlockFace.SOUTH) && adjacent.getData() != 5)
-                || (bf.equals(BlockFace.EAST) && adjacent.getData() != 2)
-                || (bf.equals(BlockFace.WEST) && adjacent.getData() != 3))
-                continue;
-            Sign sign = (Sign) adjacent.getState();
-            String text = stripColor(sign.getLine(0));
-            if (!text.equalsIgnoreCase(Config.signtext_private) && !text.equalsIgnoreCase(Config.signtext_private_locale))
-                continue;
-            return adjacent;
-        }
-
-        if (iterateVertical) {
-            Set<Block> set = new HashSet<Block>();
-            for (BlockFace bf : verticalBlockFaces) {
-                Block iterating = block;
-                while (iterating.getType().equals(block.getType())) {
-                    iterating = iterating.getRelative(bf);
-                    set.add(iterating);
-                }
-            }
-            for (Block setBlock : set) {
-                Block checkBlock = getOwnerSign(setBlock, false, false, false);
-                if (checkBlock != null)
-                    return checkBlock;
+        Set<Block> set = getAllSigns(block);
+        for (Block b : set) {
+            if (b.getType().equals(Material.WALL_SIGN)) {
+                Sign sign = (Sign) b.getState();
+                String text = stripColor(sign.getLine(0));
+                if (text.equalsIgnoreCase(Config.signtext_private)
+                    || text.equalsIgnoreCase(Config.signtext_private_locale))
+                    return b;
             }
         }
         return null;
@@ -184,39 +120,58 @@ public class Util {
             Sign sign = (Sign) signBlock.getState();
             for (int i = 1; i < 4; i++) {
                 String line = sign.getLine(i);
-                if (line.length() > 0)
-                    names.add(stripColor(line).toLowerCase());
+                if (!line.isEmpty())
+                    names.add(stripColor(line));
             }
         }
         return names;
     }
 
-    private static Set<Block> getAllSigns(Block block) {
-        Material type = block.getType();
-        BlockState state = block.getState();
-        MaterialData data = state.getData();
-        if (type.equals(Material.CHEST))
-            return getAllSigns(block, true, false, false);
-        else if (state instanceof ContainerBlock)
-            return getAllSigns(block, false, false, false);
-        else if (data instanceof Door)
-            return getAllSigns(block, true, true, false);
-        else if (data instanceof TrapDoor)
-            return getAllSigns(block, false, false, true);
-        else if (type.equals(Material.WALL_SIGN)) {
-            Sign sign = (Sign) block.getState();
-            String text = stripColor(sign.getLine(0));
-            if (text.equalsIgnoreCase(Config.signtext_private) || text.equalsIgnoreCase(Config.signtext_private_locale))
-                return getAllSigns(getBlockSignAttachedTo(block));
-            if (text.equalsIgnoreCase(Config.signtext_moreusers) || text.equalsIgnoreCase(Config.signtext_moreusers_locale))
-                return getAllSigns(getBlockSignAttachedTo(block));
-        } else {
-            Block upBlock = block.getRelative(BlockFace.UP);
-            if (upBlock.getState().getData() instanceof Door)
-                return getAllSigns(upBlock);
-            Block downBlock = block.getRelative(BlockFace.DOWN);
-            if (downBlock.getState().getData() instanceof Door)
-                return getAllSigns(downBlock);
+    /**
+     * Retrieves all sign blocks associated with <block>
+     * @param block Block to be checked
+     * @return A Set<Block> containing every [Private] or [More Users] sign associated with <block>
+     */
+    public static Set<Block> getAllSigns(Block block) {
+        switch (block.getType()) {
+            case WALL_SIGN:
+                Sign sign = (Sign) block.getState();
+                String text = stripColor(sign.getLine(0));
+                if (text.equalsIgnoreCase(Config.signtext_private)
+                    || text.equalsIgnoreCase(Config.signtext_moreusers)
+                    || text.equalsIgnoreCase(Config.signtext_private_locale)
+                    || text.equalsIgnoreCase(Config.signtext_moreusers_locale))
+                    return getAllSigns(getBlockSignAttachedTo(block));
+                break;
+            case CHEST:
+                return getAllSigns(block, true, false, false);
+            case DISPENSER:         //descend
+            case FURNACE:           //descend
+            case BURNING_FURNACE:
+                return getAllSigns(block, false, false, false);
+            case WOODEN_DOOR:       //descend
+            case IRON_DOOR_BLOCK:
+                return getAllSigns(block, true, true, false);
+            case TRAP_DOOR:
+                return getAllSigns(block, false, false, true);
+            default:
+                Set<Block> set = new HashSet<Block>();
+                for (BlockFace bf : verticalBlockFaces) {
+                    Block vertical = block.getRelative(bf);
+                    BlockState state = vertical.getState();
+                    if (state.getData() instanceof Door)
+                        set.addAll(getAllSigns(vertical));
+                }
+                for (BlockFace bf : horizontalBlockFaces) {
+                    Block horizontal = block.getRelative(bf);
+                    BlockState state = horizontal.getState();
+                    if (state.getData() instanceof TrapDoor) {
+                        TrapDoor door = (TrapDoor) state.getData();
+                        if (block.equals(horizontal.getRelative(door.getAttachedFace())))
+                            set.addAll(getAllSigns(horizontal));
+                    }
+                }
+                return set;
         }
         return new HashSet<Block>();
     }
@@ -224,30 +179,26 @@ public class Util {
     private static Set<Block> getAllSigns(Block block, boolean iterateHorizontal, boolean iterateVertical, boolean trapDoor) {
         Set<Block> signSet = new HashSet<Block>();
 
-        if (trapDoor && block.getState().getData() instanceof TrapDoor) {
-            TrapDoor door = (TrapDoor) block.getState().getData();
-            block = block.getRelative(door.getAttachedFace());
-        }
-
         for (BlockFace bf : horizontalBlockFaces) {
             Block adjacent = block.getRelative(bf);
 
             if (iterateHorizontal && adjacent.getType().equals(block.getType()))
                 signSet.addAll(getAllSigns(adjacent, false, iterateVertical, false));
-
-            if (!adjacent.getType().equals(Material.WALL_SIGN))
-                continue;
-            if ((bf.equals(BlockFace.NORTH) && adjacent.getData() != 4)
-                || (bf.equals(BlockFace.SOUTH) && adjacent.getData() != 5)
-                || (bf.equals(BlockFace.EAST) && adjacent.getData() != 2)
-                || (bf.equals(BlockFace.WEST) && adjacent.getData() != 3))
-                continue;
-            Sign sign = (Sign) adjacent.getState();
-            String text = stripColor(sign.getLine(0));
-            if (text.equalsIgnoreCase(Config.signtext_private) || text.equalsIgnoreCase(Config.signtext_private_locale))
-                signSet.add(adjacent);
-            if (text.equalsIgnoreCase(Config.signtext_moreusers) || text.equalsIgnoreCase(Config.signtext_moreusers_locale))
-                signSet.add(adjacent);
+            if (adjacent.getType().equals(Material.WALL_SIGN)) {
+                if ((bf.equals(BlockFace.NORTH) && adjacent.getData() == 4)
+                    || (bf.equals(BlockFace.SOUTH) && adjacent.getData() == 5)
+                    || (bf.equals(BlockFace.EAST) && adjacent.getData() == 2)
+                    || (bf.equals(BlockFace.WEST) && adjacent.getData() == 3)) {
+                    Sign sign = (Sign) adjacent.getState();
+                    String text = stripColor(sign.getLine(0));
+                    if (text.equalsIgnoreCase(Config.signtext_private)
+                        || text.equalsIgnoreCase(Config.signtext_private_locale))
+                        signSet.add(adjacent);
+                    else if (text.equalsIgnoreCase(Config.signtext_moreusers)
+                             || text.equalsIgnoreCase(Config.signtext_moreusers_locale))
+                        signSet.add(adjacent);
+                }
+            }
         }
 
         if (iterateVertical) {
@@ -262,6 +213,12 @@ public class Util {
             for (Block setBlock : set)
                 signSet.addAll(getAllSigns(setBlock, false, false, false));
         }
+        if (trapDoor) {
+            TrapDoor door = (TrapDoor) block.getState().getData();
+            Block hinge = block.getRelative(door.getAttachedFace());
+            signSet.addAll(getAllSigns(hinge, false, false, false));
+        }
+
         return signSet;
     }
 
@@ -364,9 +321,10 @@ public class Util {
         return set;
     }
 
-    private static Block toggleSingleBlock(Block block) {
+    private static void toggleSingleBlock(Block block) {
         block.setData((byte) (block.getData() ^ 0x4));
-        return block;
+        if (Config.doorSounds)
+            block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 0);
     }
 
     private static boolean isNaturalOpen(Block block) {
@@ -415,7 +373,7 @@ public class Util {
                 Util.sendBroadcast(Perm.admin_broadcast_snoop,
                                    String.format(Config.msg_admin_snoop, player.getName(), owner),
                                    ChatColor.RED);
-                Lockette.logger.log(Level.INFO, String.format("Lockette - " + Config.msg_admin_snoop, player.getName(), owner));
+                Lockette.logger.log(Level.INFO, String.format("Lockette: " + Config.msg_admin_snoop, player.getName(), owner));
             } else
                 return false;
         return true;
@@ -459,7 +417,7 @@ public class Util {
      * @param msg The message to be sent
      * @param color Message coloring
      */
-    public static void sendBroadcast(String perm, String msg, ChatColor color) {
+    public static void sendBroadcast(Permission perm, String msg, ChatColor color) {
         if (msg.equals(""))
             return;
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {

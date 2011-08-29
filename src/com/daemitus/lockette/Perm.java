@@ -1,18 +1,23 @@
 package com.daemitus.lockette;
 
+import org.bukkit.Bukkit;
+import org.bukkit.permissions.Permission;
+import org.bukkit.plugin.PluginManager;
+
 public class Perm {
 
-    public static final String user_create_chest = "lockette.user.create.chest";
-    public static final String user_create_dispenser = "lockette.user.create.dispenser";
-    public static final String user_create_door = "lockette.user.create.door";
-    public static final String user_create_furnace = "lockette.user.create.furnace";
-    public static final String user_create_trapdoor = "lockette.user.create.trapdoor";
-    public static final String admin_create = "lockette.admin.create";
-    public static final String admin_break = "lockette.admin.break";
-    public static final String admin_bypass = "lockette.admin.bypass";
-    public static final String admin_signs = "lockette.admin.signs";
-    public static final String admin_snoop = "lockette.admin.snoop";
-    public static final String command_reload = "lockette.command.reload";
-    public static final String admin_broadcast_break = "lockette.broadcast.break";
-    public static final String admin_broadcast_snoop = "lockette.broadcast.snoop";
+    private static final PluginManager pm = Bukkit.getServer().getPluginManager();
+    public static final Permission user_create_chest = pm.getPermission("lockette.user.create.chest");
+    public static final Permission user_create_dispenser = pm.getPermission("lockette.user.create.dispenser");
+    public static final Permission user_create_door = pm.getPermission("lockette.user.create.door");
+    public static final Permission user_create_furnace = pm.getPermission("lockette.user.create.furnace");
+    public static final Permission user_create_trapdoor = pm.getPermission("lockette.user.create.trapdoor");
+    public static final Permission admin_create = pm.getPermission("lockette.admin.create");
+    public static final Permission admin_break = pm.getPermission("lockette.admin.break");
+    public static final Permission admin_bypass = pm.getPermission("lockette.admin.bypass");
+    public static final Permission admin_signs = pm.getPermission("lockette.admin.signs");
+    public static final Permission admin_snoop = pm.getPermission("lockette.admin.snoop");
+    public static final Permission command_reload = pm.getPermission("lockette.command.reload");
+    public static final Permission admin_broadcast_break = pm.getPermission("lockette.broadcast.break");
+    public static final Permission admin_broadcast_snoop = pm.getPermission("lockette.broadcast.snoop");
 }
