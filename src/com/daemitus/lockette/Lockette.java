@@ -43,11 +43,12 @@ public class Lockette extends JavaPlugin {
             logger.log(Level.WARNING, Config.console_error_scheduler_start);
         }
 
-        logger.log(Level.INFO, "Lockette v%1$s enabled", this.getDescription().getVersion());
+        logger.log(Level.INFO, "Lockette v" + this.getDescription().getVersion() + " is enabled");
     }
 
     public void onDisable() {
         stopDoorSchedule();
+        logger.log(Level.INFO, "Lockette v" + this.getDescription().getVersion() + " is disabled");
     }
 
     @Override
