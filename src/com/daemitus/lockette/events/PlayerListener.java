@@ -3,7 +3,6 @@ package com.daemitus.lockette.events;
 import com.daemitus.lockette.Config;
 import com.daemitus.lockette.Lockette;
 import com.daemitus.lockette.Util;
-import java.util.Set;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

@@ -63,9 +63,9 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
             Lockette.logger.log(Level.INFO, String.format("Lockette: " + Config.msg_admin_break, player.getName(), owner));
             return;
         }
-        Sign sign = (Sign) block.getState();
         event.setCancelled(true);
-        sign.update(true);
+        if (block.getType().equals(Material.WALL_SIGN))
+            ((Sign) block.getState()).update(true);
         Util.sendMessage(player, Config.msg_deny_block_break, ChatColor.RED);
     }
 
