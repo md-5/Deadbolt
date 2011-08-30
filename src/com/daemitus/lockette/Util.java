@@ -366,6 +366,7 @@ public class Util {
 
     private static Block toggleSingleBlock(Block block) {
         block.setData((byte) (block.getData() ^ 0x4));
+        block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 0);
         return block;
     }
 
