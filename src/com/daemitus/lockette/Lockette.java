@@ -1,5 +1,6 @@
 package com.daemitus.lockette;
 
+import com.daemitus.lockette.bridge.Bridge;
 import com.daemitus.lockette.events.BlockListener;
 import com.daemitus.lockette.events.EntityListener;
 import com.daemitus.lockette.events.PlayerListener;
@@ -48,6 +49,7 @@ public class Lockette extends JavaPlugin {
 
     public void onDisable() {
         stopDoorSchedule();
+        Bridge.unregisterAll();
         logger.log(Level.INFO, String.format("Lockette v%1$s disabled", this.getDescription().getVersion()));
     }
 
@@ -247,14 +249,11 @@ public class Lockette extends JavaPlugin {
 
     /**
      * Register a bridge with Lockette for use in authorizing users to interact with various protected blocks.
-     * <br>
-     * <br>Required method: <pre>isAuthorized(Player, List&lt;String&gt;) {return boolean}</pre>
-     * <br>Player: player to be checked
-     * <br>List<String>: All names contained on any associated [Private] or [More Users] signs
+     * <br>Requires implementing <pre>com.daemitus.lockette.bridge.LocketteBridge</pre>
      * @param bridge Class to be added
      * @return Success or failure
      */
     public static boolean registerBridge(Object bridge) {
-        return Util.registerBridge(bridge);
+        return Bridge.registerBridge(bridge);
     }
 }

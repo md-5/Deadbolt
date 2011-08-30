@@ -92,7 +92,7 @@ public class Config {
             downloadFile("config.yml");
         Configuration config = new Configuration(configFile);
         config.load();
-
+        
         adminBreak = config.getBoolean("allow-admin-break", adminBreak);
         adminBypass = config.getBoolean("allow-admin-bypass", adminBypass);
         adminSnoop = config.getBoolean("allow-admin-snoop", adminSnoop);

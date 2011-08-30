@@ -1,7 +1,6 @@
 package com.daemitus.lockette;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import com.daemitus.lockette.bridge.Bridge;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -33,7 +32,6 @@ public class Util {
     private static final String patternNormalTooLong = ".{16,}";
     private static final String patternBracketTooLong = "\\[.{14,}\\]";
     private static final String timerPattern = "\\[.{1,11}:[123456789]\\]";
-    private static final Set<Object> objects = new HashSet<Object>();
     public static DoorSchedule doorSchedule = new DoorSchedule();
 
     /**
@@ -66,48 +64,10 @@ public class Util {
         if (names.isEmpty())
             return true;
         else
-            return names.contains(truncate(player.getName()))
+            return names.contains(player.getName().toLowerCase())
                    || names.contains(Config.signtext_everyone)
                    || names.contains(Config.signtext_everyone_locale)
-                   || queryBridges(player, names);
-    }
-
-    /**
-     * Register a bridge with Lockette for use in authorizing users to interact with various protected blocks.
-     * <br>
-     * <br>Required method: <pre>isAuthorized(Player, List&lt;String&gt;) {return boolean}</pre>
-     * <br>Player: player to be checked
-     * <br>List<String>: All names contained on any associated [Private] or [More Users] signs
-     * @param bridge Class to be added
-     * @return Success or failure
-     */
-    public static boolean registerBridge(Object bridge) {
-        return objects.add(bridge);
-    }
-
-    private static boolean queryBridges(Player player, List<String> names) {
-        for (Object obj : objects) {
-            try {
-                Method method = obj.getClass().getMethod("isAuthorized", Player.class, List.class);
-                Object result = method.invoke(obj, player, names);
-                boolean authorized = (Boolean) result;
-                if (authorized)
-                    return true;
-            } catch (NoSuchMethodException ex) {
-                Lockette.logger.log(Level.SEVERE, "Lockette: " + obj.getClass().getName() + " has no method \"isAuthorized(Player, List)\"", ex);
-            } catch (SecurityException ex) {
-                Lockette.logger.log(Level.SEVERE, "Lockette: " + obj.getClass().getName() + " Security Exception", ex);
-            } catch (IllegalAccessException ex) {
-                Lockette.logger.log(Level.SEVERE, "Lockette: " + obj.getClass().getName() + " Illegal Access Exception ", ex);
-            } catch (IllegalArgumentException ex) {
-                Lockette.logger.log(Level.SEVERE, "Lockette: " + obj.getClass().getName() + " arguments are not of type (Player, List)", ex);
-            } catch (InvocationTargetException ex) {
-                Lockette.logger.log(Level.SEVERE, "Lockette: " + obj.getClass().getName() + " Invocation Target Exception", ex);
-            } catch (ClassCastException ex) {
-                Lockette.logger.log(Level.SEVERE, "Lockette: " + obj.getClass().getName() + " has a return other than boolean", ex);
-            }
-        }
-        return false;
+                   || Bridge.queryBridges(player, names);
     }
 
     /**
@@ -161,7 +121,7 @@ public class Util {
             for (int i = 1; i < 4; i++) {
                 String line = sign.getLine(i);
                 if (!line.isEmpty())
-                    names.add(stripColor(line));
+                    names.add(stripColor(line).toLowerCase());
             }
         }
         return names;
