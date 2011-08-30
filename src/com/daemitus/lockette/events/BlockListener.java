@@ -54,6 +54,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
         Player player = event.getPlayer();
         Block block = event.getBlock();
         String owner = Util.getOwnerName(block);
+        Sign sign = (Sign) block.getState();
         if (owner.equals("") || owner.equalsIgnoreCase(Util.truncate(player.getName())))
             return;
         if (player.hasPermission(Perm.admin_break)) {
@@ -63,8 +64,8 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
             Lockette.logger.log(Level.INFO, String.format("Lockette - " + Config.msg_admin_break, player.getName(), owner));
             return;
         }
-
         event.setCancelled(true);
+        sign.update();
         Util.sendMessage(player, Config.msg_deny_block_break, ChatColor.RED);
     }
 
