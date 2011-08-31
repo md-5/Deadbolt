@@ -4,6 +4,7 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 
 public class DoorSchedule implements Runnable {
@@ -40,28 +41,30 @@ public class DoorSchedule implements Runnable {
         }
     }
 
-    public void add(Set<Block> set, int delta) {
-        Long time = System.currentTimeMillis();
-        for (Block block : set) {
-            taskList.add(new DoorTask(block, time + delta * 1000));
-        }
+    public void add(Set<Block> set, int delta, boolean isNatural, Location loc) {
+        taskList.add(new DoorTask(set, System.currentTimeMillis() + delta * 1000, isNatural, loc));
     }
 
     private void close(DoorTask task) {
-        Block block = task.block;
-        block.setData((byte) (block.getData() ^ 0x4));
-        if (Config.doorSounds)
-            block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 0);
+        for (Block block : task.set)
+            block.setData((byte) (block.getData() ^ 0x4));
+        if ((Config.timerDoorSounds) && (task.isNatural || Config.doorSounds))
+            task.loc.getWorld().playEffect(task.loc, Effect.DOOR_TOGGLE, 0);
     }
 
     private class DoorTask implements Comparable<DoorTask> {
 
-        Block block;
-        Long time;
+        public final Long time;
+        public final Set<Block> set;
+        public final boolean isNatural;
+        public final Location loc;
 
-        public DoorTask(Block block, Long time) {
-            this.block = block;
+        public DoorTask(Set<Block> set, Long time, boolean isNatural, Location loc) {
+            this.set = set;
             this.time = time;
+            this.isNatural = isNatural;
+            this.loc = loc;
+
         }
 
         public int compareTo(DoorTask task) {

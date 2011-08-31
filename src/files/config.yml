@@ -17,3 +17,6 @@ timer-doors-always-on: false        #Forces doors to close after having been use
 timer-doors-always-on-delay: 3      #The delay after which the door will close
 
 iron-door-sounds: false             #Gives iron doors the same effects as wooden ones
+timer-door-sounds: false            #Gives timed doors effects, works with iron-door-sounds
+
+clear-sign-selection: false         #Clear sign selection after using /lockette <line> <text>

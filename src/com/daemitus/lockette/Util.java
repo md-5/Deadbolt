@@ -284,12 +284,15 @@ public class Util {
         }
         Block ownerAttached = Util.getBlockSignAttachedTo(owner);
         int delay = getDelayFromSign((Sign) owner.getState());
+        boolean isNatural = isNaturalOpen(block);
+        if (!isNatural && Config.doorSounds)
+            block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 0);
         Set<Block> doorBlocks = new HashSet<Block>();
-        doorBlocks = toggleDoor(block, ownerAttached, isNaturalOpen(block));
+        doorBlocks = toggleDoor(block, ownerAttached, isNatural);
         if (Config.timerDoorsAlwaysOn)
-            doorSchedule.add(doorBlocks, delay == 0 ? Config.timerDoorsAlwaysOnDelay : delay);
+            doorSchedule.add(doorBlocks, delay == 0 ? Config.timerDoorsAlwaysOnDelay : delay, isNatural, block.getLocation());
         else if (delay > 0) {
-            doorSchedule.add(doorBlocks, delay);
+            doorSchedule.add(doorBlocks, delay, isNatural, block.getLocation());
         }
         return true;
     }
@@ -300,12 +303,14 @@ public class Util {
         if (!naturalOpen)
             toggleSingleBlock(block);
 
-        for (BlockFace bf : Util.verticalBlockFaces) {
-            Block verticalBlock = block.getRelative(bf);
-            if (verticalBlock.getType().equals(block.getType())) {
-                set.add(verticalBlock);
-                if (!naturalOpen)
-                    toggleSingleBlock(verticalBlock);
+        if (!block.getType().equals(Material.TRAP_DOOR)) {
+            for (BlockFace bf : Util.verticalBlockFaces) {
+                Block verticalBlock = block.getRelative(bf);
+                if (verticalBlock.getType().equals(block.getType())) {
+                    set.add(verticalBlock);
+                    if (!naturalOpen)
+                        toggleSingleBlock(verticalBlock);
+                }
             }
         }
 
@@ -323,8 +328,6 @@ public class Util {
 
     private static void toggleSingleBlock(Block block) {
         block.setData((byte) (block.getData() ^ 0x4));
-        if (Config.doorSounds)
-            block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 0);
     }
 
     private static boolean isNaturalOpen(Block block) {
