@@ -18,3 +18,5 @@ timer-doors-always-on-delay: 3      #The delay after which the door will close
 
 iron-door-sounds: true              #Gives iron doors the same effects as wooden ones
 timer-door-sounds: true             #Gives closing timer doors an effect
+
+clear-sign-selection: false         #Clear sign selection after text changed

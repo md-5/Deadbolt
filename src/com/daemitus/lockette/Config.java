@@ -29,6 +29,7 @@ public class Config {
     public static int timerDoorsAlwaysOnDelay = 3;   
     public static boolean ironDoorSounds = true;
     public static boolean timerDoorSounds = true;
+    public static boolean deselectSign = false;
     //------------------------------------------------------------------------//
     public static final String signtext_private = "[private]";
     public static final String signtext_moreusers = "[more users]";
@@ -107,6 +108,7 @@ public class Config {
         timerDoorsAlwaysOnDelay = config.getInt("timer-doors-always-on-delay", timerDoorsAlwaysOnDelay);
         ironDoorSounds = config.getBoolean("iron-door-sounds", ironDoorSounds);
         timerDoorSounds = config.getBoolean("timer-door-sounds", timerDoorSounds);
+        deselectSign = config.getBoolean("clear-sign-selection", timerDoorSounds);
 
         String language = config.getString("language");
 

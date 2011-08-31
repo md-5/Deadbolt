@@ -119,6 +119,8 @@ public class Lockette extends JavaPlugin {
             }
             sign.setLine(line - 1, Util.truncate(newtext));
             sign.update(true);
+            if (Config.deselectSign)
+                Util.selectedSign.remove(player);
             Util.sendMessage(player, Config.cmd_sign_updated, ChatColor.GOLD);
             return true;
 
