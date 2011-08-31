@@ -27,7 +27,8 @@ public class Config {
     public static boolean redstoneProtection = true;
     public static boolean timerDoorsAlwaysOn = false;
     public static int timerDoorsAlwaysOnDelay = 3;   
-    public static boolean doorSounds = false;
+    public static boolean ironDoorSounds = true;
+    public static boolean timerDoorSounds = true;
     //------------------------------------------------------------------------//
     public static final String signtext_private = "[private]";
     public static final String signtext_moreusers = "[more users]";
@@ -104,7 +105,8 @@ public class Config {
         redstoneProtection = config.getBoolean("redstone-protection", redstoneProtection);
         timerDoorsAlwaysOn = config.getBoolean("timer-doors-always-on", timerDoorsAlwaysOn);
         timerDoorsAlwaysOnDelay = config.getInt("timer-doors-always-on-delay", timerDoorsAlwaysOnDelay);
-        doorSounds = config.getBoolean("iron-door-sounds", doorSounds);
+        ironDoorSounds = config.getBoolean("iron-door-sounds", ironDoorSounds);
+        timerDoorSounds = config.getBoolean("timer-door-sounds", timerDoorSounds);
 
         String language = config.getString("language");
 

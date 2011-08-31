@@ -50,7 +50,7 @@ public class DoorSchedule implements Runnable {
     private void close(DoorTask task) {
         Block block = task.block;
         block.setData((byte) (block.getData() ^ 0x4));
-        if (Config.doorSounds)
+        if (Config.timerDoorSounds)
             block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 0);
     }
 

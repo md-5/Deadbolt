@@ -323,7 +323,7 @@ public class Util {
 
     private static void toggleSingleBlock(Block block) {
         block.setData((byte) (block.getData() ^ 0x4));
-        if (Config.doorSounds)
+        if (Config.ironDoorSounds)
             block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 0);
     }
 

@@ -16,4 +16,5 @@ redstone-protection: true           #Denies redstone from toggling doors and tra
 timer-doors-always-on: false        #Forces doors to close after having been used
 timer-doors-always-on-delay: 3      #The delay after which the door will close
 
-iron-door-sounds: false             #Gives iron doors the same effects as wooden ones
+iron-door-sounds: true              #Gives iron doors the same effects as wooden ones
+timer-door-sounds: true             #Gives closing timer doors an effect
