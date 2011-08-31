@@ -45,6 +45,8 @@ public class LocketteBridge_SimpleClans extends JavaPlugin implements LocketteBr
             if (clan != null) {
                 if (names.contains(truncate("[" + clan.getName() + "]").toLowerCase()))
                     return true;
+                if (names.contains(truncate("[" + clan.getTag() + "]").toLowerCase()))
+                    return true;
             }
         }
         return false;

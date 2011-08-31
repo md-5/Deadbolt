@@ -151,7 +151,7 @@ public class Lockette extends JavaPlugin {
     //------------------------------------------------------------------------//
 
     /**
-     * Check if <name> or [Everyone] is on any of the [Private] or [More Users] signs associated with <block>
+     * Check if <player> or [Everyone] is on any of the [Private] or [More Users] signs associated with <block>
      * @param player Player to be checked
      * @param block Block to be checked
      * @return If <name> is authorized to use <block>

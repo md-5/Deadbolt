@@ -2,4 +2,4 @@ name: LocketteBridge_Simpleclans
 main: com.daemitus.lockette.bridge.simpleclans.LocketteBridge_SimpleClans
 version: 1.0
 author: daemitus
-description: Bridge Lockette and SimpleClans for [ClanName] authorization on signs
+description: Bridge Lockette and SimpleClans for [ClanName] and [ClanTag] authorization on signs
