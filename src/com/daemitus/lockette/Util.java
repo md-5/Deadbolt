@@ -388,7 +388,7 @@ public class Util {
     public static boolean interactSign(Player player, Block block) {
         String owner = Util.getOwnerName(block);
         if (owner.equals(""))
-            return false;
+            return true;
         if (!owner.equalsIgnoreCase(player.getName()))
             if (Config.adminSign && player.hasPermission(Perm.admin_signs))
                 Util.sendMessage(player, String.format(Config.msg_admin_signs, owner), ChatColor.RED);
