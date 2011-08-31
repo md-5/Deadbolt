@@ -26,8 +26,10 @@ public class Config {
     public static boolean pistonProtection = true;
     public static boolean redstoneProtection = true;
     public static boolean timerDoorsAlwaysOn = false;
-    public static int timerDoorsAlwaysOnDelay = 3;   
+    public static int timerDoorsAlwaysOnDelay = 3;
     public static boolean doorSounds = false;
+    public static boolean timerDoorSounds = false;
+    public static boolean deselectSign = false;
     //------------------------------------------------------------------------//
     public static final String signtext_private = "[private]";
     public static final String signtext_moreusers = "[more users]";
@@ -92,7 +94,7 @@ public class Config {
             downloadFile("config.yml");
         Configuration config = new Configuration(configFile);
         config.load();
-        
+
         adminBreak = config.getBoolean("allow-admin-break", adminBreak);
         adminBypass = config.getBoolean("allow-admin-bypass", adminBypass);
         adminSnoop = config.getBoolean("allow-admin-snoop", adminSnoop);
@@ -105,6 +107,8 @@ public class Config {
         timerDoorsAlwaysOn = config.getBoolean("timer-doors-always-on", timerDoorsAlwaysOn);
         timerDoorsAlwaysOnDelay = config.getInt("timer-doors-always-on-delay", timerDoorsAlwaysOnDelay);
         doorSounds = config.getBoolean("iron-door-sounds", doorSounds);
+        timerDoorSounds = config.getBoolean("timer-door-sounds", timerDoorSounds);
+        deselectSign = config.getBoolean("clear-sign-selection", deselectSign);
 
         String language = config.getString("language");
 
