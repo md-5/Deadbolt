@@ -20,6 +20,11 @@ public class LocketteBridge_PermissionsEx extends JavaPlugin implements Lockette
     private PermissionManager permissions;
 
     public void onDisable() {
+        if (Lockette.unregisterBridge(this)) {
+            logger.log(Level.INFO, "LocketteBridge_PermissionsEx: disabled");
+        } else {
+            logger.log(Level.WARNING, "LocketteBridge_PermissionsEx: Could not unregister with Lockette");
+        }
     }
 
     public void onEnable() {

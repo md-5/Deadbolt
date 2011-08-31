@@ -256,4 +256,13 @@ public class Lockette extends JavaPlugin {
     public static boolean registerBridge(Object bridge) {
         return Bridge.registerBridge(bridge);
     }
+
+    /**
+     * Unregister a bridge from Lockette
+     * @param bridge Class to be removed
+     * @return Success or failure
+     */
+    public static boolean unregisterBridge(Object bridge) {
+        return Bridge.unregisterBridge(bridge);
+    }
 }

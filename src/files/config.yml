@@ -1,38 +1,19 @@
-#Super Perms
-use-Permissions: true
-#Check against ops.txt
-use-OP-list: true
+language: english.yml               #File to load for messages
 
-#File to load for messages
-language: english.yml
+allow-admin-break: true             #Admin override for breaking protected blocks
+allow-admin-bypass: true            #Admin override for using protected doors
+allow-admin-sign: true              #Admin override for using /lockette <line> <text> on protected signs
+allow-admin-snoop: true             #Admin override for opening protected containers
 
-#Admin overrides to disregard ownership
-## Breaking protected blocks
-allow-admin-break: true
-## Toggling protected doors
-allow-admin-bypass: true
-## Using /lockette <line> <text> on protected signs
-allow-admin-sign: true
-## Opening protected containers
-allow-admin-snoop: true
+explosion-protection: true          #Protect owned blocks from explosions
+broadcast-tnt-fizzle: false         #For TNT, broadcast that it failed
+broadcast-tnt-fizzle-radius: 25     #Radius in blocks to broadcast failure
 
-#Protect owned blocks from explosions
-explosion-protection: true
-#For TNT, broadcast within <radius> that it failed
-broadcast-tnt-fizzle: true
-broadcast-tnt-fizzle-radius: 25
+piston-protection: true             #Prevents doors and trapdoors from being broken
 
-#Protects blocks from retracting sticky-pistons.
-#Protection from pushing is standard Minecraft
-piston-protection: true
+redstone-protection: true           #Denies redstone from toggling doors and trapdoors
 
-#Deny redstone affecting any protected Door
-redstone-protection: true
+timer-doors-always-on: false        #Forces doors to close after having been used
+timer-doors-always-on-delay: 3      #The delay after which the door will close
 
-#Force doors to automatically toggle after <delay>,
-#or by [Timer:#] if on the sign
-timer-doors-always-on: false
-timer-doors-always-on-delay: 3
-
-#Make iron doors toggled by Lockette have the same sound as wooden doors
-iron-door-sounds: false
+iron-door-sounds: false             #Gives iron doors the same effects as wooden ones

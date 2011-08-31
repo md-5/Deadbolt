@@ -19,6 +19,11 @@ public class LocketteBridge_PermissionsBukkit extends JavaPlugin implements Lock
     private PermissionsPlugin permissions;
 
     public void onDisable() {
+        if (Lockette.unregisterBridge(this)) {
+            logger.log(Level.INFO, "LocketteBridge_PermissionsBukkit: disabled");
+        } else {
+            logger.log(Level.WARNING, "LocketteBridge_PermissionsBukkit: Could not unregister with Lockette");
+        }
     }
 
     public void onEnable() {

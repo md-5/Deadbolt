@@ -1,43 +1,43 @@
-﻿#Make sure a word is before any %1$s or %2$s
-signtext_private: private
-signtext_moreusers: more users
-signtext_everyone: everyone
-signtext_timer: timer
-console_error_scheduler_start: Automatic door scheduler failed to start
-console_error_scheduler_stop: Automatic door scheduler failed to stop
-cmd_help_editsign: /lockette <line number> <text> - Edit signs on locked containers, right click a sign first to select it
-cmd_help_reload: /lockette reload - Reload the config.yml and <language>.yml files
-cmd_reload: Reloading settings...
-cmd_sign_updated: Sign updated
-cmd_sign_selected: Sign selected, use /lockette <line number> <text>
-cmd_sign_selected_error: Selected sign has an error. Right click it again
-cmd_sign_not_selected: Nothing selected, right click a valid sign first
-cmd_identifier_not_changeable: Break and replace to change the identifier on line 1
-cmd_owner_not_changeable: Break and replace to change the owner on line 2
-cmd_line_num_out_of_range: Bad format, your line number should be 2,3,4
-cmd_command_not_found: No command found, use "/lockette" for options
-cmd_console_reload: Reloading settings...
-cmd_console_command_not_found: No command found, use "lockette" for options
-msg_admin_break: (Admin) %1$s broke a block owned by %2$s!
-msg_admin_bypass: Bypassed a door owned by %1$s, be sure to shut it
-msg_admin_signs: Selected a sign owned by %1$s!
-msg_admin_snoop: (Admin) %1$s snooped around in a container owned by %2$s
-msg_deny_door_access: Access denied
-msg_deny_container_access: Access denied
-msg_deny_sign_selection: You don't own this sign
-msg_deny_block_break: You don't own this block
-msg_deny_chest_expansion: You don't own the adjacent chest
-msg_deny_door_expansion: You don't own the adjacent door
-msg_deny_trapdoor_placement: You don't own the adjacent hinge block
-msg_deny_sign_private_nothing_nearby: Nothing nearby to protect
-msg_deny_sign_private_already_owned: This block is already protected
-msg_deny_sign_moreusers_already_owned: You don't own this block
-msg_deny_sign_moreusers_no_private: No sign with [Private] nearby
-msg_deny_chest_perm: You are not authorized to protect chests
-msg_deny_dispenser_perm: You are not authorized to protect dispensers
-msg_deny_furnace_perm: You are not authorized to protect furnaces
-msg_deny_door_perm: You are not authorized to protect doors
-msg_deny_trapdoor_perm: You are not authorized to protect trap doors
-msg_warning_player_not_found: Player %1$s is not online, make sure you have the correct name
-msg_tnt_fizzle: TNT tried to explode too close to a protected block
-msg_reminder_lock_your_chests: Place a sign headed [Private] next to your chest to lock it
+#Make sure that %1$s or %2$s is NOT the first word in any message
+signtext_private:                       private
+signtext_moreusers:                     more users
+signtext_everyone:                      everyone
+signtext_timer:                         timer
+console_error_scheduler_start:          Automatic door scheduler failed to start
+console_error_scheduler_stop:           Automatic door scheduler failed to stop
+cmd_help_editsign:                      /lockette <line number> <text> - Edit signs on locked containers, right click a sign first to select it
+cmd_help_reload:                        /lockette reload - Reload the config.yml and <language>.yml files
+cmd_reload:                             Reloading settings...
+cmd_sign_updated:                       Sign updated
+cmd_sign_selected:                      Sign selected, use /lockette <line number> <text>
+cmd_sign_selected_error:                Selected sign has an error. Right click it again
+cmd_sign_not_selected:                  Nothing selected, right click a valid sign first
+cmd_identifier_not_changeable:          Break and replace to change the identifier on line 1
+cmd_owner_not_changeable:               Break and replace to change the owner on line 2
+cmd_line_num_out_of_range:              Bad format, your line number should be 2,3,4
+cmd_command_not_found:                  No command found, use "/lockette" for options
+cmd_console_reload:                     Reloading settings...
+cmd_console_command_not_found:          No command found, use "lockette" for options
+msg_admin_break:                        (Admin) %1$s broke a block owned by %2$s!
+msg_admin_bypass:                       Bypassed a door owned by %1$s, be sure to shut it
+msg_admin_signs:                        Selected a sign owned by %1$s!
+msg_admin_snoop:                        (Admin) %1$s snooped around in a container owned by %2$s
+msg_deny_door_access:                   Access denied
+msg_deny_container_access:              Access denied
+msg_deny_sign_selection:                You don't own this sign
+msg_deny_block_break:                   You don't own this block
+msg_deny_chest_expansion:               You don't own the adjacent chest
+msg_deny_door_expansion:                You don't own the adjacent door
+msg_deny_trapdoor_placement:            You don't own the adjacent hinge block
+msg_deny_sign_private_nothing_nearby:   Nothing nearby to protect
+msg_deny_sign_private_already_owned:    This block is already protected
+msg_deny_sign_moreusers_already_owned:  You don't own this block
+msg_deny_sign_moreusers_no_private:     No sign with [Private] nearby
+msg_deny_chest_perm:                    You are not authorized to protect chests
+msg_deny_dispenser_perm:                You are not authorized to protect dispensers
+msg_deny_furnace_perm:                  You are not authorized to protect furnaces
+msg_deny_door_perm:                     You are not authorized to protect doors
+msg_deny_trapdoor_perm:                 You are not authorized to protect trap doors
+msg_warning_player_not_found:           Player %1$s is not online, make sure you have the correct name
+msg_tnt_fizzle:                         TNT tried to explode too close to a protected block
+msg_reminder_lock_your_chests:          Place a sign headed [Private] next to your chest to lock it

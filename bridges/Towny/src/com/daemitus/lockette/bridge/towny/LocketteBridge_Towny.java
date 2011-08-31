@@ -20,6 +20,11 @@ public class LocketteBridge_Towny extends JavaPlugin implements LocketteBridge {
     private Towny towny;
 
     public void onDisable() {
+        if (Lockette.unregisterBridge(this)) {
+            logger.log(Level.INFO, "LocketteBridge_Towny: disabled");
+        } else {
+            logger.log(Level.WARNING, "LocketteBridge_Towny: Could not unregister with Lockette");
+        }
     }
 
     public void onEnable() {

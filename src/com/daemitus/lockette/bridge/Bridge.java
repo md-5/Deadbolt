@@ -28,6 +28,15 @@ public class Bridge {
         return false;
     }
 
+    /**
+     * Unregister a bridge from Lockette
+     * @param bridge Class to be removed
+     * @return Success or failure
+     */
+    public static boolean unregisterBridge(Object bridge) {
+        return objects.remove(bridge);
+    }
+
     public static void unregisterAll() {
         objects.clear();
     }

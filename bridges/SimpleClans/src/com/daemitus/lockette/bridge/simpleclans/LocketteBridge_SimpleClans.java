@@ -18,6 +18,11 @@ public class LocketteBridge_SimpleClans extends JavaPlugin implements LocketteBr
     private SimpleClans sc;
 
     public void onDisable() {
+        if (Lockette.unregisterBridge(this)) {
+            logger.log(Level.INFO, "LocketteBridge_SimpleClans: disabled");
+        } else {
+            logger.log(Level.WARNING, "LocketteBridge_SimpleClans: Could not unregister with Lockette");
+        }
     }
 
     public void onEnable() {
