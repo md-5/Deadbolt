@@ -64,7 +64,7 @@ public class Util {
         if (names.isEmpty())
             return true;
         else
-            return names.contains(player.getName().toLowerCase())
+            return names.contains(truncate(player.getName().toLowerCase()))
                    || names.contains(Config.signtext_everyone)
                    || names.contains(Config.signtext_everyone_locale)
                    || Bridge.queryBridges(player, names);
