@@ -1,0 +1,5 @@
+name: LocketteBridge_Towny
+main: com.daemitus.lockette.bridge.towny.LocketteBridge_Towny
+version: 1.0
+author: daemitus
+description: Bridge Lockette and Towny for [TownName] and [NationName] authorization on signs

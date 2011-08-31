@@ -1,0 +1,5 @@
+name: LocketteBridge_PermissionsBukkit
+main: com.daemitus.lockette.bridge.permissionsbukkit.LocketteBridge_PermissionsBukkit
+version: 1.0
+author: daemitus
+description: Bridge Lockette and PermissionsBukkit for [GroupName] authorization on signs

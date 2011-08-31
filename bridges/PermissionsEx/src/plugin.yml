@@ -1,0 +1,5 @@
+name: LocketteBridge_PermissionsEx
+main: com.daemitus.lockette.bridge.permissionsex.LocketteBridge_PermissionsEx
+version: 1.0
+author: daemitus
+description: Bridge Lockette and PermissionsEx for [GroupName] authorization on signs

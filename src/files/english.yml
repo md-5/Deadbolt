@@ -1,4 +1,4 @@
-#Make sure a word is before any %1$s or %2$s
+﻿#Make sure a word is before any %1$s or %2$s
 signtext_private: private
 signtext_moreusers: more users
 signtext_everyone: everyone
