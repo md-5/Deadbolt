@@ -110,10 +110,7 @@ public class Config {
         timerDoorSounds = config.getBoolean("timer-door-sounds", timerDoorSounds);
         deselectSign = config.getBoolean("clear-sign-selection", deselectSign);
 
-        String language = config.getString("language");
-
-        if (language == null)
-            language = "english.yml";
+        String language = config.getString("language", "english.yml");
         File langfile = new File(plugin.getDataFolder() + File.separator + language);
         if (!langfile.exists())
             downloadFile(language);
