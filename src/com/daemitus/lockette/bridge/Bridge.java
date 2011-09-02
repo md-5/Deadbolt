@@ -39,6 +39,7 @@ public class Bridge {
 
     public static void unregisterAll() {
         objects.clear();
+        objects.removeAll(objects);
     }
 
     public static boolean queryBridges(Player player, List<String> names) {
