@@ -3,4 +3,5 @@ main: com.daemitus.deadbolt.bridge.permissionsbukkit.DeadboltBridge_PermissionsB
 version: 1.0
 author: daemitus
 description: Bridge Deadbolt and PermissionsBukkit for [GroupName] authorization on signs
-depend: [Deadbolt, PermissionsBukkit]
+softdepend: [Deadbolt, PermissionsBukkit]
+#THIS SHOULD BE A HARD DEPEND. BUKKIT HAS AN ISSUE WITH CONFLICTING SOFT/HARD DEPENDENCIES
