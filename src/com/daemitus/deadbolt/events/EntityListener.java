@@ -44,7 +44,7 @@ public class EntityListener extends org.bukkit.event.entity.EntityListener {
                         }
                     }
                 }
-                break;
+                return;
             }
         }
     }
