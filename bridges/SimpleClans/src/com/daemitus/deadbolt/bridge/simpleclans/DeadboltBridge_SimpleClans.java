@@ -43,7 +43,6 @@ public class DeadboltBridge_SimpleClans extends JavaPlugin implements DeadboltBr
         if (cp != null) {
             Clan clan = cp.getClan();
             if (clan != null) {
-                System.out.println(clan.getName() + " _ " + clan.getTag());
                 if (names.contains(truncate("[" + clan.getName() + "]").toLowerCase()))
                     return true;
                 if (names.contains(truncate("[" + clan.getTag() + "]").toLowerCase()))
