@@ -163,7 +163,7 @@ public class Config {
         msg_deny_chest_expansion = locale.getString("msg_deny_chest_expansion", msg_deny_chest_expansion);
         msg_deny_door_expansion = locale.getString("msg_deny_door_expansion", msg_deny_door_expansion);
         msg_deny_trapdoor_placement = locale.getString("msg_deny_trapdoor_placement", msg_deny_trapdoor_placement);
-        msg_deny_sign_private_nothing_nearby = locale.getString("msg_deny_sign_private_nothing_nearby");//, msg_deny_sign_private_nothing_nearby);
+        msg_deny_sign_private_nothing_nearby = locale.getString("msg_deny_sign_private_nothing_nearby", msg_deny_sign_private_nothing_nearby);
         msg_deny_sign_private_already_owned = locale.getString("msg_deny_sign_private_already_owned", msg_deny_sign_private_already_owned);
         msg_deny_sign_moreusers_already_owned = locale.getString("msg_deny_sign_moreusers_already_owned", msg_deny_sign_moreusers_already_owned);
         msg_deny_sign_moreusers_no_private = locale.getString("msg_deny_sign_moreusers_no_private", msg_deny_sign_moreusers_no_private);
