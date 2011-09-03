@@ -1,5 +1,6 @@
-name: LocketteBridge_Towny
-main: com.daemitus.lockette.bridge.towny.LocketteBridge_Towny
+name: DeadboltBridge_Towny
+main: com.daemitus.deadbolt.bridge.towny.DeadboltBridge_Towny
 version: 1.0
 author: daemitus
-description: Bridge Lockette and Towny for [TownName] and [NationName] authorization on signs
+description: Bridge Deadbolt and Towny for [TownName] and [NationName] authorization on signs
+depend: [Deadbolt, Towny]

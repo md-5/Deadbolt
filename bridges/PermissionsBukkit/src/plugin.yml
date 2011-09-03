@@ -1,5 +1,6 @@
-name: LocketteBridge_PermissionsBukkit
-main: com.daemitus.lockette.bridge.permissionsbukkit.LocketteBridge_PermissionsBukkit
+name: DeadboltBridge_PermissionsBukkit
+main: com.daemitus.deadbolt.bridge.permissionsbukkit.DeadboltBridge_PermissionsBukkit
 version: 1.0
 author: daemitus
-description: Bridge Lockette and PermissionsBukkit for [GroupName] authorization on signs
+description: Bridge Deadbolt and PermissionsBukkit for [GroupName] authorization on signs
+depend: [Deadbolt, PermissionsBukkit]

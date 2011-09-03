@@ -2,7 +2,7 @@ language: english.yml               #File to load for messages
 
 allow-admin-break: true             #Admin override for breaking protected blocks
 allow-admin-bypass: true            #Admin override for using protected doors
-allow-admin-sign: true              #Admin override for using /lockette <line> <text> on protected signs
+allow-admin-sign: true              #Admin override for using /deadbolt <line> <text> on protected signs
 allow-admin-snoop: true             #Admin override for opening protected containers
 
 explosion-protection: true          #Protect owned blocks from explosions
@@ -19,4 +19,4 @@ timer-doors-always-on-delay: 3      #The delay after which the door will close
 iron-door-sounds: false             #Gives iron doors the same effects as wooden ones
 timer-door-sounds: false            #Gives timed doors effects, works with iron-door-sounds
 
-clear-sign-selection: false         #Clear sign selection after using /lockette <line> <text>
+clear-sign-selection: false         #Clear sign selection after using /deadbolt <line> <text>

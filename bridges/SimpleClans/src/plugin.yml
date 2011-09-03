@@ -1,5 +1,6 @@
-name: LocketteBridge_Simpleclans
-main: com.daemitus.lockette.bridge.simpleclans.LocketteBridge_SimpleClans
+name: DeadboltBridge_SimpleClans
+main: com.daemitus.deadbolt.bridge.simpleclans.DeadboltBridge_SimpleClans
 version: 1.0
 author: daemitus
-description: Bridge Lockette and SimpleClans for [ClanName] and [ClanTag] authorization on signs
+description: Bridge Deadbolt and SimpleClans for [ClanName] and [ClanTag] authorization on signs
+depend: [Deadbolt, SimpleClans]

@@ -1,97 +1,97 @@
-name: Lockette
-main: com.daemitus.lockette.Lockette
+name: Deadbolt
+main: com.daemitus.deadbolt.Deadbolt
 version: 1.0
 author: daemitus
 description: A simple plugin for locking containers and doors without passwords or database files. Recreated from Acru's original plugin.
 commands:
-    lockette:
-        description: Access to the Lockette plugin via commands.
+    deadbolt:
+        description: Access to the Deadbolt plugin via commands.
 permissions:
 #------------------------------------------------------------------------------#
-    lockette.*:
+    deadbolt.*:
         description: All user and admin functionality INCLUDING broadcasts and commands
         default: op
         children:
-            lockette.user.*: true
-            lockette.admin.*: true
-            lockette.broadcast.*: true
-            lockette.command.*: true
+            deadbolt.user.*: true
+            deadbolt.admin.*: true
+            deadbolt.broadcast.*: true
+            deadbolt.command.*: true
 #------------------------------------------------------------------------------#
-    lockette.user.*:
+    deadbolt.user.*:
         description: All user functionality
         default: true
         children:
-            lockette.user.create.*: true
+            deadbolt.user.create.*: true
 #------------------------------------------------------------------------------#
-    lockette.user.create.*:
+    deadbolt.user.create.*:
         description: Allows protection of all chests, dispensers, furnaces, doors, and trapdoors
         default: true
         children:
-            lockette.user.create.chest: true
-            lockette.user.create.dispenser: true
-            lockette.user.create.door: true
-            lockette.user.create.furnace: true
-            lockette.user.create.trapdoor: true
-    lockette.user.create.chest:
+            deadbolt.user.create.chest: true
+            deadbolt.user.create.dispenser: true
+            deadbolt.user.create.door: true
+            deadbolt.user.create.furnace: true
+            deadbolt.user.create.trapdoor: true
+    deadbolt.user.create.chest:
         description: Allows user protection of chests
         default: true
-    lockette.user.create.dispenser:
+    deadbolt.user.create.dispenser:
         description: Allows user protection of dispensers
         default: true
-    lockette.user.create.door:
+    deadbolt.user.create.door:
         description: Allows user protection of doors
         default: true
-    lockette.user.create.furnace:
+    deadbolt.user.create.furnace:
         description: Allows user protection of furnaces
         default: true
-    lockette.user.create.trapdoor:
+    deadbolt.user.create.trapdoor:
         description: Allows user protection of trapdoors
         default: true
 #------------------------------------------------------------------------------#
-    lockette.admin.*:
+    deadbolt.admin.*:
         description: Allows for all admin functionality
         default: op
         children:
-            lockette.admin.create: true
-            lockette.admin.break: true
-            lockette.admin.bypass: true
-            lockette.admin.signs: true
-            lockette.admin.snoop: true
-    lockette.admin.create:
+            deadbolt.admin.create: true
+            deadbolt.admin.break: true
+            deadbolt.admin.bypass: true
+            deadbolt.admin.signs: true
+            deadbolt.admin.snoop: true
+    deadbolt.admin.create:
         description: Allows admin protection of all for other users
         default: op
-    lockette.admin.break:
+    deadbolt.admin.break:
         description: Allows admin breaking of protected blocks
         default: op
-    lockette.admin.bypass:
+    deadbolt.admin.bypass:
         description: Allows admin usage of protected doors and trapdoors
         default: op
-    lockette.admin.signs:
+    deadbolt.admin.signs:
         description: Allows admin usage of commands on user signs
         default: op
-    lockette.admin.snoop:
+    deadbolt.admin.snoop:
         description: Allows admin usage of protected chests, dispensers, and furnaces
         default: op
 #------------------------------------------------------------------------------#
-    lockette.command.*:
+    deadbolt.command.*:
         description: Allows use of all priviledged commands
         default: op
         children:
-            lockette.command.reload: true
-    lockette.command.reload:
-        description: Allows admin usage of /lockette reload
+            deadbolt.command.reload: true
+    deadbolt.command.reload:
+        description: Allows admin usage of /deadbolt reload
         default: op
 #------------------------------------------------------------------------------#
-    lockette.broadcast.*:
+    deadbolt.broadcast.*:
         description: Receives all notifications of admin overrides
         default: true
         children:
-            lockette.broadcast.break: true
-            lockette.broadcast.snoop: true
-    lockette.broadcast.break:
+            deadbolt.broadcast.break: true
+            deadbolt.broadcast.snoop: true
+    deadbolt.broadcast.break:
         description: Receives notifications of admin override block breaks
         default: true
-    lockette.broadcast.snoop:
+    deadbolt.broadcast.snoop:
         description: receives notifications of admin override container snoops
         default: true
 #------------------------------------------------------------------------------#
