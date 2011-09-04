@@ -17,6 +17,7 @@ public class Lockette extends JavaPlugin {
     }
 
     public static String getProtectedOwner(Block block) {
-        return Deadbolt.getOwnerName(block);
+        String name = Deadbolt.getOwnerName(block);
+        return name.equals("") ? null : name;
     }
 }

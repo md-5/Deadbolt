@@ -22,6 +22,11 @@ permissions:
         default: true
         children:
             deadbolt.user.create.*: true
+            deadbolt.user.color: true
+#------------------------------------------------------------------------------#
+    deadbolt.user.color:
+        description: Allows coloring of signs
+        default: true
 #------------------------------------------------------------------------------#
     deadbolt.user.create.*:
         description: Allows protection of all chests, dispensers, furnaces, doors, and trapdoors

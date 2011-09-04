@@ -12,6 +12,7 @@ public class Perm {
     public static final Permission user_create_door = pm.getPermission("deadbolt.user.create.door");
     public static final Permission user_create_furnace = pm.getPermission("deadbolt.user.create.furnace");
     public static final Permission user_create_trapdoor = pm.getPermission("deadbolt.user.create.trapdoor");
+    public static final Permission user_color = pm.getPermission("deadbolt.user.color");
     public static final Permission admin_create = pm.getPermission("deadbolt.admin.create");
     public static final Permission admin_break = pm.getPermission("deadbolt.admin.break");
     public static final Permission admin_bypass = pm.getPermission("deadbolt.admin.bypass");

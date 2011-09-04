@@ -28,7 +28,9 @@ public class Util {
     public static final Set<BlockFace> verticalBlockFaces = EnumSet.of(BlockFace.UP, BlockFace.DOWN);
     public static final Map<Player, Block> selectedSign = new HashMap<Player, Block>();
     private static final String pluginTag = "Deadbolt: ";
-    private static final String patternStripColor = "(?i)§[0-9a-zA-Z]";
+    public static final String patternFindColor = "(\\&)([0-9a-fA-F])";
+    public static final String patternReplaceColor = "§$2";
+    private static final String patternStripColor = "§[0-9a-fA-F]";
     private static final String patternNormalTooLong = ".{16,}";
     private static final String patternBracketTooLong = "\\[.{14,}\\]";
     private static final String timerPattern = "\\[.{1,11}:[123456789]\\]";

@@ -1,5 +1,6 @@
 package com.daemitus.deadbolt;
 
+import com.daemitus.deadbolt.commands.DeadboltCommandExecutor;
 import com.daemitus.deadbolt.bridge.Bridge;
 import com.daemitus.deadbolt.events.BlockListener;
 import com.daemitus.deadbolt.events.EntityListener;
@@ -7,12 +8,7 @@ import com.daemitus.deadbolt.events.PlayerListener;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,12 +16,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Deadbolt extends JavaPlugin {
 
     public static final Logger logger = Logger.getLogger("Minecraft");
-    private PluginManager pm;
-    private Config cm;
+    public Config cm;
 
     public void onEnable() {
 
-        pm = this.getServer().getPluginManager();
+        PluginManager pm = this.getServer().getPluginManager();
 
         BlockListener blockListener = new BlockListener(this);
         blockListener.registerEvents(pm);
@@ -39,6 +34,8 @@ public class Deadbolt extends JavaPlugin {
         cm = new Config(this);
         cm.load();
 
+        this.getCommand("deadbolt").setExecutor(new DeadboltCommandExecutor(this));
+
         if (!Util.doorSchedule.start(this)) {
             logger.log(Level.WARNING, String.format("Deadbolt: %1$s", Config.console_error_scheduler_start));
         }
@@ -49,97 +46,6 @@ public class Deadbolt extends JavaPlugin {
     public void onDisable() {
         stopDoorSchedule();
         logger.log(Level.INFO, String.format("Deadbolt v%1$s disabled", this.getDescription().getVersion()));
-    }
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player)
-            return onPlayerCommand((Player) sender, command, label, args);
-        else
-            return onConsoleCommand(sender, command, label, args);
-    }
-
-    private boolean onPlayerCommand(Player player, Command command, String label, String[] args) {
-        int arg = args.length;
-
-        if (arg == 0) {
-            player.sendMessage(ChatColor.RED + "Deadbolt v" + this.getDescription().getVersion());
-            player.sendMessage(ChatColor.RED + Config.cmd_help_editsign);
-            if (player.hasPermission(Perm.command_reload))
-                player.sendMessage(ChatColor.RED + Config.cmd_help_reload);
-            return true;
-
-        }
-
-        if (args[0].matches("reload")) {
-            Util.sendMessage(player, Config.cmd_reload, ChatColor.RED);
-            cm.load();
-            return true;
-        }
-
-        Block block = Util.selectedSign.get(player);
-        if (block == null) {
-            Util.sendMessage(player, Config.cmd_sign_not_selected, ChatColor.YELLOW);
-            return true;
-        }
-
-        if (!block.getType().equals(Material.WALL_SIGN)) {
-            Util.sendMessage(player, Config.cmd_sign_selected_error, ChatColor.RED);
-            Util.selectedSign.remove(player);
-            return true;
-        }
-
-        try {
-            Sign sign = (Sign) block.getState();
-            String ident = Util.stripColor(sign.getLine(0));
-            boolean isPrivate = ident.equalsIgnoreCase(Config.signtext_private) || ident.equalsIgnoreCase(Config.signtext_private_locale);
-            int line = Integer.valueOf(args[0]);
-
-            if (line < 1 || line > 4) {
-                Util.sendMessage(player, Config.cmd_line_num_out_of_range, ChatColor.RED);
-                return true;
-            }
-            if (line == 1) {
-                Util.sendMessage(player, Config.cmd_identifier_not_changeable, ChatColor.RED);
-                return true;
-            }
-            if (line == 2 && isPrivate) {
-                Util.sendMessage(player, Config.cmd_owner_not_changeable, ChatColor.RED);
-                return true;
-            }
-
-            String newtext = "";
-            for (int i = 1; i < args.length; i++) {
-                newtext += args[i];
-                if (i + 1 < args.length) {
-                    newtext += " ";
-                }
-            }
-            sign.setLine(line - 1, Util.truncate(newtext));
-            sign.update(true);
-            if (Config.deselectSign)
-                Util.selectedSign.remove(player);
-            Util.sendMessage(player, Config.cmd_sign_updated, ChatColor.GOLD);
-            return true;
-
-        } catch (NumberFormatException ex) {
-        }
-
-        Util.sendMessage(player, Config.cmd_command_not_found, ChatColor.RED);
-        return true;
-    }
-
-    private boolean onConsoleCommand(CommandSender sender, Command command, String label, String[] args) {
-        int arg = args.length;
-        if (arg == 0) {
-            sender.sendMessage("Deadbolt v" + this.getDescription().getVersion() + " options: reload");
-        } else if (arg == 1 && args[0].equals("reload")) {
-            sender.sendMessage("Deadbolt: " + Config.cmd_console_reload);
-            cm.load();
-        } else {
-            sender.sendMessage("Deadbolt: " + Config.cmd_console_command_not_found);
-        }
-        return true;
     }
 
     private void stopDoorSchedule() {

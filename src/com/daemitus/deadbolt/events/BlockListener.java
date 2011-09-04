@@ -150,6 +150,12 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
 
     @Override
     public void onSignChange(SignChangeEvent event) {
+        if (event.getPlayer().hasPermission(Perm.user_color)) {
+            for (int i = 0; i < 4; i++) {
+                event.setLine(i, event.getLine(i).replaceAll(Util.patternFindColor, Util.patternReplaceColor));
+            }
+        }
+
         String identifier = Util.stripColor(event.getLine(0));
         boolean isPrivate =
                 identifier.equalsIgnoreCase(Config.signtext_private)
@@ -184,16 +190,15 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
                 } else {
                     if (lines[1].equals("")) {
                         lines[1] = Util.truncate(player.getName());
-                    } else if (plugin.getServer().getPlayer(lines[1]) == null) {
+                    } else if (plugin.getServer().getPlayer(Util.stripColor(lines[1])) == null) {
                         Util.sendMessage(player, String.format(Config.msg_warning_player_not_found, lines[1]), ChatColor.YELLOW);
                     }
                 }
             }
             Sign sign = (Sign) block.getState();
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 4; i++)
                 sign.setLine(i, lines[i]);
-                sign.update(true);
-            }
+            sign.update(true);
         } else {
             if (status.equals(""))
                 status = Config.msg_deny_sign_private_nothing_nearby;
@@ -202,7 +207,6 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
             block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(Material.SIGN, 1));
             block.setType(Material.AIR);
         }
-
     }
 
     private String checkWallSign(Player player, Block signBlock, boolean isPrivate) {
