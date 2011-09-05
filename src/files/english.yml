@@ -13,7 +13,7 @@ cmd_sign_selected_error:                "Selected sign has an error. Right click
 cmd_sign_not_selected:                  "Nothing selected, right click a valid sign first"
 cmd_identifier_not_changeable:          "Break and replace to change the identifier on line 1"
 cmd_owner_not_changeable:               "Break and replace to change the owner on line 2"
-cmd_line_num_out_of_range:              "Bad format, your line number should be 2,3,4"
+cmd_line_num_out_of_range:              "Bad format, your line number should be 3 or 4"
 cmd_command_not_found:                  "No command found, use \"/deadbolt\" for options"
 cmd_console_reload:                     "Reloading settings..."
 cmd_console_command_not_found:          "No command found, use \"deadbolt\" for options"
