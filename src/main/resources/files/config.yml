@@ -1,0 +1,22 @@
+language: english.yml               #File to load for messages
+
+allow-admin-break: true             #Admin override for breaking protected blocks
+allow-admin-bypass: true            #Admin override for using protected doors
+allow-admin-sign: true              #Admin override for using /deadbolt <line> <text> on protected signs
+allow-admin-snoop: true             #Admin override for opening protected containers
+
+explosion-protection: true          #Protect owned blocks from explosions
+broadcast-tnt-fizzle: false         #For TNT, broadcast that it failed
+broadcast-tnt-fizzle-radius: 25     #Radius in blocks to broadcast failure
+
+piston-protection: true             #Prevents doors and trapdoors from being broken
+
+redstone-protection: true           #Denies redstone from toggling doors and trapdoors
+
+timer-doors-always-on: false        #Forces doors to close after having been used
+timer-doors-always-on-delay: 3      #The delay after which the door will close
+
+iron-door-sounds: false             #Gives iron doors the same effects as wooden ones
+timer-door-sounds: false            #Gives timed doors effects, works with iron-door-sounds
+
+clear-sign-selection: false         #Clear sign selection after using /deadbolt <line> <text>
