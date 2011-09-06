@@ -14,7 +14,7 @@ import org.bukkit.util.config.Configuration;
 public class Config {
 
     private final Deadbolt plugin;
-    private final String repo = "https://raw.github.com/daemitus/Deadbolt/master/src/files/";
+    private final String repo = "https://raw.github.com/daemitus/Deadbolt/master/src/main/resources/files/";
     //------------------------------------------------------------------------//
     public static boolean adminBreak = true;
     public static boolean adminBypass = true;
