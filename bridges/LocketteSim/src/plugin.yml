@@ -1,6 +1,6 @@
 name: Lockette
 main: org.yi.acru.bukkit.Lockette.Lockette
-version: 1.0
+version: 1.0a
 author: Daemitus
 description: This bridges all plugins that look for Lockette and substitutes Deadbolt
 depend:

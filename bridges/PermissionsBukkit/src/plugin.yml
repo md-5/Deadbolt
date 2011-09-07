@@ -1,6 +1,6 @@
 name: DeadboltBridge_PermissionsBukkit
 main: com.daemitus.deadbolt.bridge.permissionsbukkit.DeadboltBridge_PermissionsBukkit
-version: 1.0
+version: 1.1
 author: daemitus
 description: Bridge Deadbolt and PermissionsBukkit for [GroupName] authorization on signs
 softdepend: [Deadbolt, PermissionsBukkit]

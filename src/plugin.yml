@@ -1,6 +1,6 @@
 name: Deadbolt
 main: com.daemitus.deadbolt.Deadbolt
-version: 1.0
+version: 1.1
 author: daemitus
 description: A simple plugin for locking containers and doors without passwords or database files. Recreated from Acru's original plugin.
 commands:
