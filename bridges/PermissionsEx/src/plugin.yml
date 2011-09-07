@@ -1,0 +1,7 @@
+name: DeadboltBridge_PermissionsEx
+main: com.daemitus.deadbolt.bridge.permissionsex.DeadboltBridge_PermissionsEx
+version: 1.0
+author: daemitus
+description: Bridge Deadbolt and PermissionsEx for [GroupName] authorization on signs
+softdepend: [Deadbolt, PermissionsEx]
+#THIS SHOULD BE A HARD DEPEND. BUKKIT HAS AN ISSUE WITH CONFLICTING SOFT/HARD DEPENDENCIES
