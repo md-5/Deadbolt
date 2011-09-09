@@ -1,6 +1,6 @@
-name: DeadboltBridge_PermissionsEx
+name: DeadboltBridge-PermissionsEx
 main: com.daemitus.deadbolt.bridge.permissionsex.DeadboltBridge_PermissionsEx
-version: 1.1
+version: 1.2
 author: daemitus
 description: Bridge Deadbolt and PermissionsEx for [GroupName] authorization on signs
 softdepend: [Deadbolt, PermissionsEx]
