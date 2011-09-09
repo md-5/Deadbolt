@@ -183,8 +183,8 @@ public class Config {
             plugin.getDataFolder().mkdirs();
         String datafile = plugin.getDataFolder().getPath() + File.separator + filename;
         String repofile = repo + filename;
+        File download = new File(datafile);
         try {
-            File download = new File(datafile);
             download.createNewFile();
             URL link = new URL(repofile);
             ReadableByteChannel rbc = Channels.newChannel(link.openStream());
@@ -193,10 +193,13 @@ public class Config {
             Deadbolt.logger.log(Level.INFO, "Deadbolt: Downloaded file ".concat(datafile));
         } catch (MalformedURLException ex) {
             Deadbolt.logger.log(Level.WARNING, "Deadbolt: Malformed URL ".concat(repofile));
+            download.delete();
         } catch (FileNotFoundException ex) {
             Deadbolt.logger.log(Level.WARNING, "Deadbolt: File not found ".concat(datafile));
+            download.delete();
         } catch (IOException ex) {
             Deadbolt.logger.log(Level.WARNING, "Deadbolt: IOError downloading ".concat(repofile));
+            download.delete();
         }
     }
 }
