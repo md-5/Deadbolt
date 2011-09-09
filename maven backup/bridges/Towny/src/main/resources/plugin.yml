@@ -1,7 +1,0 @@
-name: DeadboltBridge_Towny
-main: com.daemitus.deadbolt.bridge.towny.DeadboltBridge_Towny
-version: 1.0
-author: daemitus
-description: Bridge Deadbolt and Towny for [TownName] and [NationName] authorization on signs
-softdepend: [Deadbolt, Towny]
-#THIS SHOULD BE A HARD DEPEND. BUKKIT HAS AN ISSUE WITH CONFLICTING SOFT/HARD DEPENDENCIES

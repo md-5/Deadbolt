@@ -1,7 +1,0 @@
-name: DeadboltBridge_SimpleClans
-main: com.daemitus.deadbolt.bridge.simpleclans.DeadboltBridge_SimpleClans
-version: 1.0
-author: daemitus
-description: Bridge Deadbolt and SimpleClans for [ClanName] and [ClanTag] authorization on signs
-softdepend: [Deadbolt, SimpleClans]
-#THIS SHOULD BE A HARD DEPEND. BUKKIT HAS AN ISSUE WITH CONFLICTING SOFT/HARD DEPENDENCIES
