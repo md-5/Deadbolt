@@ -8,6 +8,7 @@ import com.daemitus.deadbolt.events.PlayerListener;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -15,7 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Deadbolt extends JavaPlugin {
 
-    public static final Logger logger = Logger.getLogger("Minecraft");
+    public static final Logger logger = Bukkit.getServer().getLogger();
     public Config cm;
 
     public void onEnable() {

@@ -14,7 +14,7 @@ import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-public class DeadboltBridge_PermissionsEx extends JavaPlugin implements DeadboltBridge {
+public class PermissionsExBridge extends JavaPlugin implements DeadboltBridge {
 
     public static final Logger logger = Logger.getLogger("Minecraft");
     private static final String patternBracketTooLong = "\\[.{14,}\\]";

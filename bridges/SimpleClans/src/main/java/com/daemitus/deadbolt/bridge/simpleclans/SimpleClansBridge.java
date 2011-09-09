@@ -8,13 +8,14 @@ import java.util.logging.Logger;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class DeadboltBridge_SimpleClans extends JavaPlugin implements DeadboltBridge {
+public class SimpleClansBridge extends JavaPlugin implements DeadboltBridge {
 
-    public static final Logger logger = Logger.getLogger("Minecraft");
+    public static final Logger logger = Bukkit.getServer().getLogger();
     private static final String patternBracketTooLong = "\\[.{14,}\\]";
     private SimpleClans sc;
 

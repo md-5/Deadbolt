@@ -15,14 +15,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class DeadboltBridge_Towny extends JavaPlugin implements DeadboltBridge {
+public class TownyBridge extends JavaPlugin implements DeadboltBridge {
 
-    public static final Logger logger = Logger.getLogger("Minecraft");
+    public static final Logger logger = Bukkit.getServer().getLogger();
     private static final String patternBracketTooLong = "\\[.{14,}\\]";
-    //private static final Permission denyall_wilderness = Bukkit.getServer().getPluginManager().getPermission("deadbolt.towny.wild.denyall");
     private static final String denyall_wilderness = "deadbolt.towny.wild.denyall";
     private static Towny towny;
 

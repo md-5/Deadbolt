@@ -10,7 +10,7 @@ import org.bukkit.block.Block;
 public class DoorSchedule implements Runnable {
 
     private int taskID = -1;
-    private final PriorityBlockingQueue<DoorTask> taskList = new PriorityBlockingQueue<DoorTask>();
+    private final PriorityBlockingQueue<DoorTask> taskList = new PriorityBlockingQueue<>();
 
     public boolean start(final Deadbolt plugin) {
         if (taskID != -1)

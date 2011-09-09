@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 
 public class Bridge {
 
-    private static final Set<Object> objects = new HashSet<Object>();
+    private static final Set<Object> objects = new HashSet<>();
 
     /**
      * Register a bridge with Deadbolt for use in authorizing users to interact with various protected blocks.

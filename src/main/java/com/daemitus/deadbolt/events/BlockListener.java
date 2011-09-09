@@ -32,7 +32,7 @@ import org.bukkit.plugin.PluginManager;
 
 public class BlockListener extends org.bukkit.event.block.BlockListener {
 
-    private final Set<Player> reminder = new HashSet<Player>();
+    private final Set<Player> reminder = new HashSet<>();
     private final Deadbolt plugin;
 
     public BlockListener(final Deadbolt plugin) {

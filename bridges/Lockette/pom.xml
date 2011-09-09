@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.yi.acru.bukkit.Lockette</groupId>
-  <artifactId>DeadBolt-LocketteSim</artifactId>
+  <artifactId>DeadBolt-Lockette</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>DeadBolt-LocketteSim</name>
+  <name>DeadBolt-Lockette</name>
   <url>http://dev.bukkit.org/server-mods/deadbolt/</url>
     <build>
         <plugins>

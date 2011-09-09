@@ -1,5 +1,5 @@
 name: Deadbolt-SimpleClans
-main: com.daemitus.deadbolt.bridge.simpleclans.DeadboltBridge_SimpleClans
+main: com.daemitus.deadbolt.bridge.simpleclans.SimpleClansBridge
 version: 1.2
 author: daemitus
 description: Bridge Deadbolt and SimpleClans for [ClanName] and [ClanTag] authorization on signs

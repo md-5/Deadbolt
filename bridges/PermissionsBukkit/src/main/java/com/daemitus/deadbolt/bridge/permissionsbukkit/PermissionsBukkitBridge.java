@@ -13,7 +13,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class DeadboltBridge_PermissionsBukkit extends JavaPlugin implements DeadboltBridge {
+public class PermissionsBukkitBridge extends JavaPlugin implements DeadboltBridge {
 
     public static final Logger logger = Logger.getLogger("Minecraft");
     private static final String patternBracketTooLong = "\\[.{14,}\\]";
