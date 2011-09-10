@@ -22,9 +22,9 @@ public class PermissionsBukkitBridge extends JavaPlugin implements DeadboltBridg
     @Override
     public void onDisable() {
         if (Deadbolt.unregisterBridge(this)) {
-            logger.log(Level.INFO, "DeadboltBridge_PermissionsBukkit: disabled");
+            logger.log(Level.INFO, "Deadbolt-PermissionsBukkit: disabled");
         } else {
-            logger.log(Level.WARNING, "DeadboltBridge_PermissionsBukkit: Could not unregister with Deadbolt");
+            logger.log(Level.WARNING, "Deadbolt-PermissionsBukkit: Could not unregister with Deadbolt");
         }
     }
 
@@ -33,12 +33,12 @@ public class PermissionsBukkitBridge extends JavaPlugin implements DeadboltBridg
         permissions = (PermissionsPlugin) this.getServer().getPluginManager().getPlugin("PermissionsBukkit");
 
         if (permissions == null) {
-            logger.log(Level.WARNING, "DeadboltBridge_PermissionsBukkit: PermissionsBukkit not found");
+            logger.log(Level.WARNING, "Deadbolt-PermissionsBukkit: PermissionsBukkit not found");
         } else {
             if (Deadbolt.registerBridge(this)) {
-                logger.log(Level.INFO, "DeadboltBridge_PermissionsBukkit: enabled");
+                logger.log(Level.INFO, "Deadbolt-PermissionsBukkit: enabled");
             } else {
-                logger.log(Level.WARNING, "DeadboltBridge_PermissionsBukkit: Could not register with Deadbolt");
+                logger.log(Level.WARNING, "Deadbolt-PermissionsBukkit: Could not register with Deadbolt");
             }
         }
 

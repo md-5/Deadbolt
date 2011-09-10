@@ -26,21 +26,21 @@ public class TownyBridge extends JavaPlugin implements DeadboltBridge {
 
     public void onDisable() {
         if (Deadbolt.unregisterBridge(this)) {
-            logger.log(Level.INFO, "DeadboltBridge_Towny: disabled");
+            logger.log(Level.INFO, "Deadbolt-Towny: disabled");
         } else {
-            logger.log(Level.WARNING, "DeadboltBridge_Towny: Could not unregister with Deadbolt");
+            logger.log(Level.WARNING, "Deadbolt-Towny: Could not unregister with Deadbolt");
         }
     }
 
     public void onEnable() {
         towny = (Towny) this.getServer().getPluginManager().getPlugin("Towny");
         if (towny == null) {
-            logger.log(Level.WARNING, "DeadboltBridge_Towny: Towny not found");
+            logger.log(Level.WARNING, "Deadbolt-Towny: Towny not found");
         } else {
             if (Deadbolt.registerBridge(this)) {
-                logger.log(Level.INFO, "DeadboltBridge_Towny: enabled");
+                logger.log(Level.INFO, "Deadbolt-Towny: enabled");
             } else {
-                logger.log(Level.WARNING, "DeadboltBridge_Towny: Could not register with Deadbolt");
+                logger.log(Level.WARNING, "Deadbolt-Towny: Could not register with Deadbolt");
             }
         }
     }

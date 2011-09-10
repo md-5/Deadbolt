@@ -22,21 +22,21 @@ public class PermissionsExBridge extends JavaPlugin implements DeadboltBridge {
 
     public void onDisable() {
         if (Deadbolt.unregisterBridge(this)) {
-            logger.log(Level.INFO, "DeadboltBridge_PermissionsEx: disabled");
+            logger.log(Level.INFO, "Deadbolt-PermissionsEx: disabled");
         } else {
-            logger.log(Level.WARNING, "DeadboltBridge_PermissionsEx: Could not unregister with Deadbolt");
+            logger.log(Level.WARNING, "Deadbolt-PermissionsEx: Could not unregister with Deadbolt");
         }
     }
 
     public void onEnable() {
         if (this.getServer().getPluginManager().getPlugin("PermissionsEx") == null) {
-            logger.log(Level.WARNING, "DeadboltBridge_PermissionsEx: PermissionsEx not found");
+            logger.log(Level.WARNING, "Deadbolt-PermissionsEx: PermissionsEx not found");
         } else {
             permissions = PermissionsEx.getPermissionManager();
             if (Deadbolt.registerBridge(this)) {
-                logger.log(Level.INFO, "DeadboltBridge_PermissionsEx: enabled");
+                logger.log(Level.INFO, "Deadbolt-PermissionsEx: enabled");
             } else {
-                logger.log(Level.WARNING, "DeadboltBridge_PermissionsEx: Could not register with Deadbolt");
+                logger.log(Level.WARNING, "Deadbolt-PermissionsEx: Could not register with Deadbolt");
             }
         }
     }

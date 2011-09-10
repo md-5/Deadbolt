@@ -21,21 +21,21 @@ public class SimpleClansBridge extends JavaPlugin implements DeadboltBridge {
 
     public void onDisable() {
         if (Deadbolt.unregisterBridge(this)) {
-            logger.log(Level.INFO, "DeadboltBridge_SimpleClans: disabled");
+            logger.log(Level.INFO, "Deadbolt-SimpleClans: disabled");
         } else {
-            logger.log(Level.WARNING, "DeadboltBridge_SimpleClans: Could not unregister with Deadbolt");
+            logger.log(Level.WARNING, "Deadbolt-SimpleClans: Could not unregister with Deadbolt");
         }
     }
 
     public void onEnable() {
         sc = (SimpleClans) this.getServer().getPluginManager().getPlugin("SimpleClans");
         if (sc == null) {
-            logger.log(Level.WARNING, "DeadboltBridge_SimpleClans: SimpleClans not found");
+            logger.log(Level.WARNING, "Deadbolt-SimpleClans: SimpleClans not found");
         } else {
             if (Deadbolt.registerBridge(this)) {
-                logger.log(Level.INFO, "DeadboltBridge_SimpleClans: enabled");
+                logger.log(Level.INFO, "Deadbolt-SimpleClans: enabled");
             } else {
-                logger.log(Level.WARNING, "DeadboltBridge_SimpleClans: Could not register with Deadbolt");
+                logger.log(Level.WARNING, "Deadbolt-SimpleClans: Could not register with Deadbolt");
             }
         }
     }
