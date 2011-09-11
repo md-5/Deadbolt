@@ -17,16 +17,17 @@ permissions:
             deadbolt.broadcast.*: true
             deadbolt.command.*: true
 #------------------------------------------------------------------------------#
-    deadbolt.user.*:
+    deadbolt.user.*:        
         description: All user functionality
-        default: true
-        children:
+        default: op
+        children:          
             deadbolt.user.create.*: true
             deadbolt.user.color: true
 #------------------------------------------------------------------------------#
     deadbolt.user.color:
         description: Allows coloring of signs
-        default: true
+        default: op
+        default: false
 #------------------------------------------------------------------------------#
     deadbolt.user.create.*:
         description: Allows protection of all chests, dispensers, furnaces, doors, and trapdoors
@@ -89,7 +90,7 @@ permissions:
 #------------------------------------------------------------------------------#
     deadbolt.broadcast.*:
         description: Receives all notifications of admin overrides
-        default: true
+        default: op
         children:
             deadbolt.broadcast.break: true
             deadbolt.broadcast.snoop: true
