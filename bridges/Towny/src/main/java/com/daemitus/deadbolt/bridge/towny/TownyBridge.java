@@ -49,10 +49,16 @@ public class TownyBridge extends JavaPlugin implements DeadboltBridge {
         try {
             Resident resident = towny.getTownyUniverse().getResident(player.getName());
             Town town = resident.getTown();
-            if (names.contains(truncate("[" + town.getName() + "]").toLowerCase()))
+            if (names.contains(truncate("[" + town.getName().toLowerCase() + "]")))//town check
+                return true;
+            if (names.contains(truncate("+" + town.getName().toLowerCase() + "+"))
+                    && (town.getMayor().equals(resident) || town.getAssistants().contains(resident)))//town assistant check
                 return true;
             Nation nation = town.getNation();
-            if (names.contains(truncate("[" + nation.getName() + "]").toLowerCase()))
+            if (names.contains(truncate("[" + nation.getName() + "]").toLowerCase()))//nation check
+                return true;
+            if (names.contains(truncate("+" + nation.getName().toLowerCase() + "+"))
+                    && (nation.getCapital().getMayor().equals(resident) || nation.getAssistants().contains(resident)))//nation assistant check
                 return true;
         } catch (NotRegisteredException ex) {
         }
