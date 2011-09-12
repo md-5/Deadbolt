@@ -15,7 +15,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -91,10 +90,8 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
                 event.setCancelled(true);
                 Util.sendMessage(player, Config.msg_deny_chest_expansion, ChatColor.RED);
             } else {
-                if (!reminder.contains(player)) {
-                    reminder.add(player);
+                if (!reminder.add(player))
                     Util.sendMessage(player, Config.msg_reminder_lock_your_chests, ChatColor.GOLD);
-                }
             }
         } else if (data instanceof Door) {
             if (!onDoorPlace(player, block)) {
@@ -106,7 +103,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
                 Util.sendMessage(player, Config.msg_deny_door_expansion, ChatColor.RED);
             }
         } else if (data instanceof TrapDoor) {
-            if (!onTrapDoorPlace(player, against)) {
+            if (!onTrapDoorPlace(player, block, against)) {
                 event.setCancelled(true);
                 Util.sendMessage(player, Config.msg_deny_trapdoor_placement, ChatColor.RED);
             }
@@ -114,12 +111,14 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
     }
 
     private boolean onChestPlace(Player player, Block block) {
+        if (player.hasPermission(Perm.admin_create))
+            return true;
         for (BlockFace bf : Util.horizontalBlockFaces) {
             Block adjacent = block.getRelative(bf);
             if (!adjacent.getType().equals(block.getType()))
                 continue;
             String owner = Util.getOwnerName(adjacent);
-            if (owner.equals("") || owner.equals(Util.truncate(player.getName())))
+            if (owner.equals("") || owner.equalsIgnoreCase(Util.truncate(player.getName())))
                 continue;
             return false;
         }
@@ -127,27 +126,37 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
     }
 
     private boolean onDoorPlace(Player player, Block block) {
+        if (player.hasPermission(Perm.admin_create))
+            return true;
         for (BlockFace bf : Util.horizontalBlockFaces) {
             Block adjacent = block.getRelative(bf);
-            if (!adjacent.getType().equals(block.getType()))
-                continue;
-            String owner = Util.getOwnerName(adjacent);
-            if (owner.equals("") || owner.equals(Util.truncate(player.getName())))
-                continue;
-            return false;
+            if (adjacent.getType().equals(block.getType())) {
+                String owner = Util.getOwnerName(adjacent);
+                if (owner.isEmpty() || owner.equals(Util.truncate(player.getName())))
+                    continue;
+                else
+                    return false;
+            }
         }
         String owner = Util.getOwnerName(block.getRelative(0, 2, 0));
-        if (owner.equals("") || owner.equals(Util.truncate(player.getName())))
-            return true;
-        return false;
+        return owner.isEmpty() || owner.equalsIgnoreCase(Util.truncate(player.getName()));
     }
 
-    private boolean onTrapDoorPlace(Player player, Block against) {
-        String owner = Util.getOwnerName(against);
-        if (owner.equals("") || owner.equals(Util.truncate(player.getName()))) {
+    private boolean onTrapDoorPlace(Player player, Block block, Block against) {
+        if (player.hasPermission(Perm.admin_create))
             return true;
+        for (BlockFace bf : Util.horizontalBlockFaces) {
+            Block adjacent = block.getRelative(bf);
+            if (adjacent.getType().equals(block.getType())) {
+                String owner = Util.getOwnerName(adjacent);
+                if (owner.isEmpty() || owner.equals(Util.truncate(player.getName())))
+                    continue;
+                else
+                    return false;
+            }
         }
-        return false;
+        String owner = Util.getOwnerName(against);
+        return owner.isEmpty() || owner.equalsIgnoreCase(Util.truncate(player.getName()));
     }
 
     @Override
