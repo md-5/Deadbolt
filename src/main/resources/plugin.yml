@@ -29,7 +29,6 @@ permissions:
     deadbolt.user.color:
         description: Allows coloring of signs
         default: op
-        default: false
 #------------------------------------------------------------------------------#
     deadbolt.user.create.*:
         description: Allows protection of all chests, dispensers, furnaces, doors, and trapdoors
@@ -98,8 +97,8 @@ permissions:
             deadbolt.broadcast.snoop: true
     deadbolt.broadcast.break:
         description: Receives notifications of admin override block breaks
-        default: true
+        default: op
     deadbolt.broadcast.snoop:
         description: receives notifications of admin override container snoops
-        default: true
+        default: op
 #------------------------------------------------------------------------------#
