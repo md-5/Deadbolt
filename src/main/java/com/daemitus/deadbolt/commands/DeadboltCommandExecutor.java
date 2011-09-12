@@ -79,8 +79,8 @@ public class DeadboltCommandExecutor implements CommandExecutor {
                     Util.sendMessage(player, Config.cmd_identifier_not_changeable, ChatColor.RED);
                     return true;
                 }
-            } else if (line == 2 && (name.equalsIgnoreCase(Config.signtext_private) || name.equalsIgnoreCase(Config.signtext_private_locale))) {
-                if (ident.equalsIgnoreCase(Util.stripColor(text))) {
+            } else if (line == 2 && (ident.equalsIgnoreCase(Config.signtext_private) || ident.equalsIgnoreCase(Config.signtext_private_locale))) {
+                if (name.equalsIgnoreCase(Util.stripColor(text))) {
                     sign.setLine(line - 1, text);
                 } else {
                     Util.sendMessage(player, Config.cmd_owner_not_changeable, ChatColor.RED);

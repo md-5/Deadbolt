@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -145,16 +146,16 @@ public class Util {
                     return getAllSigns(getBlockSignAttachedTo(block));
                 break;
             case CHEST:
-                return getAllSigns(block, true, false, false);
+                return getAllSigns(block, true, false, false, new HashSet<Block>());
             case DISPENSER:         //descend
             case FURNACE:           //descend
             case BURNING_FURNACE:
-                return getAllSigns(block, false, false, false);
+                return getAllSigns(block, false, false, false, new HashSet<Block>());
             case WOODEN_DOOR:       //descend
             case IRON_DOOR_BLOCK:
-                return getAllSigns(block, true, true, false);
+                return getAllSigns(block, true, true, false, new HashSet<Block>());
             case TRAP_DOOR:
-                return getAllSigns(block, false, false, true);
+                return getAllSigns(block, true, false, true, new HashSet<Block>());
             default:
                 Set<Block> set = new HashSet<>();
                 for (BlockFace bf : verticalBlockFaces) {
@@ -177,14 +178,16 @@ public class Util {
         return new HashSet<>();
     }
 
-    private static Set<Block> getAllSigns(Block block, boolean iterateHorizontal, boolean iterateVertical, boolean trapDoor) {
+    private static Set<Block> getAllSigns(Block block, boolean iterateHorizontal, boolean iterateVertical, boolean trapDoor, Set<Block> traversed) {
         Set<Block> signSet = new HashSet<>();
+        if (!traversed.add(block))
+            return signSet;
 
         for (BlockFace bf : horizontalBlockFaces) {
             Block adjacent = block.getRelative(bf);
 
             if (iterateHorizontal && adjacent.getType().equals(block.getType()))
-                signSet.addAll(getAllSigns(adjacent, false, iterateVertical, false));
+                signSet.addAll(getAllSigns(adjacent, true, iterateVertical, trapDoor, traversed));
             if (adjacent.getType().equals(Material.WALL_SIGN)) {
                 if ((bf.equals(BlockFace.NORTH) && adjacent.getData() == 4)
                         || (bf.equals(BlockFace.SOUTH) && adjacent.getData() == 5)
@@ -193,9 +196,8 @@ public class Util {
                     Sign sign = (Sign) adjacent.getState();
                     String text = stripColor(sign.getLine(0));
                     if (text.equalsIgnoreCase(Config.signtext_private)
-                            || text.equalsIgnoreCase(Config.signtext_private_locale))
-                        signSet.add(adjacent);
-                    else if (text.equalsIgnoreCase(Config.signtext_moreusers)
+                            || text.equalsIgnoreCase(Config.signtext_private_locale)
+                            || text.equalsIgnoreCase(Config.signtext_moreusers)
                             || text.equalsIgnoreCase(Config.signtext_moreusers_locale))
                         signSet.add(adjacent);
                 }
@@ -212,12 +214,12 @@ public class Util {
                 }
             }
             for (Block setBlock : set)
-                signSet.addAll(getAllSigns(setBlock, false, false, false));
+                signSet.addAll(getAllSigns(setBlock, false, false, false, traversed));
         }
         if (trapDoor) {
             TrapDoor door = (TrapDoor) block.getState().getData();
             Block hinge = block.getRelative(door.getAttachedFace());
-            signSet.addAll(getAllSigns(hinge, false, false, false));
+            signSet.addAll(getAllSigns(hinge, false, false, false, traversed));
         }
 
         return signSet;
@@ -279,7 +281,7 @@ public class Util {
         if (!override) {
             if (!Util.isAuthorized(player, block))
                 if (player.hasPermission(Perm.admin_bypass)) {
-                    sendMessage(player, String.format(Config.msg_admin_bypass, ((Sign) owner.getState()).getLine(1)), ChatColor.RED);
+                    sendMessage(player, String.format(Config.msg_admin_bypass, stripColor(((Sign) owner.getState()).getLine(1))), ChatColor.RED);
                 } else
                     return false;
         }
@@ -289,43 +291,36 @@ public class Util {
         if (!isNatural && Config.doorSounds)
             block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 0);
         Set<Block> doorBlocks = new HashSet<>();
-        doorBlocks = toggleDoor(block, ownerAttached, isNatural);
-        player.sendMessage("delay = " + delay);
+        toggleDoor(block, ownerAttached, isNatural, doorBlocks);
         if (delay > 0)
             doorSchedule.add(doorBlocks, delay, isNatural, block.getLocation());
         else if (Config.timerDoorsAlwaysOn && delay == -1)
             doorSchedule.add(doorBlocks, Config.timerDoorsAlwaysOnDelay, isNatural, block.getLocation());
-
         return true;
     }
 
-    private static Set<Block> toggleDoor(Block block, Block key, boolean naturalOpen) {
-        Set<Block> set = new HashSet<>();
-        set.add(block);
+    private static void toggleDoor(Block block, Block signAttached, boolean naturalOpen, Set<Block> doorBlocks) {
+        if (!doorBlocks.add(block))
+            return;
         if (!naturalOpen)
             toggleSingleBlock(block);
 
-        if (!block.getType().equals(Material.TRAP_DOOR)) {
+        if (block.getType().equals(Material.IRON_DOOR_BLOCK) || block.getType().equals(Material.WOODEN_DOOR)) {
             for (BlockFace bf : Util.verticalBlockFaces) {
                 Block verticalBlock = block.getRelative(bf);
                 if (verticalBlock.getType().equals(block.getType())) {
-                    set.add(verticalBlock);
+                    doorBlocks.add(verticalBlock);
                     if (!naturalOpen)
                         toggleSingleBlock(verticalBlock);
                 }
             }
         }
 
-        if (key != null) {
-            for (BlockFace bf : Util.horizontalBlockFaces) {
-                Block adjacent = block.getRelative(bf);
-                if (adjacent.getType().equals(block.getType())
-                        && ((adjacent.getX() == key.getX() && adjacent.getZ() == key.getZ())
-                        || (block.getX() == key.getX() && block.getZ() == key.getZ())))
-                    set.addAll(toggleDoor(adjacent, null, false));
-            }
+        for (BlockFace bf : Util.horizontalBlockFaces) {
+            Block adjacent = block.getRelative(bf);
+            if (adjacent.getType().equals(block.getType()))
+                toggleDoor(adjacent, signAttached, false, doorBlocks);
         }
-        return set;
     }
 
     private static void toggleSingleBlock(Block block) {
@@ -334,12 +329,10 @@ public class Util {
 
     private static boolean isNaturalOpen(Block block) {
         switch (block.getType()) {
-            case WOODEN_DOOR:
-                return true;
-            case TRAP_DOOR:
-                return true;
             case IRON_DOOR_BLOCK:
                 return false;
+            case WOODEN_DOOR:
+            case TRAP_DOOR:
             default:
                 return true;
         }

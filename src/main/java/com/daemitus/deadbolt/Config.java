@@ -48,9 +48,9 @@ public class Config {
     /* 11 */ public static String cmd_sign_selected = "Sign selected, use /deadbolt <line number> <text>";
     /* 12 */ public static String cmd_sign_selected_error = "Selected sign has an error. Right click it again";
     /* 13 */ public static String cmd_sign_not_selected = "Nothing selected, right click a valid sign first";
-    /* 14 */ public static String cmd_identifier_not_changeable = "Break and replace to change the identifier on line 1";
-    /* 15 */ public static String cmd_owner_not_changeable = "Break and replace to change the owner on line 2";
-    /* 16 */ public static String cmd_line_num_out_of_range = "Bad format, your line number should be 2,3,4";
+    /* 14 */ public static String cmd_identifier_not_changeable = "The identifier on line 1 is not changeable, except for color.";
+    /* 15 */ public static String cmd_owner_not_changeable = "The owner on line 2 is not changeable, except for color.";
+    /* 16 */ public static String cmd_line_num_out_of_range = "Bad format, your line number should be 1,2,3,4";
     /* 17 */ public static String cmd_command_not_found = "No command found, use \"/deadbolt\" for options";
     /* 18 */ public static String cmd_console_reload = "Deadbolt - Reloading settings...";
     /* 19 */ public static String cmd_console_command_not_found = "Deadbolt - No command found, use \"deadbolt\" for options";

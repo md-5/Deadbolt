@@ -15,6 +15,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -59,7 +60,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
             return;
         if (player.hasPermission(Perm.admin_break)) {
             Util.sendBroadcast(Perm.admin_broadcast_break,
-                    String.format(Config.msg_admin_break, player.getName(), owner),
+                    String.format(Config.msg_admin_break, player.getName(), Util.stripColor(owner)),
                     ChatColor.RED);
             Deadbolt.logger.log(Level.INFO, String.format("Deadbolt: " + Config.msg_admin_break, player.getName(), owner));
             return;
@@ -165,7 +166,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
         if (!isPrivate && !isMoreUsers)
             return;
 
-        
+
         String status = "";
         Player player = event.getPlayer();
         Block block = event.getBlock();
@@ -177,7 +178,9 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
             block.setType(Material.WALL_SIGN);
             for (byte data = 2; !status.equals("valid") && data < 6; data++) {
                 block.setData(data);
-                status = checkWallSign(player, block, isPrivate);
+                String newStatus = checkWallSign(player, block, isPrivate);
+                if (!newStatus.isEmpty())
+                    status = newStatus;
             }
         }
 
@@ -185,8 +188,8 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
         if (status.equals("valid")) {
             if (Bridge.canProtect(player, block)) {
                 if (isPrivate) {
-                    boolean isAdminAuth = player.hasPermission(Perm.admin_create);
-                    if (!isAdminAuth) {
+                    if (!player.hasPermission(Perm.admin_create)
+                            && !Util.stripColor(lines[1]).equalsIgnoreCase(player.getName())) {
                         lines[1] = Util.truncate(player.getName());
                     } else {
                         if (lines[1].equals("")) {
