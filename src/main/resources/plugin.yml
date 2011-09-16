@@ -39,6 +39,7 @@ permissions:
             deadbolt.user.create.door: true
             deadbolt.user.create.furnace: true
             deadbolt.user.create.trapdoor: true
+            deadbolt.user.create.fencegate: true
     deadbolt.user.create.chest:
         description: Allows user protection of chests
         default: true
@@ -53,6 +54,9 @@ permissions:
         default: true
     deadbolt.user.create.trapdoor:
         description: Allows user protection of trapdoors
+        default: true
+    deadbolt.user.create.fencegate:
+        description: Allows user protection of fencegates
         default: true
 #------------------------------------------------------------------------------#
     deadbolt.admin.*:

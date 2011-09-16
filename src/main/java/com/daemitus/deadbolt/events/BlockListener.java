@@ -74,79 +74,106 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
     public void onBlockPlace(BlockPlaceEvent event) {
         if (event.isCancelled())
             return;
+
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
         Block against = event.getBlockAgainst();
         if (against.getType().equals(Material.WALL_SIGN) && Util.isProtected(against)) {
             event.setCancelled(true);
             return;
         }
-        Player player = event.getPlayer();
-        Block block = event.getBlock();
-        Material type = block.getType();
-        BlockState state = block.getState();
-        MaterialData data = state.getData();
 
         if (player.hasPermission(Perm.admin_create))
             return;
 
-        if (type.equals(Material.CHEST)) {
-            if (!onChestPlace(player, block)) {
-                event.setCancelled(true);
-                Util.sendMessage(player, Config.msg_deny_chest_expansion, ChatColor.RED);
-            } else {
-                if (reminder.add(player))
+        switch (block.getType()) {
+            case FURNACE:
+            case BURNING_FURNACE:
+            case DISPENSER:
+            case CHEST:
+                if (!onContainerPlace(event)) {
+                    event.setCancelled(true);
+                    Util.sendMessage(player, Config.msg_deny_chest_expansion, ChatColor.RED);
+                } else if (reminder.add(player)) {
                     Util.sendMessage(player, Config.msg_reminder_lock_your_chests, ChatColor.GOLD);
-            }
-        } else if (data instanceof Door) {
-            if (!onDoorPlace(player, block)) {
-                event.setCancelled(true);
-                block.setType(Material.SAND);
-                block.setType(Material.AIR);
-                block.getRelative(BlockFace.UP).setType(Material.SAND);
-                block.getRelative(BlockFace.UP).setType(Material.AIR);
-                Util.sendMessage(player, Config.msg_deny_door_expansion, ChatColor.RED);
-            }
-        } else if (data instanceof TrapDoor) {
-            if (!onTrapDoorPlace(player, block, against)) {
-                event.setCancelled(true);
-                Util.sendMessage(player, Config.msg_deny_trapdoor_placement, ChatColor.RED);
-            }
+                }
+                return;
+            case IRON_DOOR_BLOCK:
+            case WOODEN_DOOR:
+                if (!onDoorPlace(event)) {
+                    event.setCancelled(true);
+                    Util.sendMessage(player, Config.msg_deny_door_expansion, ChatColor.RED);
+                    block.setType(Material.SAND);
+                    block.setType(Material.AIR);
+                    Block upBlock = block.getRelative(BlockFace.UP);
+                    if (upBlock.getType().equals(block.getType())) {
+                        upBlock.setType(Material.SAND);
+                        upBlock.setType(Material.AIR);
+                    }
+                }
+                return;
+            case TRAP_DOOR:
+                if (!onTrapDoorPlace(event)) {
+                    event.setCancelled(true);
+                    Util.sendMessage(player, Config.msg_deny_trapdoor_placement, ChatColor.RED);
+                }
+                return;
+            case FENCE_GATE:
+                if (!onFenceGatePlace(event)) {
+                    event.setCancelled(true);
+                    Util.sendMessage(player, Config.msg_deny_fencegate_placement, ChatColor.RED);
+                }
         }
     }
 
-    private boolean onChestPlace(Player player, Block block) {
+    private boolean onContainerPlace(BlockPlaceEvent event) {
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
+
         for (BlockFace bf : Util.allBlockFaces) {
             Block adjacent = block.getRelative(bf);
             if (!adjacent.getType().equals(block.getType()))
                 continue;
             String owner = Util.getOwnerName(adjacent);
-            if (owner.equals("") || owner.equalsIgnoreCase(Util.truncate(player.getName())))
+            if (owner.isEmpty() || owner.equalsIgnoreCase(Util.truncate(player.getName())))
                 continue;
             return false;
         }
         return true;
     }
 
-    private boolean onDoorPlace(Player player, Block block) {
+    private boolean onDoorPlace(BlockPlaceEvent event) {
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
+
         for (BlockFace bf : Util.horizontalBlockFaces) {
             Block adjacent = block.getRelative(bf);
             if (adjacent.getType().equals(block.getType())) {
                 String owner = Util.getOwnerName(adjacent);
                 if (owner.isEmpty() || owner.equals(Util.truncate(player.getName())))
                     continue;
-                else
-                    return false;
+                return false;
             }
         }
-        String ownerUp = Util.getOwnerName(block.getRelative(0, 2, 0));
-        if(!ownerUp.isEmpty() && ownerUp.equalsIgnoreCase(Util.truncate(player.getName())))
+
+        Block dBlock = block.getRelative(0, -1, 0);
+        String dOwner = Util.getOwnerName(dBlock);
+        if (!dOwner.isEmpty() && !dOwner.equalsIgnoreCase(Util.truncate(player.getName())))
             return false;
-        String ownerDown = Util.getOwnerName(block.getRelative(BlockFace.DOWN));
-        if(!ownerDown.isEmpty() && ownerDown.equalsIgnoreCase(Util.truncate(player.getName())))
+
+        Block uBlock = block.getRelative(0, 2, 0);
+        String uOwner = Util.getOwnerName(uBlock);
+        if (!uOwner.isEmpty() && !uOwner.equalsIgnoreCase(Util.truncate(player.getName())))
             return false;
+
         return true;
     }
 
-    private boolean onTrapDoorPlace(Player player, Block block, Block against) {
+    private boolean onTrapDoorPlace(BlockPlaceEvent event) {
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
+        Block against = event.getBlockAgainst();
+
         for (BlockFace bf : Util.horizontalBlockFaces) {
             Block adjacent = block.getRelative(bf);
             if (adjacent.getType().equals(block.getType())) {
@@ -157,8 +184,36 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
                     return false;
             }
         }
-        String owner = Util.getOwnerName(against);
-        return owner.isEmpty() || owner.equalsIgnoreCase(Util.truncate(player.getName()));
+
+        String aOwner = Util.getOwnerName(against);
+        if (!aOwner.isEmpty() && !aOwner.equalsIgnoreCase(Util.truncate(player.getName())))
+            return false;
+
+        Block dBlock = block.getRelative(BlockFace.DOWN);
+        String dOwner = Util.getOwnerName(dBlock);
+        if (!dOwner.isEmpty() && !dOwner.equalsIgnoreCase(Util.truncate(player.getName())))
+            return false;
+
+        Block uBlock = block.getRelative(BlockFace.UP);
+        String uOwner = Util.getOwnerName(uBlock);
+        if (!uOwner.isEmpty() && !uOwner.equalsIgnoreCase(Util.truncate(player.getName())))
+            return false;
+
+        return true;
+    }
+
+    private boolean onFenceGatePlace(BlockPlaceEvent event) {
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
+
+        for (BlockFace bf : Util.allBlockFaces) {
+            Block adjacent = block.getRelative(bf);
+            String owner = Util.getOwnerName(adjacent);
+            if (owner.isEmpty() || owner.equals(Util.truncate(player.getName())))
+                continue;
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -228,55 +283,65 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
 
     private String checkWallSign(Player player, Block signBlock, boolean isPrivate) {
         Block against = Util.getBlockSignAttachedTo(signBlock);
-        if (against == null)
-            return "";
         String owner = Util.getOwnerName(against);
 
         if (isPrivate) {
             //is it owned?
-            if (!owner.equals("")) {
+            if (!owner.isEmpty()) {
                 return Config.msg_deny_sign_private_already_owned;
             } else {
                 //check against the block it is immediately on
                 switch (against.getType()) {
                     case CHEST:
-                        return player.hasPermission(Perm.user_create_chest) ? "valid" : Config.msg_deny_chest_perm;
+                        return player.hasPermission(Perm.user_create_chest) ? "valid" : String.format(Config.msg_deny_block_perm, against.getType().name());
                     case DISPENSER:
-                        return player.hasPermission(Perm.user_create_dispenser) ? "valid" : Config.msg_deny_dispenser_perm;
+                        return player.hasPermission(Perm.user_create_dispenser) ? "valid" : String.format(Config.msg_deny_block_perm, against.getType().name());
                     case FURNACE:
-                        return player.hasPermission(Perm.user_create_furnace) ? "valid" : Config.msg_deny_furnace_perm;
+                        return player.hasPermission(Perm.user_create_furnace) ? "valid" : String.format(Config.msg_deny_block_perm, against.getType().name());
                     case BURNING_FURNACE:
-                        return player.hasPermission(Perm.user_create_furnace) ? "valid" : Config.msg_deny_furnace_perm;
+                        return player.hasPermission(Perm.user_create_furnace) ? "valid" : String.format(Config.msg_deny_block_perm, against.getType().name());
                     case WOODEN_DOOR:
-                        return player.hasPermission(Perm.user_create_door) ? "valid" : Config.msg_deny_door_perm;
+                        return player.hasPermission(Perm.user_create_door) ? "valid" : String.format(Config.msg_deny_block_perm, against.getType().name());
                     case IRON_DOOR_BLOCK:
-                        return player.hasPermission(Perm.user_create_door) ? "valid" : Config.msg_deny_door_perm;
+                        return player.hasPermission(Perm.user_create_door) ? "valid" : String.format(Config.msg_deny_block_perm, against.getType().name());
                     case TRAP_DOOR:
-                        return player.hasPermission(Perm.user_create_trapdoor) ? "valid" : Config.msg_deny_trapdoor_perm;
+                        return player.hasPermission(Perm.user_create_trapdoor) ? "valid" : String.format(Config.msg_deny_block_perm, against.getType().name());
+                    case FENCE_GATE:
+                        return player.hasPermission(Perm.user_create_fencegate) ? "valid" : String.format(Config.msg_deny_block_perm, against.getType().name());
                 }
 
-                //check for doors above/below
+                //check for doors above/below the againstBlock
                 for (BlockFace bf : Util.verticalBlockFaces) {
                     Block vertical = against.getRelative(bf);
-                    if (vertical.getState().getData() instanceof Door)
-                        return player.hasPermission(Perm.user_create_door) ? "valid" : Config.msg_deny_door_perm;
+                    switch (vertical.getType()) {
+                        case WOODEN_DOOR:
+                        case IRON_DOOR_BLOCK:
+                            return player.hasPermission(Perm.user_create_door) ? "valid" : String.format(Config.msg_deny_block_perm, vertical.getType().name());
+
+                    }
                 }
 
-                //look for trap doors nearby
+                //check for trapdoors above/below the sign itself
+                for (BlockFace bf : Util.verticalBlockFaces) {
+                    Block vertical = against.getRelative(bf);
+                    if (vertical.getType().equals(Material.TRAP_DOOR)) {
+                        return player.hasPermission(Perm.user_create_trapdoor) ? "valid" : String.format(Config.msg_deny_block_perm, vertical.getType().name());
+                    }
+                }
+
+                //assume against is the hinge, look for trap doors nearby
                 for (BlockFace bf : Util.horizontalBlockFaces) {
                     Block adjacent = against.getRelative(bf);
-                    BlockState state = adjacent.getState();
-                    MaterialData data = state.getData();
-                    if (data instanceof TrapDoor) {
-                        TrapDoor trapDoor = (TrapDoor) data;
+                    if (adjacent.getType().equals(Material.TRAP_DOOR)) {
+                        TrapDoor trapDoor = (TrapDoor) adjacent.getState().getData();
                         if (adjacent.getRelative(trapDoor.getAttachedFace()).equals(against)) {
-                            return player.hasPermission(Perm.user_create_trapdoor) ? "valid" : Config.msg_deny_trapdoor_perm;
+                            return player.hasPermission(Perm.user_create_trapdoor) ? "valid" : String.format(Config.msg_deny_block_perm, adjacent.getType().name());
                         }
                     }
                 }
             }
         } else {
-            if (owner.equals("")) {
+            if (owner.isEmpty()) {
                 return Config.msg_deny_sign_moreusers_no_private;
             } else if (!owner.equalsIgnoreCase(Util.truncate(player.getName()))) {
                 if (player.hasPermission(Perm.admin_create)) {
@@ -295,10 +360,12 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
     @Override
     public void onBlockRedstoneChange(BlockRedstoneEvent event) {
         Block block = event.getBlock();
-        BlockState state = block.getState();
-        MaterialData data = state.getData();
-        if (!(data instanceof Door || data instanceof TrapDoor))
-            return;
+        switch (block.getType()) {
+            case WOODEN_DOOR:
+            case IRON_DOOR_BLOCK:
+            case TRAP_DOOR:
+                return;
+        }
         if (!Config.redstoneProtection)
             return;
         List<String> names = Util.getAllNames(block);

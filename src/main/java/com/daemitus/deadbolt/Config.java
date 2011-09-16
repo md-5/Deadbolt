@@ -65,18 +65,15 @@ public class Config {
     /* 28 */ public static String msg_deny_chest_expansion = "You don't own the adjacent chest";
     /* 29 */ public static String msg_deny_door_expansion = "You don't own the adjacent door";
     /* 30 */ public static String msg_deny_trapdoor_placement = "You don't own the adjacent hinge block";
-    /* 31 */ public static String msg_deny_sign_private_nothing_nearby = "Nothing nearby to protect";
-    /* 32 */ public static String msg_deny_sign_private_already_owned = "This block is already protected";
-    /* 33 */ public static String msg_deny_sign_moreusers_already_owned = "You don't own this block";
-    /* 34 */ public static String msg_deny_sign_moreusers_no_private = "No sign with [Private] nearby";
-    /* 35 */ public static String msg_deny_chest_perm = "You are not authorized to protect chests";
-    /* 36 */ public static String msg_deny_dispenser_perm = "You are not authorized to protect dispensers";
-    /* 37 */ public static String msg_deny_furnace_perm = "You are not authorized to protect furnaces";
-    /* 38 */ public static String msg_deny_door_perm = "You are not authorized to protect doors";
-    /* 39 */ public static String msg_deny_trapdoor_perm = "You are not authorized to protect trap doors";
-    /* 40 */ public static String msg_warning_player_not_found = "%1$s is not online, make sure you have the correct name";
-    /* 41 */ public static String msg_tnt_fizzle = "TNT tried to explode too close to a protected block";
-    /* 42 */ public static String msg_reminder_lock_your_chests = "Place a sign headed [Private] next to your chest to lock it";
+    /* 31 */ public static String msg_deny_fencegate_placement = "You don't own the adjacent fence gate";
+    /* 32 */ public static String msg_deny_sign_private_nothing_nearby = "Nothing nearby to protect";
+    /* 33 */ public static String msg_deny_sign_private_already_owned = "This block is already protected";
+    /* 34 */ public static String msg_deny_sign_moreusers_already_owned = "You don't own this block";
+    /* 35 */ public static String msg_deny_sign_moreusers_no_private = "No sign with [Private] nearby";
+    /* 36 */ public static String msg_deny_block_perm = "You are not authorized to protect %1$s";
+    /* 37 */ public static String msg_warning_player_not_found = "%1$s is not online, make sure you have the correct name";
+    /* 38 */ public static String msg_tnt_fizzle = "TNT tried to explode too close to a protected block";
+    /* 39 */ public static String msg_reminder_lock_your_chests = "Place a sign headed [Private] next to your chest to lock it";
     //------------------------------------------------------------------------//
 
     public Config(final Deadbolt plugin) {
@@ -167,11 +164,7 @@ public class Config {
         msg_deny_sign_private_already_owned = locale.getString("msg_deny_sign_private_already_owned", msg_deny_sign_private_already_owned);
         msg_deny_sign_moreusers_already_owned = locale.getString("msg_deny_sign_moreusers_already_owned", msg_deny_sign_moreusers_already_owned);
         msg_deny_sign_moreusers_no_private = locale.getString("msg_deny_sign_moreusers_no_private", msg_deny_sign_moreusers_no_private);
-        msg_deny_chest_perm = locale.getString("msg_deny_chest_perm", msg_deny_chest_perm);
-        msg_deny_dispenser_perm = locale.getString("msg_deny_dispenser_perm", msg_deny_dispenser_perm);
-        msg_deny_furnace_perm = locale.getString("msg_deny_furnace_perm", msg_deny_furnace_perm);
-        msg_deny_door_perm = locale.getString("msg_deny_door_perm", msg_deny_door_perm);
-        msg_deny_trapdoor_perm = locale.getString("msg_deny_trapdoor_perm", msg_deny_trapdoor_perm);
+        msg_deny_block_perm = locale.getString("msg_deny_block_perm", msg_deny_block_perm);
         msg_warning_player_not_found = locale.getString("msg_warning_player_not_found", msg_warning_player_not_found);
         msg_tnt_fizzle = locale.getString("msg_tnt_fizzle", msg_tnt_fizzle);
         msg_reminder_lock_your_chests = locale.getString("msg_reminder_lock_your_chests", msg_reminder_lock_your_chests);

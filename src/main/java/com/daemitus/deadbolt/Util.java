@@ -156,6 +156,10 @@ public class Util {
                 return getAllSigns(block, true, true, false, new HashSet<Block>());
             case TRAP_DOOR:
                 return getAllSigns(block, true, false, true, new HashSet<Block>());
+            case FENCE_GATE:
+                return getAllSigns(block, true, true, false, new HashSet<Block>());
+            case AIR:
+                return new HashSet<>();
             default:
                 Set<Block> set = new HashSet<>();
                 for (BlockFace bf : verticalBlockFaces) {
@@ -285,13 +289,12 @@ public class Util {
                 } else
                     return false;
         }
-        Block ownerAttached = Util.getBlockSignAttachedTo(owner);
         int delay = getDelayFromSign((Sign) owner.getState());
         boolean isNatural = isNaturalOpen(block);
         if (!isNatural && Config.doorSounds)
             block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 0);
         Set<Block> doorBlocks = new HashSet<>();
-        toggleDoor(block, ownerAttached, isNatural, doorBlocks);
+        toggleDoor(block, isNatural, doorBlocks);
         if (delay > 0)
             doorSchedule.add(doorBlocks, delay, isNatural, block.getLocation());
         else if (Config.timerDoorsAlwaysOn && delay == -1)
@@ -299,27 +302,37 @@ public class Util {
         return true;
     }
 
-    private static void toggleDoor(Block block, Block signAttached, boolean naturalOpen, Set<Block> doorBlocks) {
+    private static void toggleDoor(Block block, boolean naturalOpen, Set<Block> doorBlocks) {
         if (!doorBlocks.add(block))
             return;
         if (!naturalOpen)
             toggleSingleBlock(block);
 
-        if (block.getType().equals(Material.IRON_DOOR_BLOCK) || block.getType().equals(Material.WOODEN_DOOR)) {
-            for (BlockFace bf : Util.verticalBlockFaces) {
-                Block verticalBlock = block.getRelative(bf);
-                if (verticalBlock.getType().equals(block.getType())) {
-                    doorBlocks.add(verticalBlock);
-                    if (!naturalOpen)
-                        toggleSingleBlock(verticalBlock);
+        switch (block.getType()) {
+            case WOODEN_DOOR:
+            case IRON_DOOR_BLOCK:
+                for (BlockFace bf : Util.allBlockFaces) {
+                    Block adjacent = block.getRelative(bf);
+                    if (adjacent.getType().equals(block.getType())) {
+                        toggleDoor(adjacent, false, doorBlocks);
+                    }
                 }
-            }
-        }
-
-        for (BlockFace bf : Util.horizontalBlockFaces) {
-            Block adjacent = block.getRelative(bf);
-            if (adjacent.getType().equals(block.getType()))
-                toggleDoor(adjacent, signAttached, false, doorBlocks);
+                break;
+            case TRAP_DOOR:
+                for (BlockFace bf : Util.horizontalBlockFaces) {
+                    Block adjacent = block.getRelative(bf);
+                    if (adjacent.getType().equals(block.getType()))
+                        toggleDoor(adjacent, false, doorBlocks);
+                }
+                break;
+            case FENCE_GATE:
+                for (BlockFace bf : Util.allBlockFaces) {
+                    Block adjacent = block.getRelative(bf);
+                    if (adjacent.getType().equals(block.getType())) {
+                        toggleDoor(adjacent, false, doorBlocks);
+                    }
+                }
+                break;
         }
     }
 
@@ -333,6 +346,7 @@ public class Util {
                 return false;
             case WOODEN_DOOR:
             case TRAP_DOOR:
+            case FENCE_GATE:
             default:
                 return true;
         }
@@ -361,7 +375,7 @@ public class Util {
         if (override)
             return true;
         String owner = Util.getOwnerName(block);
-        if (owner.equals(""))
+        if (owner.isEmpty())
             return true;
         if (!Util.isAuthorized(player, block))
             if (player.hasPermission(Perm.admin_snoop)) {
@@ -382,7 +396,7 @@ public class Util {
      */
     public static boolean interactSign(Player player, Block block) {
         String owner = Util.getOwnerName(block);
-        if (owner.equals(""))
+        if (owner.isEmpty())
             return true;
         if (!owner.equalsIgnoreCase(player.getName()))
             if (Config.adminSign && player.hasPermission(Perm.admin_signs))
