@@ -1,6 +1,6 @@
 name: Deadbolt-Towny
 main: com.daemitus.deadbolt.bridge.towny.TownyBridge
-version: 1.2
+version: 1.3/0.76.1
 author: daemitus
 description: Bridge Deadbolt and Towny for [TownName] and [NationName] authorization on signs, optional restricting of usage in wilderness areas
 softdepend: [Deadbolt, Towny]

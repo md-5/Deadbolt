@@ -1,9 +1,8 @@
 package com.daemitus.deadbolt.commands;
 
-import com.daemitus.deadbolt.Config;
+import com.daemitus.deadbolt.Conf;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Perm;
-import com.daemitus.deadbolt.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -12,6 +11,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.SignChangeEvent;
 
 public class DeadboltCommandExecutor implements CommandExecutor {
 
@@ -34,71 +34,80 @@ public class DeadboltCommandExecutor implements CommandExecutor {
 
         if (arg == 0) {
             player.sendMessage(ChatColor.RED + "Deadbolt v" + plugin.getDescription().getVersion());
-            player.sendMessage(ChatColor.RED + Config.cmd_help_editsign);
+            player.sendMessage(ChatColor.RED + Conf.cmd_help_editsign);
             if (player.hasPermission(Perm.command_reload))
-                player.sendMessage(ChatColor.RED + Config.cmd_help_reload);
+                player.sendMessage(ChatColor.RED + Conf.cmd_help_reload);
             return true;
         }
 
         if (args[0].equalsIgnoreCase("reload")) {
-            Util.sendMessage(player, Config.cmd_reload, ChatColor.RED);
-            plugin.cm.load();
+            Conf.sendMessage(player, Conf.cmd_reload, ChatColor.RED);
+            new Conf(plugin);
             return true;
         }
 
         try {
             int line = Integer.valueOf(args[0]);
             if (line < 1 || line > 4) {
-                Util.sendMessage(player, Config.cmd_line_num_out_of_range, ChatColor.RED);
+                Conf.sendMessage(player, Conf.cmd_line_num_out_of_range, ChatColor.RED);
                 return true;
             }
-            Block block = Util.selectedSign.get(player);
+            Block block = Conf.selectedSign.get(player);
             if (block == null) {
-                Util.sendMessage(player, Config.cmd_sign_not_selected, ChatColor.YELLOW);
+                Conf.sendMessage(player, Conf.cmd_sign_not_selected, ChatColor.RED);
                 return true;
             }
             if (!block.getType().equals(Material.WALL_SIGN)) {
-                Util.sendMessage(player, Config.cmd_sign_selected_error, ChatColor.RED);
-                Util.selectedSign.remove(player);
+                Conf.sendMessage(player, Conf.cmd_sign_selected_error, ChatColor.RED);
+                Conf.selectedSign.remove(player);
                 return true;
             }
 
+            line--;
             Sign sign = (Sign) block.getState();
-            String ident = Util.stripColor(sign.getLine(0));
-            String name = Util.stripColor(sign.getLine(1));
+            String lines[] = sign.getLines();
+
             String text = "";
             for (int i = 1; i < args.length; i++)
                 text += args[i] + (i + 1 < args.length ? " " : "");
             if (player.hasPermission(Perm.user_color))
-                text = text.replaceAll(Util.patternFindColor, Util.patternReplaceColor);
-            text = Util.truncate(text);
-            if (line == 1) {
-                if (ident.equalsIgnoreCase(Util.stripColor(text))) {
-                    sign.setLine(line - 1, text);
+                text = Conf.replaceColor(text);
+            text = Conf.truncate(text, 15);
+            if (line == 0) {
+                if (Conf.stripColor(lines[0]).equalsIgnoreCase(Conf.stripColor(text))) {
+                    lines[0] = text;
                 } else {
-                    Util.sendMessage(player, Config.cmd_identifier_not_changeable, ChatColor.RED);
+                    Conf.sendMessage(player, Conf.cmd_identifier_not_changeable, ChatColor.RED);
                     return true;
                 }
-            } else if (line == 2 && (ident.equalsIgnoreCase(Config.signtext_private) || ident.equalsIgnoreCase(Config.signtext_private_locale))) {
-                if (name.equalsIgnoreCase(Util.stripColor(text))) {
-                    sign.setLine(line - 1, text);
+            } else if (line == 1 && Conf.isPrivate(lines[0])) {
+                if (Conf.stripColor(lines[1]).equalsIgnoreCase(Conf.stripColor(text))) {
+                    lines[1] = text;
                 } else {
-                    Util.sendMessage(player, Config.cmd_owner_not_changeable, ChatColor.RED);
+                    Conf.sendMessage(player, Conf.cmd_owner_not_changeable, ChatColor.RED);
                     return true;
                 }
             } else {
-                sign.setLine(line - 1, text);
+                lines[line] = text;
             }
-            sign.update(true);
-            if (Config.deselectSign)
-                Util.selectedSign.remove(player);
-            Util.sendMessage(player, Config.cmd_sign_updated, ChatColor.GOLD);
-            return true;
+            if (Conf.deselectSign)
+                Conf.selectedSign.remove(player);
 
+            boolean isPrivate = Conf.isPrivate(lines[0]);
+            boolean isMoreUsers = Conf.isMoreUsers(lines[0]);
+            if (isPrivate)
+                for (int i = 0; i < 4; i++)
+                    lines[i] = Conf.default_color_private[i] + lines[i];
+            else if (isMoreUsers)
+                for (int i = 0; i < 4; i++)
+                    lines[i] = Conf.default_color_moreusers[i] + lines[i];
+            Conf.setLines(sign, lines);
+            Conf.sendMessage(player, Conf.cmd_sign_updated, ChatColor.GOLD);
+            return true;
         } catch (NumberFormatException ex) {
         }
 
-        Util.sendMessage(player, Config.cmd_command_not_found, ChatColor.RED);
+        Conf.sendMessage(player, Conf.cmd_command_not_found, ChatColor.RED);
         return true;
     }
 
@@ -110,12 +119,12 @@ public class DeadboltCommandExecutor implements CommandExecutor {
         }
 
         if (args[0].equalsIgnoreCase("reload")) {
-            sender.sendMessage("Deadbolt: " + Config.cmd_console_reload);
-            plugin.cm.load();
+            sender.sendMessage("Deadbolt: " + Conf.cmd_console_reload);
+            new Conf(plugin);
             return true;
         }
 
-        sender.sendMessage("Deadbolt: " + Config.cmd_console_command_not_found);
+        sender.sendMessage("Deadbolt: " + Conf.cmd_console_command_not_found);
         return true;
     }
 }
