@@ -32,3 +32,5 @@ silent-door-sounds: false           #Gives normally silent doors the same effect
 timed-door-sounds: false            #Gives timed doors the same effect as when opened, if silent, stays silent
 
 clear-sign-selection: false         #Clear sign selection after using /deadbolt <line> <text>
+
+vertical-trapdoors: false           #Related trapdoor groups travel vertically, in addition to horizontally

@@ -19,6 +19,7 @@ public class SimpleClansBridge extends JavaPlugin implements DeadboltBridge {
     private static final String patternBracketTooLong = "\\[.{14,}\\]";
     private SimpleClans sc;
 
+    @Override
     public void onDisable() {
         if (Deadbolt.unregisterBridge(this)) {
             logger.log(Level.INFO, "Deadbolt-SimpleClans: disabled");
@@ -27,6 +28,7 @@ public class SimpleClansBridge extends JavaPlugin implements DeadboltBridge {
         }
     }
 
+    @Override
     public void onEnable() {
         sc = (SimpleClans) this.getServer().getPluginManager().getPlugin("SimpleClans");
         if (sc == null) {
@@ -40,6 +42,7 @@ public class SimpleClansBridge extends JavaPlugin implements DeadboltBridge {
         }
     }
 
+    @Override
     public boolean isAuthorized(Player player, List<String> names) {
         ClanPlayer cp = sc.getClanManager().getClanPlayer(player);
         if (cp != null) {
@@ -54,6 +57,7 @@ public class SimpleClansBridge extends JavaPlugin implements DeadboltBridge {
         return false;
     }
 
+    @Override
     public boolean canProtect(Player player, Block block) {
         //Not used
         return true;
@@ -63,5 +67,10 @@ public class SimpleClansBridge extends JavaPlugin implements DeadboltBridge {
         if (text.matches(patternBracketTooLong))
             return "[" + text.substring(1, 14) + "]";
         return text;
+    }
+
+    @Override
+    public boolean isOwner(Player player, Block block) {
+        return false;
     }
 }

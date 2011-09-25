@@ -58,11 +58,12 @@ public final class Conf {
     /*  6 */ public static boolean redstoneProtection = true;
     /*  9 */ public static boolean explosionProtection = true;
     /* 10 */ public static boolean broadcastTNT = true;
-    /* 11 */ public static int broadcastTNTRadius = 25;   
+    /* 11 */ public static int broadcastTNTRadius = 25;
     /* 29 */ public static int defaultTimer = 0;
     /* 31 */ public static boolean silentDoorSounds = false;
     /* 32 */ public static boolean timedDoorSounds = false;
     /* 34 */ public static boolean deselectSign = false;
+    /* 36 */ public static boolean verticalTrapdoors = false;
     //------------------------------------------------------------------------//
     /*  1 */ public static String signtext_private;
     /*  2 */ public static String signtext_moreusers;
@@ -141,12 +142,12 @@ public final class Conf {
                 Bukkit.getLogger().log(Level.WARNING, String.format("Deadbolt: Default moreusers color " + (i + 1) + " is not within [0-9a-fA-F]"));
             }
         }
-        
+
         /* 29 */ defaultTimer = config.getInt("default_door_timer", defaultTimer);
         /* 31 */ deselectSign = config.getBoolean("clear-sign-selection", deselectSign);
         /* 32 */ silentDoorSounds = config.getBoolean("silent-door-sounds", silentDoorSounds);
         /* 34 */ timedDoorSounds = config.getBoolean("timed-door-sounds", timedDoorSounds);
-
+        /* 36 */ verticalTrapdoors = config.getBoolean("vertical-trapdoors", verticalTrapdoors);
 
         /*  1 */ String language = config.getString("language", "english.yml");
         File langfile = new File(plugin.getDataFolder() + File.separator + language);
@@ -174,42 +175,42 @@ public final class Conf {
         /*  4 */ signtext_timer = locale.getString("signtext_timer", DEFAULT_SIGNTEXT_TIMER);
         signtext_timer = (signtext_timer.length() > 10 ? signtext_timer.substring(0, 11) : signtext_timer);
         pattern_signtext_timer = Pattern.compile("\\[(?i)(" + DEFAULT_SIGNTEXT_TIMER + "|" + signtext_timer + "):[0-9]\\]");
-        
-    /*  5 */ cmd_help_editsign = locale.getString("cmd_help_editsign",cmd_help_editsign); 
-    /*  6 */ cmd_help_reload = locale.getString("cmd_help_reload",cmd_help_reload); 
-    /*  7 */ cmd_reload = locale.getString("cmd_reload",cmd_reload); 
-    /*  8 */ cmd_sign_updated = locale.getString("cmd_sign_updated",cmd_sign_updated); 
-    /*  9 */ cmd_sign_selected = locale.getString("cmd_sign_selected",cmd_sign_selected); 
-    /* 10 */ cmd_sign_selected_error = locale.getString("cmd_sign_selected_error",cmd_sign_selected_error); 
-    /* 11 */ cmd_sign_not_selected = locale.getString("cmd_sign_not_selected",cmd_sign_not_selected); 
-    /* 12 */ cmd_identifier_not_changeable = locale.getString("cmd_identifier_not_changeable",cmd_identifier_not_changeable);
-    /* 13 */ cmd_owner_not_changeable = locale.getString("cmd_owner_not_changeable",cmd_owner_not_changeable); 
-    /* 14 */ cmd_line_num_out_of_range = locale.getString("cmd_line_num_out_of_range",cmd_line_num_out_of_range);
-    /* 15 */ cmd_command_not_found = locale.getString("cmd_command_not_found",cmd_command_not_found);
-    /* 16 */ cmd_console_reload = locale.getString("cmd_console_reload",cmd_console_reload); 
-    /* 17 */ cmd_console_command_not_found = locale.getString("cmd_console_command_not_found",cmd_console_command_not_found);
-    /* 18 */ msg_admin_break = locale.getString("msg_admin_break",msg_admin_break);
-    /* 29 */ msg_admin_bypass = locale.getString("msg_admin_bypass",msg_admin_bypass);
-    /* 20 */ msg_admin_sign_placed = locale.getString("msg_admin_sign_placed",msg_admin_sign_placed); 
-    /* 21 */ msg_admin_sign_selection = locale.getString("msg_admin_sign_selection",msg_admin_sign_selection);
-    /* 22 */ msg_admin_container = locale.getString("msg_admin_container",msg_admin_container); 
-    /* 23 */ msg_admin_warning_player_not_found = locale.getString("msg_admin_warning_player_not_found",msg_admin_warning_player_not_found);
-    /* 24 */ msg_deny_access_door = locale.getString("msg_deny_access_door",msg_deny_access_door); 
-    /* 25 */ msg_deny_access_container = locale.getString("msg_deny_access_container",msg_deny_access_container); 
-    /* 26 */ msg_deny_sign_selection = locale.getString("msg_deny_sign_selection",msg_deny_sign_selection);
-    /* 27 */ msg_deny_block_break = locale.getString("msg_deny_block_break",msg_deny_block_break);
-    /* 28 */ msg_deny_container_expansion = locale.getString("msg_deny_container_expansion",msg_deny_container_expansion); 
-    /* 29 */ msg_deny_door_expansion = locale.getString("msg_deny_door_expansion",msg_deny_door_expansion);
-    /* 30 */ msg_deny_trapdoor_placement = locale.getString("msg_deny_trapdoor_placement",msg_deny_trapdoor_placement);
-    /* 31 */ msg_deny_fencegate_placement = locale.getString("msg_deny_fencegate_placement",msg_deny_fencegate_placement); 
-    /* 32 */ msg_deny_sign_private_nothing_nearby = locale.getString("msg_deny_sign_private_nothing_nearby",msg_deny_sign_private_nothing_nearby); 
-    /* 33 */ msg_deny_sign_private_already_owned = locale.getString("msg_deny_sign_private_already_owned",msg_deny_sign_private_already_owned);
-    /* 34 */ msg_deny_sign_moreusers_already_owned = locale.getString("msg_deny_sign_moreusers_already_owned",msg_deny_sign_moreusers_already_owned);
-    /* 35 */ msg_deny_sign_moreusers_no_private = locale.getString("msg_deny_sign_moreusers_no_private",msg_deny_sign_moreusers_no_private); 
-    /* 36 */ msg_deny_sign_quickplace = locale.getString("msg_deny_sign_quickplace",msg_deny_sign_quickplace);
-    /* 37 */ msg_deny_block_perm = locale.getString("msg_deny_block_perm",msg_deny_block_perm);
-    /* 38 */ msg_tnt_fizzle = locale.getString("msg_tnt_fizzle",msg_tnt_fizzle);
-    /* 39 */ msg_reminder_lock_your_chests = locale.getString("msg_reminder_lock_your_chests",msg_reminder_lock_your_chests);
+
+        /*  5 */ cmd_help_editsign = locale.getString("cmd_help_editsign", cmd_help_editsign);
+        /*  6 */ cmd_help_reload = locale.getString("cmd_help_reload", cmd_help_reload);
+        /*  7 */ cmd_reload = locale.getString("cmd_reload", cmd_reload);
+        /*  8 */ cmd_sign_updated = locale.getString("cmd_sign_updated", cmd_sign_updated);
+        /*  9 */ cmd_sign_selected = locale.getString("cmd_sign_selected", cmd_sign_selected);
+        /* 10 */ cmd_sign_selected_error = locale.getString("cmd_sign_selected_error", cmd_sign_selected_error);
+        /* 11 */ cmd_sign_not_selected = locale.getString("cmd_sign_not_selected", cmd_sign_not_selected);
+        /* 12 */ cmd_identifier_not_changeable = locale.getString("cmd_identifier_not_changeable", cmd_identifier_not_changeable);
+        /* 13 */ cmd_owner_not_changeable = locale.getString("cmd_owner_not_changeable", cmd_owner_not_changeable);
+        /* 14 */ cmd_line_num_out_of_range = locale.getString("cmd_line_num_out_of_range", cmd_line_num_out_of_range);
+        /* 15 */ cmd_command_not_found = locale.getString("cmd_command_not_found", cmd_command_not_found);
+        /* 16 */ cmd_console_reload = locale.getString("cmd_console_reload", cmd_console_reload);
+        /* 17 */ cmd_console_command_not_found = locale.getString("cmd_console_command_not_found", cmd_console_command_not_found);
+        /* 18 */ msg_admin_break = locale.getString("msg_admin_break", msg_admin_break);
+        /* 29 */ msg_admin_bypass = locale.getString("msg_admin_bypass", msg_admin_bypass);
+        /* 20 */ msg_admin_sign_placed = locale.getString("msg_admin_sign_placed", msg_admin_sign_placed);
+        /* 21 */ msg_admin_sign_selection = locale.getString("msg_admin_sign_selection", msg_admin_sign_selection);
+        /* 22 */ msg_admin_container = locale.getString("msg_admin_container", msg_admin_container);
+        /* 23 */ msg_admin_warning_player_not_found = locale.getString("msg_admin_warning_player_not_found", msg_admin_warning_player_not_found);
+        /* 24 */ msg_deny_access_door = locale.getString("msg_deny_access_door", msg_deny_access_door);
+        /* 25 */ msg_deny_access_container = locale.getString("msg_deny_access_container", msg_deny_access_container);
+        /* 26 */ msg_deny_sign_selection = locale.getString("msg_deny_sign_selection", msg_deny_sign_selection);
+        /* 27 */ msg_deny_block_break = locale.getString("msg_deny_block_break", msg_deny_block_break);
+        /* 28 */ msg_deny_container_expansion = locale.getString("msg_deny_container_expansion", msg_deny_container_expansion);
+        /* 29 */ msg_deny_door_expansion = locale.getString("msg_deny_door_expansion", msg_deny_door_expansion);
+        /* 30 */ msg_deny_trapdoor_placement = locale.getString("msg_deny_trapdoor_placement", msg_deny_trapdoor_placement);
+        /* 31 */ msg_deny_fencegate_placement = locale.getString("msg_deny_fencegate_placement", msg_deny_fencegate_placement);
+        /* 32 */ msg_deny_sign_private_nothing_nearby = locale.getString("msg_deny_sign_private_nothing_nearby", msg_deny_sign_private_nothing_nearby);
+        /* 33 */ msg_deny_sign_private_already_owned = locale.getString("msg_deny_sign_private_already_owned", msg_deny_sign_private_already_owned);
+        /* 34 */ msg_deny_sign_moreusers_already_owned = locale.getString("msg_deny_sign_moreusers_already_owned", msg_deny_sign_moreusers_already_owned);
+        /* 35 */ msg_deny_sign_moreusers_no_private = locale.getString("msg_deny_sign_moreusers_no_private", msg_deny_sign_moreusers_no_private);
+        /* 36 */ msg_deny_sign_quickplace = locale.getString("msg_deny_sign_quickplace", msg_deny_sign_quickplace);
+        /* 37 */ msg_deny_block_perm = locale.getString("msg_deny_block_perm", msg_deny_block_perm);
+        /* 38 */ msg_tnt_fizzle = locale.getString("msg_tnt_fizzle", msg_tnt_fizzle);
+        /* 39 */ msg_reminder_lock_your_chests = locale.getString("msg_reminder_lock_your_chests", msg_reminder_lock_your_chests);
     }
 
     private void downloadFile(String filename) {

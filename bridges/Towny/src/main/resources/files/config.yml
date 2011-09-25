@@ -1,5 +1,1 @@
-deny_wilderness:      false  #Denies protecting of blocks in the wild
-
-wilderness_override:  false  #Protected blocks in the wild are able to be modified/broken by ANYONE
-mayor_override:       false  #Protected blocks in towns are able to be modified/broken by MAYORS
-assistant_override:   false  #Protected blocks in towns are able to be modified/broken by ASSISTANTS
+deny_wilderness: false  #Denies protecting of blocks in the wild

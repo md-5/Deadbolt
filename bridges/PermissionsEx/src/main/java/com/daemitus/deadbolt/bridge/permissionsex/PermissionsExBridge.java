@@ -20,6 +20,7 @@ public class PermissionsExBridge extends JavaPlugin implements DeadboltBridge {
     private static final String patternBracketTooLong = "\\[.{14,}\\]";
     private PermissionManager permissions;
 
+    @Override
     public void onDisable() {
         if (Deadbolt.unregisterBridge(this)) {
             logger.log(Level.INFO, "Deadbolt-PermissionsEx: disabled");
@@ -28,6 +29,7 @@ public class PermissionsExBridge extends JavaPlugin implements DeadboltBridge {
         }
     }
 
+    @Override
     public void onEnable() {
         if (this.getServer().getPluginManager().getPlugin("PermissionsEx") == null) {
             logger.log(Level.WARNING, "Deadbolt-PermissionsEx: PermissionsEx not found");
@@ -41,8 +43,9 @@ public class PermissionsExBridge extends JavaPlugin implements DeadboltBridge {
         }
     }
 
+    @Override
     public boolean isAuthorized(Player player, List<String> names) {
-        Set<String> allGroupNames = new HashSet<>();
+        Set<String> allGroupNames = new HashSet<String>();
         for (PermissionGroup g : permissions.getUser(player).getGroups()) {
             allGroupNames.add(g.getName());
             getInherited(g, allGroupNames);
@@ -63,6 +66,7 @@ public class PermissionsExBridge extends JavaPlugin implements DeadboltBridge {
         }
     }
 
+    @Override
     public boolean canProtect(Player player, Block block) {
         //Not used
         return true;
@@ -72,5 +76,10 @@ public class PermissionsExBridge extends JavaPlugin implements DeadboltBridge {
         if (text.matches(patternBracketTooLong))
             return "[" + text.substring(1, 14) + "]";
         return text;
+    }
+
+    @Override
+    public boolean isOwner(Player player, Block block) {
+        return false;
     }
 }

@@ -147,7 +147,7 @@ public class SignListener extends org.bukkit.event.block.BlockListener {
 
         String owner = null;
         for (DeadboltGroup dbg : dbgList)
-            if (owner == null && dbg.getOwner() != null && dbg.isOwner(player))
+            if (owner == null && dbg.getOwner() != null && (dbg.isOwner(player)))
                 owner = player.getName();
             else
                 owner = dbg.getOwner();

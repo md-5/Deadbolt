@@ -4,6 +4,7 @@ import com.daemitus.deadbolt.Conf;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.DeadboltGroup;
 import com.daemitus.deadbolt.Perm;
+import com.daemitus.deadbolt.bridge.Bridge;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -42,7 +43,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
         Block block = event.getBlock();
         DeadboltGroup dbg = DeadboltGroup.getRelated(block);
         String owner = dbg.getOwner();
-        if (dbg.isOwnerOrNull(player))
+        if (dbg.isOwnerOrNull(player) || Bridge.isOwner(player, block))
             return;
         if (player.hasPermission(Perm.admin_break)) {
             Conf.sendBroadcast(Perm.admin_broadcast_break,
@@ -89,13 +90,13 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
             case IRON_DOOR_BLOCK:
             case WOODEN_DOOR:
                 if (!dbg.isOwnerOrNull(player)) {
-                    event.setCancelled(true);
                     Conf.sendMessage(player, Conf.msg_deny_door_expansion, ChatColor.RED);
                     Block upBlock = block.getRelative(BlockFace.UP);
-                    if (upBlock.getType().equals(block.getType())) {
-                        upBlock.setType(Material.SAND);
-                        upBlock.setType(Material.AIR);
-                    }
+                    block.setType(Material.STONE);
+                    block.setType(Material.AIR);
+                    upBlock.setType(Material.STONE);
+                    upBlock.setType(Material.AIR);
+                    event.setCancelled(true);
                 }
                 return;
             case TRAP_DOOR:
@@ -109,6 +110,7 @@ public class BlockListener extends org.bukkit.event.block.BlockListener {
                     event.setCancelled(true);
                     Conf.sendMessage(player, Conf.msg_deny_fencegate_placement, ChatColor.RED);
                 }
+                return;
         }
     }
 

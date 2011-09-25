@@ -78,4 +78,9 @@ public class PermissionsBukkitBridge extends JavaPlugin implements DeadboltBridg
             return "[" + text.substring(1, 14) + "]";
         return text;
     }
+
+    @Override
+    public boolean isOwner(Player player, Block block) {
+        return false;
+    }
 }

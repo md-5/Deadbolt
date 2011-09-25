@@ -35,6 +35,7 @@ public class TownyBridge extends JavaPlugin implements DeadboltBridge {
     private static boolean mayorOverride = false;
     private static boolean assistantOverride = false;
 
+    @Override
     public void onDisable() {
         if (Deadbolt.unregisterBridge(this)) {
             Bukkit.getLogger().log(Level.INFO, "Deadbolt-Towny: disabled");
@@ -43,6 +44,7 @@ public class TownyBridge extends JavaPlugin implements DeadboltBridge {
         }
     }
 
+    @Override
     public void onEnable() {
         towny = (Towny) this.getServer().getPluginManager().getPlugin("Towny");
         if (towny == null) {
@@ -57,6 +59,7 @@ public class TownyBridge extends JavaPlugin implements DeadboltBridge {
         }
     }
 
+    @Override
     public boolean isAuthorized(Player player, List<String> names) {
         try {
             Resident resident = towny.getTownyUniverse().getResident(player.getName());
@@ -77,6 +80,7 @@ public class TownyBridge extends JavaPlugin implements DeadboltBridge {
         return false;
     }
 
+    @Override
     public boolean canProtect(Player player, Block block) {
         if (denyWilderness && towny.getTownyUniverse().isWilderness(block)) {
             Conf.sendMessage(player, "You can only protect blocks inside of a town", ChatColor.RED);
@@ -100,7 +104,7 @@ public class TownyBridge extends JavaPlugin implements DeadboltBridge {
         denyWilderness = config.getBoolean("deny_wilderness", denyWilderness);
         wildernessOverride = config.getBoolean("wilderness_override", wildernessOverride);
         mayorOverride = config.getBoolean("mayor_override", mayorOverride);
-        assistantOverride = config.getBoolean("assistant_override", mayorOverride);
+        assistantOverride = config.getBoolean("assistant_override", assistantOverride);
     }
 
     private void downloadFile(String filename) {
@@ -127,5 +131,28 @@ public class TownyBridge extends JavaPlugin implements DeadboltBridge {
             Bukkit.getLogger().log(Level.WARNING, "Deadbolt: IOError downloading ".concat(repofile));
             download.delete();
         }
+    }
+
+    @Override
+    public boolean isOwner(Player player, Block block) {
+        if (wildernessOverride && towny.getTownyUniverse().isWilderness(block))
+            return true;
+        if (mayorOverride) {
+            try {
+                Resident resident = towny.getTownyUniverse().getResident(player.getName());
+                Town blockTown = towny.getTownyUniverse().getTownBlock(block.getLocation()).getTown();
+                return blockTown.getMayor().equals(resident);
+            } catch (NotRegisteredException ex) {
+            }
+        }
+        if (assistantOverride) {
+            try {
+                Resident resident = towny.getTownyUniverse().getResident(player.getName());
+                Town blockTown = towny.getTownyUniverse().getTownBlock(block.getLocation()).getTown();
+                return blockTown.getAssistants().contains(resident);
+            } catch (NotRegisteredException ex) {
+            }
+        }
+        return false;
     }
 }

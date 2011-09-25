@@ -7,8 +7,15 @@ import org.bukkit.entity.Player;
 public interface DeadboltBridge {
 
     /**
-     * Verifies that a player is authorized to use a protected block.
-     * Default return should be false if not used.
+     * Overrides default isOwner logic for the purposes of breaking. Use isAuthorized for interacting or canProtect for protecting. False if unused.
+     * @param player The player to be checked
+     * @param block The block checked against
+     * @return 
+     */
+    public boolean isOwner(Player player, Block block);
+
+    /**
+     * Verifies that a player is authorized to use a protected block. False if unused.
      * @param player The player to be checked
      * @param names A List<String> of lines on associated signs in lower case
      * @return
@@ -16,9 +23,7 @@ public interface DeadboltBridge {
     public boolean isAuthorized(Player player, List<String> names);
 
     /**
-     * Verifies that a player is allowed to protect blocks
-     * Default return should be true if not used.
-     * This should include a reason for denial to the player
+     * Verifies that a player is allowed to protect blocks. True if unused.
      * @param player The player to be checked
      * @param block The sign block being placed
      * @return

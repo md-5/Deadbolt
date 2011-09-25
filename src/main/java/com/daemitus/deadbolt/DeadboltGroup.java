@@ -53,7 +53,7 @@ public class DeadboltGroup {
                 getRelated(block, true, true, dbg);
                 break;
             case TRAP_DOOR:
-                getRelated(block, true, false, dbg);
+                getRelated(block, true, Conf.verticalTrapdoors, dbg);
                 break;
             case DISPENSER:
             case FURNACE:
@@ -204,15 +204,15 @@ public class DeadboltGroup {
 
     public static boolean parseSignAttached(Block signBlock, Block attached, DeadboltGroup dbg) {
         if (signBlock.getType().equals(Material.WALL_SIGN)
-                && ((signBlock.getData() == 2 && signBlock.getRelative(BlockFace.EAST).equals(attached))
-                || (signBlock.getData() == 3 && signBlock.getRelative(BlockFace.WEST).equals(attached))
-                || (signBlock.getData() == 4 && signBlock.getRelative(BlockFace.NORTH).equals(attached))
-                || (signBlock.getData() == 5 && signBlock.getRelative(BlockFace.SOUTH).equals(attached))))
-            return false;
-        Sign sign = (Sign) signBlock.getState();
-        if (parseSign(sign, dbg)) {
-            dbg.add(attached);
-            return true;
+                && ((signBlock.getData() == 2 && signBlock.getRelative(BlockFace.WEST).equals(attached))
+                || (signBlock.getData() == 3 && signBlock.getRelative(BlockFace.EAST).equals(attached))
+                || (signBlock.getData() == 4 && signBlock.getRelative(BlockFace.SOUTH).equals(attached))
+                || (signBlock.getData() == 5 && signBlock.getRelative(BlockFace.NORTH).equals(attached)))) {
+            Sign sign = (Sign) signBlock.getState();
+            if (parseSign(sign, dbg)) {
+                dbg.add(attached);
+                return true;
+            }
         }
         return false;
     }
@@ -280,11 +280,11 @@ public class DeadboltGroup {
     }
 
     public String getOwner() {
-        return Conf.stripColor(owner);
+        return owner;
     }
 
     public boolean isOwner(Player player) {
-        if (Conf.stripColor(owner).equalsIgnoreCase(Conf.truncate(player.getName(), 15)))
+        if (owner.equalsIgnoreCase(Conf.truncate(player.getName(), 15)))
             return true;
         return false;
     }
@@ -306,7 +306,7 @@ public class DeadboltGroup {
             for (String text : authorized)
                 if (Conf.isEveryone(text))
                     return true;
-        } else if (authorized.contains(player.getName()) || Bridge.isAuthorized(player, authorized))
+        } else if (isOwner(player) || authorized.contains(player.getName()) || Bridge.isAuthorized(player, authorized))
             return true;
 
         return false;

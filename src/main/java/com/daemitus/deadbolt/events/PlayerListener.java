@@ -4,6 +4,7 @@ import com.daemitus.deadbolt.Conf;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.DeadboltGroup;
 import com.daemitus.deadbolt.Perm;
+import com.daemitus.deadbolt.bridge.Bridge;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -96,6 +97,8 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
             case TRAP_DOOR:
             case FENCE_GATE:
 
+                if (!Bridge.canProtect(event.getPlayer(), against))
+                    return false;
                 BlockFace clickedFace = event.getBlockFace();
                 Block signBlock = against.getRelative(clickedFace);
                 if (!signBlock.getType().equals(Material.AIR))
@@ -136,7 +139,7 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
                     signBlock.setType(Material.AIR);
                     return false;
                 }
-                
+
                 sign.update(true);
 
                 ItemStack held = player.getItemInHand();
@@ -160,12 +163,12 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
         DeadboltGroup dbg = DeadboltGroup.getRelated(block);
         if (dbg.getOwner() == null) {
             return true;
-        } else if (dbg.isOwner(player)) {
+        } else if (dbg.isAuthorized(player)) {
             dbg.toggleBlocks(plugin, block.getType());
             return false;
         } else if (player.hasPermission(Perm.admin_bypass)) {
             dbg.toggleBlocks(plugin, block.getType());
-            Conf.sendMessage(player, String.format(Conf.msg_admin_bypass,dbg.getOwner()), ChatColor.RED);
+            Conf.sendMessage(player, String.format(Conf.msg_admin_bypass, dbg.getOwner()), ChatColor.RED);
             return false;
         } else {
             Conf.sendMessage(player, Conf.msg_deny_access_door, ChatColor.RED);
@@ -179,7 +182,7 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
         DeadboltGroup dbg = DeadboltGroup.getRelated(block);
         if (dbg.getOwner() == null) {
             return true;
-        } else if (dbg.isOwner(player)) {
+        } else if (dbg.isAuthorized(player)) {
             return true;
         } else if (player.hasPermission(Perm.admin_container)) {
             Conf.sendBroadcast(Perm.broadcast_admin_container, String.format(Conf.msg_admin_container, player.getName(), dbg.getOwner()), ChatColor.RED);
@@ -204,7 +207,7 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
         } else if (player.hasPermission(Perm.admin_sign_selection)) {
             //((CraftPlayer) player).getHandle().a((TileEntitySign) ((CraftWorld) player.getWorld()).getHandle().getTileEntity(signBlock.getX(), signBlock.getY(), signBlock.getZ()));
             Conf.selectedSign.put(player, block);
-            Conf.sendMessage(player, String.format(Conf.msg_admin_sign_selection,dbg.getOwner()), ChatColor.RED);
+            Conf.sendMessage(player, String.format(Conf.msg_admin_sign_selection, dbg.getOwner()), ChatColor.RED);
             return false;
         } else {
             Conf.sendMessage(player, Conf.msg_deny_sign_selection, ChatColor.RED);
