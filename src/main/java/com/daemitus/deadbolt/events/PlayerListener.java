@@ -85,6 +85,49 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
         }
     }
 
+    private boolean canQuickProtect(Player player, Block block) {
+
+        switch (block.getType()) {
+            case CHEST:
+                if (player.hasPermission(Perm.user_create_chest))
+                    return true;
+                break;
+            case DISPENSER:
+                if (player.hasPermission(Perm.user_create_dispenser))
+                    return true;
+                break;
+            case FURNACE:
+                if (player.hasPermission(Perm.user_create_furnace))
+                    return true;
+                break;
+            case BURNING_FURNACE:
+                if (player.hasPermission(Perm.user_create_furnace))
+                    return true;
+                break;
+            case WOODEN_DOOR:
+                if (player.hasPermission(Perm.user_create_door))
+                    return true;
+                break;
+            case IRON_DOOR_BLOCK:
+                if (player.hasPermission(Perm.user_create_door))
+                    return true;
+                break;
+            case TRAP_DOOR:
+                if (player.hasPermission(Perm.user_create_trapdoor))
+                    return true;
+                break;
+            case FENCE_GATE:
+                if (player.hasPermission(Perm.user_create_fencegate))
+                    return true;
+                break;
+            default:
+                return true;
+
+        }
+        Conf.sendMessage(player, String.format(Conf.msg_deny_block_perm, block.getType().name()), ChatColor.RED);
+        return false;
+    }
+
     private boolean placeSign(PlayerInteractEvent event) {
         Block against = event.getClickedBlock();
         switch (against.getType()) {
@@ -97,6 +140,8 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
             case TRAP_DOOR:
             case FENCE_GATE:
 
+                if (!canQuickProtect(event.getPlayer(), against))
+                    return false;
                 if (!Bridge.canProtect(event.getPlayer(), against))
                     return false;
                 BlockFace clickedFace = event.getBlockFace();
