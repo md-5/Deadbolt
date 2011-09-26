@@ -284,7 +284,7 @@ public class DeadboltGroup {
     }
 
     public boolean isOwner(Player player) {
-        if (owner.equalsIgnoreCase(Conf.truncate(player.getName(), 15)))
+        if (owner.equalsIgnoreCase(Conf.truncate(player.getName(), owner.length())))
             return true;
         return false;
     }
