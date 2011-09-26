@@ -284,7 +284,7 @@ public class DeadboltGroup {
     }
 
     public boolean isOwner(Player player) {
-        if (owner.equalsIgnoreCase(Conf.truncate(player.getName(), owner.length())))
+        if (owner.equalsIgnoreCase(Conf.truncate(player.getName(), 13)))
             return true;
         return false;
     }
@@ -306,7 +306,7 @@ public class DeadboltGroup {
             for (String text : authorized)
                 if (Conf.isEveryone(text))
                     return true;
-        } else if (isOwner(player) || authorized.contains(player.getName()) || Bridge.isAuthorized(player, authorized))
+        } else if (isOwner(player) || authorized.contains(Conf.truncate(player.getName(), 13)) || Bridge.isAuthorized(player, authorized))
             return true;
 
         return false;

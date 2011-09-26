@@ -71,7 +71,7 @@ public class SignListener extends org.bukkit.event.block.BlockListener {
                     lines[1] = Conf.default_color_private[1] + player.getName();
                 else if (player.hasPermission(Perm.admin_create) && plugin.getServer().getPlayer(owner) == null)
                     Conf.sendMessage(player, String.format(Conf.msg_admin_warning_player_not_found, owner), ChatColor.YELLOW);
-                else if (!player.hasPermission(Perm.admin_create) && !owner.equalsIgnoreCase(Conf.truncate(player.getName(), owner.length())))
+                else if (!player.hasPermission(Perm.admin_create) && !owner.equalsIgnoreCase(Conf.truncate(player.getName(), 13)))
                     lines[1] = Conf.default_color_private[1] + player.getName();
             }
             Conf.setLines((Sign) block.getState(), lines);
