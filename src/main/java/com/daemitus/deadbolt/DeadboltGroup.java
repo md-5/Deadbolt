@@ -308,7 +308,7 @@ public class DeadboltGroup {
             for (String text : authorized)
                 if (Conf.isEveryone(text))
                     return true;
-        } else if (isOwner(player) || authorized.contains(Conf.truncate(player.getName(), 13)) || Bridge.isAuthorized(player, authorized))
+        } else if (isOwnerOrNull(player) || authorized.contains(Conf.truncate(player.getName(), 13)) || Bridge.isAuthorized(player, authorized))
             return true;
 
         return false;
