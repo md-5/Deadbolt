@@ -8,6 +8,7 @@ import com.palmergames.bukkit.towny.Towny;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
+import com.palmergames.bukkit.towny.object.TownyWorld;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -60,6 +61,34 @@ public class TownyBridge extends JavaPlugin implements DeadboltBridge {
     }
 
     @Override
+    public boolean isOwner(Player player, Block block) {
+        for (TownyWorld tw : towny.getTownyUniverse().getWorlds()) {
+            if (tw.getName().equalsIgnoreCase(player.getWorld().getName()) && tw.isUsingTowny()) {
+                if (wildernessOverride && towny.getTownyUniverse().isWilderness(block))
+                    return true;
+                if (mayorOverride) {
+                    try {
+                        Resident resident = towny.getTownyUniverse().getResident(player.getName());
+                        Town blockTown = towny.getTownyUniverse().getTownBlock(block.getLocation()).getTown();
+                        return blockTown.getMayor().equals(resident);
+                    } catch (NotRegisteredException ex) {
+                    }
+                }
+                if (assistantOverride) {
+                    try {
+                        Resident resident = towny.getTownyUniverse().getResident(player.getName());
+                        Town blockTown = towny.getTownyUniverse().getTownBlock(block.getLocation()).getTown();
+                        return blockTown.getAssistants().contains(resident);
+                    } catch (NotRegisteredException ex) {
+                    }
+                }
+                break;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public boolean isAuthorized(Player player, List<String> names) {
         try {
             Resident resident = towny.getTownyUniverse().getResident(player.getName());
@@ -82,9 +111,14 @@ public class TownyBridge extends JavaPlugin implements DeadboltBridge {
 
     @Override
     public boolean canProtect(Player player, Block block) {
-        if (denyWilderness && towny.getTownyUniverse().isWilderness(block)) {
-            Conf.sendMessage(player, "You can only protect blocks inside of a town", ChatColor.RED);
-            return false;
+        for (TownyWorld tw : towny.getTownyUniverse().getWorlds()) {
+            if (tw.getName().equalsIgnoreCase(player.getWorld().getName()) && tw.isUsingTowny()) {
+                if (denyWilderness && towny.getTownyUniverse().isWilderness(block)) {
+                    Conf.sendMessage(player, "You can only protect blocks inside of a town", ChatColor.RED);
+                    return false;
+                }
+                break;
+            }
         }
         return true;
     }
@@ -131,28 +165,5 @@ public class TownyBridge extends JavaPlugin implements DeadboltBridge {
             Bukkit.getLogger().log(Level.WARNING, "Deadbolt: IOError downloading ".concat(repofile));
             download.delete();
         }
-    }
-
-    @Override
-    public boolean isOwner(Player player, Block block) {
-        if (wildernessOverride && towny.getTownyUniverse().isWilderness(block))
-            return true;
-        if (mayorOverride) {
-            try {
-                Resident resident = towny.getTownyUniverse().getResident(player.getName());
-                Town blockTown = towny.getTownyUniverse().getTownBlock(block.getLocation()).getTown();
-                return blockTown.getMayor().equals(resident);
-            } catch (NotRegisteredException ex) {
-            }
-        }
-        if (assistantOverride) {
-            try {
-                Resident resident = towny.getTownyUniverse().getResident(player.getName());
-                Town blockTown = towny.getTownyUniverse().getTownBlock(block.getLocation()).getTown();
-                return blockTown.getAssistants().contains(resident);
-            } catch (NotRegisteredException ex) {
-            }
-        }
-        return false;
     }
 }
