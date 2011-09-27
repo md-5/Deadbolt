@@ -76,6 +76,12 @@ public class SignListener extends org.bukkit.event.block.BlockListener {
             }
             for (int i = 0; i < 4; i++)
                 lines[i] = Conf.formatLine(lines[i]);
+
+            Sign sign = (Sign) block.getState();
+            for (int i = 0; i < 4; i++) 
+                sign.setLine(i, lines[i]);
+            sign.update(true);
+
             return;
         } else {
             if (status.isEmpty())
