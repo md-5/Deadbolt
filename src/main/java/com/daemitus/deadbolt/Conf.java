@@ -71,39 +71,44 @@ public final class Conf {
     /*  4 */ public static String signtext_timer;
     /*  5 */ public static String cmd_help_editsign = "/deadbolt <line number> <text> - Edit signs on locked containers, right click a sign first to select it";
     /*  6 */ public static String cmd_help_reload = "/deadbolt reload - Reload the config.yml and <language>.yml files";
-    /*  7 */ public static String cmd_reload = "Reloading settings...";
-    /*  8 */ public static String cmd_sign_updated = "Sign updated";
-    /*  9 */ public static String cmd_sign_selected = "Sign selected, use /deadbolt <line number> <text>";
-    /* 10 */ public static String cmd_sign_selected_error = "Selected sign has an error. Right click it again";
-    /* 11 */ public static String cmd_sign_not_selected = "Nothing selected, right click a valid sign first";
-    /* 12 */ public static String cmd_identifier_not_changeable = "The identifier on line 1 is not changeable, except for color.";
-    /* 13 */ public static String cmd_owner_not_changeable = "The owner on line 2 is not changeable, except for color.";
-    /* 14 */ public static String cmd_line_num_out_of_range = "Bad format, your line number should be 1,2,3,4";
-    /* 15 */ public static String cmd_command_not_found = "No command found, use \"/deadbolt\" for options";
-    /* 16 */ public static String cmd_console_reload = "Deadbolt - Reloading settings...";
-    /* 17 */ public static String cmd_console_command_not_found = "Deadbolt - No command found, use \"deadbolt\" for options";
-    /* 18 */ public static String msg_admin_break = "(Admin) %1$s broke a block owned by %2$s";
-    /* 29 */ public static String msg_admin_bypass = "(Admin) Warning, this door is owned by %1$s, make sure to shut it";
-    /* 20 */ public static String msg_admin_sign_placed = "(Admin) Warning, this block is owned by %1$s";
-    /* 21 */ public static String msg_admin_sign_selection = "(Admin) Warning, selected a sign owned by %1$s";
-    /* 22 */ public static String msg_admin_container = "(Admin) %1$s opened a container owned by %2$s";
-    /* 23 */ public static String msg_admin_warning_player_not_found = "%1$s is not online, make sure you have the correct name";
-    /* 24 */ public static String msg_deny_access_door = "Access denied";
-    /* 25 */ public static String msg_deny_access_container = "Access denied";
-    /* 26 */ public static String msg_deny_sign_selection = "You don't own this sign";
-    /* 27 */ public static String msg_deny_block_break = "You don't own this block";
-    /* 28 */ public static String msg_deny_container_expansion = "You don't own the adjacent container";
-    /* 29 */ public static String msg_deny_door_expansion = "You don't own the adjacent door";
-    /* 30 */ public static String msg_deny_trapdoor_placement = "You don't own the adjacent hinge block";
-    /* 31 */ public static String msg_deny_fencegate_placement = "You don't own the adjacent fence gate";
-    /* 32 */ public static String msg_deny_sign_private_nothing_nearby = "Nothing nearby to protect";
-    /* 33 */ public static String msg_deny_sign_private_already_owned = "This block is already protected";
-    /* 34 */ public static String msg_deny_sign_moreusers_already_owned = "You don't own this block";
-    /* 35 */ public static String msg_deny_sign_moreusers_no_private = "No sign with [Private] nearby";
-    /* 36 */ public static String msg_deny_sign_quickplace = "You cant protect this block, %1$s already has";
-    /* 37 */ public static String msg_deny_block_perm = "You are not authorized to protect %1$s";
-    /* 38 */ public static String msg_tnt_fizzle = "TNT tried to explode too close to a protected block";
-    /* 39 */ public static String msg_reminder_lock_your_chests = "Place a sign headed [Private] next to your chest to lock it";
+    /*  7 */ public static String cmd_help_fix = "/deadbolt fix - toggle a single block";
+    /*  8 */ public static String cmd_help_fixAll = "/deadbolt fixall - toggle all related blocks";
+    /*  9 */ public static String cmd_reload = "Reloading settings...";
+    /* 10 */ public static String cmd_fix_notowned = "You don't own that block";
+    /* 11 */ public static String cmd_fix_bad_type = "You can only fix blocks that open and close";
+    /* 12 */ public static String cmd_sign_updated = "Sign updated";
+    /* 13 */ public static String cmd_sign_selected = "Sign selected, use /deadbolt <line number> <text>";
+    /* 14 */ public static String cmd_sign_selected_error = "Selected sign has an error. Right click it again";
+    /* 15 */ public static String cmd_sign_not_selected = "Nothing selected, right click a valid sign first";
+    /* 16 */ public static String cmd_identifier_not_changeable = "The identifier on line 1 is not changeable, except for color.";
+    /* 17 */ public static String cmd_owner_not_changeable = "The owner on line 2 is not changeable, except for color.";
+    /* 18 */ public static String cmd_line_num_out_of_range = "Bad format, your line number should be 1,2,3,4";
+    /* 19 */ public static String cmd_command_not_found = "No command found, use \"/deadbolt\" for options";
+    /* 20 */ public static String cmd_console_reload = "Deadbolt - Reloading settings...";
+    /* 21 */ public static String cmd_console_command_not_found = "Deadbolt - No command found, use \"deadbolt\" for options";
+    /* 22 */ public static String msg_admin_break = "(Admin) %1$s broke a block owned by %2$s";
+    /* 23 */ public static String msg_admin_bypass = "(Admin) Warning, this door is owned by %1$s, make sure to shut it";
+    /* 24 */ public static String msg_admin_sign_placed = "(Admin) Warning, this block is owned by %1$s";
+    /* 25 */ public static String msg_admin_sign_selection = "(Admin) Warning, selected a sign owned by %1$s";
+    /* 26 */ public static String msg_admin_block_fixed = "(Admin) Warning, fixed a block owned by %1$s";
+    /* 27 */ public static String msg_admin_container = "(Admin) %1$s opened a container owned by %2$s";
+    /* 28 */ public static String msg_admin_warning_player_not_found = "%1$s is not online, make sure you have the correct name";
+    /* 29 */ public static String msg_deny_access_door = "Access denied";
+    /* 30 */ public static String msg_deny_access_container = "Access denied";
+    /* 31 */ public static String msg_deny_sign_selection = "You don't own this sign";
+    /* 32 */ public static String msg_deny_block_break = "You don't own this block";
+    /* 33 */ public static String msg_deny_container_expansion = "You don't own the adjacent container";
+    /* 34 */ public static String msg_deny_door_expansion = "You don't own the adjacent door";
+    /* 35 */ public static String msg_deny_trapdoor_placement = "You don't own the adjacent hinge block";
+    /* 36 */ public static String msg_deny_fencegate_placement = "You don't own the adjacent fence gate";
+    /* 37 */ public static String msg_deny_sign_private_nothing_nearby = "Nothing nearby to protect";
+    /* 38 */ public static String msg_deny_sign_private_already_owned = "This block is already protected";
+    /* 39 */ public static String msg_deny_sign_moreusers_already_owned = "You don't own this block";
+    /* 40 */ public static String msg_deny_sign_moreusers_no_private = "No sign with [Private] nearby";
+    /* 41 */ public static String msg_deny_sign_quickplace = "You cant protect this block, %1$s already has";
+    /* 42 */ public static String msg_deny_block_perm = "You are not authorized to protect %1$s";
+    /* 43 */ public static String msg_tnt_fizzle = "TNT tried to explode too close to a protected block";
+    /* 44 */ public static String msg_reminder_lock_your_chests = "Place a sign headed [Private] next to your chest to lock it";
     //------------------------------------------------------------------------//
 
     public Conf(final Deadbolt plugin) {
@@ -178,6 +183,10 @@ public final class Conf {
 
         /*  5 */ cmd_help_editsign = locale.getString("cmd_help_editsign", cmd_help_editsign);
         /*  6 */ cmd_help_reload = locale.getString("cmd_help_reload", cmd_help_reload);
+        /*    */ cmd_help_fix = locale.getString("cmd_help_fix", cmd_help_fix);
+        /*    */ cmd_help_fixAll = locale.getString("cmd_help_fixAll", cmd_help_fixAll);
+        /*    */ cmd_fix_notowned = locale.getString("cmd_fix_notowned", cmd_fix_notowned);
+        /*    */ cmd_fix_bad_type = locale.getString("cmd_fix_bad_type", cmd_fix_bad_type);
         /*  7 */ cmd_reload = locale.getString("cmd_reload", cmd_reload);
         /*  8 */ cmd_sign_updated = locale.getString("cmd_sign_updated", cmd_sign_updated);
         /*  9 */ cmd_sign_selected = locale.getString("cmd_sign_selected", cmd_sign_selected);
@@ -193,6 +202,7 @@ public final class Conf {
         /* 29 */ msg_admin_bypass = locale.getString("msg_admin_bypass", msg_admin_bypass);
         /* 20 */ msg_admin_sign_placed = locale.getString("msg_admin_sign_placed", msg_admin_sign_placed);
         /* 21 */ msg_admin_sign_selection = locale.getString("msg_admin_sign_selection", msg_admin_sign_selection);
+        /*    */ msg_admin_block_fixed = locale.getString("msg_admin_block_fixed", msg_admin_block_fixed);
         /* 22 */ msg_admin_container = locale.getString("msg_admin_container", msg_admin_container);
         /* 23 */ msg_admin_warning_player_not_found = locale.getString("msg_admin_warning_player_not_found", msg_admin_warning_player_not_found);
         /* 24 */ msg_deny_access_door = locale.getString("msg_deny_access_door", msg_deny_access_door);
@@ -284,18 +294,12 @@ public final class Conf {
         return stripColor(sign.getLine(line));
     }
 
-    public static void setLines(Sign sign, String lines[]) {
-        for (int i = 0; i < 4; i++)
-            setLine(sign, i, lines[i]);
-        sign.update(true);
-    }
-
-    public static void setLine(Sign sign, int num, String line) {
+    public static String formatLine(String line) {
         while (line.startsWith("§0"))
             line = line.substring(2);
         line = TWOCOLORPATTERN.matcher(line).replaceAll("$2$3");
         line = truncate(line, 15);
-        sign.setLine(num, line);
+        return line;
     }
 
     public static int countColors(String text) {

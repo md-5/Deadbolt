@@ -226,21 +226,23 @@ public class DeadboltGroup {
     }
 
     public static boolean parseSign(Sign sign, DeadboltGroup dbg) {
-        String line = Conf.getLine(sign, 0);
-        if (Conf.isPrivate(line)) {
-            dbg.owner = Conf.getLine(sign, 1);
+        String ident = Conf.getLine(sign, 0);
+        String line;
+        if (Conf.isPrivate(ident)) {
+            dbg.owner = Conf.getLine(sign, 1).toLowerCase();
             for (int i = 2; i < 4; i++) {
                 line = Conf.getLine(sign, i);
                 if (Conf.isTimer(line))
                     dbg.timer = Integer.valueOf(line.substring(line.length() - 2, line.length() - 1));
                 else
-                    dbg.authorized.add(line);
+                    dbg.authorized.add(line.toLowerCase());
             }
             dbg.add(sign.getBlock());
             return true;
-        } else if (Conf.isMoreUsers(line)) {
+        } else if (Conf.isMoreUsers(ident)) {
             for (int i = 1; i < 4; i++) {
-                dbg.authorized.add(line);
+                line = Conf.getLine(sign, i);
+                dbg.authorized.add(line.toLowerCase());
             }
             dbg.add(sign.getBlock());
             return true;
@@ -286,7 +288,7 @@ public class DeadboltGroup {
     public boolean isOwner(Player player) {
         if (owner == null)
             return false;
-        if (owner.equalsIgnoreCase(Conf.truncate(player.getName(), 13)))
+        if (owner.equalsIgnoreCase(Conf.truncate(player.getName(), owner.length() >= 13 ? owner.length() : 15)))
             return true;
         return false;
     }
@@ -308,7 +310,11 @@ public class DeadboltGroup {
             for (String text : authorized)
                 if (Conf.isEveryone(text))
                     return true;
-        } else if (isOwnerOrNull(player) || authorized.contains(Conf.truncate(player.getName(), 13)) || Bridge.isAuthorized(player, authorized))
+        } else if (isOwnerOrNull(player)
+                || authorized.contains(Conf.truncate(player.getName(), 15))
+                || authorized.contains(Conf.truncate(player.getName(), 14))
+                || authorized.contains(Conf.truncate(player.getName(), 13))
+                || Bridge.isAuthorized(player, authorized))
             return true;
 
         return false;

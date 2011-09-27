@@ -12,7 +12,7 @@ public class Perm {
     public static final String admin_create = "deadbolt.admin.create";
     public static final String admin_break = "deadbolt.admin.break";
     public static final String admin_bypass = "deadbolt.admin.bypass";
-    public static final String admin_sign_selection = "deadbolt.admin.signs";
+    public static final String admin_commands = "deadbolt.admin.commands";
     public static final String admin_container = "deadbolt.admin.snoop";
     public static final String command_reload = "deadbolt.command.reload";
     public static final String admin_broadcast_break = "deadbolt.broadcast.break";

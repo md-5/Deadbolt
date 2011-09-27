@@ -172,12 +172,12 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
                 DeadboltGroup dbg = DeadboltGroup.getRelated(against);
                 Sign sign = (Sign) signBlock.getState();
                 if (dbg.getOwner() == null) {
-                    Conf.setLine(sign, 0, Conf.default_color_private[0] + "[" + Conf.signtext_private + "]");
-                    Conf.setLine(sign, 1, Conf.default_color_private[1] + player.getName());
+                    sign.setLine(0, Conf.formatLine(Conf.default_color_private[0] + "[" + Conf.signtext_private + "]"));
+                    sign.setLine(1, Conf.formatLine(Conf.default_color_private[1] + player.getName()));
                 } else if (dbg.isOwner(player)) {
-                    Conf.setLine(sign, 0, Conf.default_color_moreusers[0] + "[" + Conf.signtext_moreusers + "]");
+                    sign.setLine(0, Conf.formatLine(Conf.default_color_moreusers[0] + "[" + Conf.signtext_moreusers + "]"));
                 } else if (player.hasPermission(Perm.admin_create)) {
-                    Conf.setLine(sign, 0, Conf.default_color_moreusers[0] + "[" + Conf.signtext_moreusers + "]");
+                    sign.setLine(0, Conf.formatLine(Conf.default_color_moreusers[0] + "[" + Conf.signtext_moreusers + "]"));
                     Conf.sendMessage(player, String.format(Conf.msg_admin_sign_placed, dbg.getOwner()), ChatColor.RED);
                 } else {
                     Conf.sendMessage(player, String.format(Conf.msg_deny_sign_quickplace, dbg.getOwner()), ChatColor.RED);
@@ -206,9 +206,9 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
         Block block = event.getClickedBlock();
         Player player = event.getPlayer();
         DeadboltGroup dbg = DeadboltGroup.getRelated(block);
-        if (dbg.getOwner() == null) {
+        if (dbg.getOwner() == null)
             return true;
-        } else if (dbg.isAuthorized(player)) {
+        else if (dbg.isAuthorized(player)) {
             dbg.toggleBlocks(plugin, block.getType());
             return false;
         } else if (player.hasPermission(Perm.admin_bypass)) {
@@ -225,9 +225,9 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
         Block block = event.getClickedBlock();
         Player player = event.getPlayer();
         DeadboltGroup dbg = DeadboltGroup.getRelated(block);
-        if (dbg.getOwner() == null) {
+        if (dbg.getOwner() == null)
             return true;
-        } else if (dbg.isAuthorized(player)) {
+        if (dbg.isAuthorized(player)) {
             return true;
         } else if (player.hasPermission(Perm.admin_container)) {
             Conf.sendBroadcast(Perm.broadcast_admin_container, String.format(Conf.msg_admin_container, player.getName(), dbg.getOwner()), ChatColor.RED);
@@ -249,7 +249,7 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
             Conf.selectedSign.put(player, block);
             Conf.sendMessage(player, Conf.cmd_sign_selected, ChatColor.GOLD);
             return false;
-        } else if (player.hasPermission(Perm.admin_sign_selection)) {
+        } else if (player.hasPermission(Perm.admin_commands)) {
             //((CraftPlayer) player).getHandle().a((TileEntitySign) ((CraftWorld) player.getWorld()).getHandle().getTileEntity(signBlock.getX(), signBlock.getY(), signBlock.getZ()));
             Conf.selectedSign.put(player, block);
             Conf.sendMessage(player, String.format(Conf.msg_admin_sign_selection, dbg.getOwner()), ChatColor.RED);

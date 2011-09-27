@@ -8,7 +8,7 @@ description: A simple plugin for locking containers and doors without passwords 
 commands:
     deadbolt:
         description: Access to the Deadbolt plugin via commands.
-        alias: db
+        aliases: db
 permissions:
 #------------------------------------------------------------------------------#
     deadbolt.*:
@@ -78,8 +78,8 @@ permissions:
     deadbolt.admin.bypass:
         description: Allows admin usage of protected doors and trapdoors
         default: op
-    deadbolt.admin.signs:
-        description: Allows admin usage of commands on user signs
+    deadbolt.admin.commands:
+        description: Allows admin usage of commands on user blocks
         default: op
     deadbolt.admin.snoop:
         description: Allows admin usage of protected chests, dispensers, and furnaces
