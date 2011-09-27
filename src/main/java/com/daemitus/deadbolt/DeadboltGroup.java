@@ -21,7 +21,8 @@ public class DeadboltGroup {
     private List<String> authorized = new ArrayList<String>();
     private Set<Block> related = new HashSet<Block>();
     private Set<Block> traversed = new HashSet<Block>();
-    public int timer = Conf.defaultTimer;
+    private int timer = Conf.defaultTimer;
+    private boolean everyone = false;
 
     public DeadboltGroup() {
     }
@@ -234,6 +235,8 @@ public class DeadboltGroup {
                 line = Conf.getLine(sign, i);
                 if (Conf.isTimer(line))
                     dbg.timer = Integer.valueOf(line.substring(line.length() - 2, line.length() - 1));
+                else if (Conf.isEveryone(line))
+                    dbg.everyone = true;
                 else
                     dbg.authorized.add(line.toLowerCase());
             }
@@ -307,14 +310,13 @@ public class DeadboltGroup {
 
     public boolean isAuthorized(Player player) {
         if (player == null) {//null? check for everyone
-            for (String text : authorized)
-                if (Conf.isEveryone(text))
-                    return true;
+            return everyone;
         } else if (isOwnerOrNull(player)
                 || authorized.contains(Conf.truncate(player.getName(), 15))
                 || authorized.contains(Conf.truncate(player.getName(), 14))
                 || authorized.contains(Conf.truncate(player.getName(), 13))
-                || Bridge.isAuthorized(player, authorized))
+                || Bridge.isAuthorized(player, authorized)
+                || everyone)
             return true;
 
         return false;
