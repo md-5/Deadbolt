@@ -67,7 +67,7 @@ permissions:
             deadbolt.admin.create: true
             deadbolt.admin.break: true
             deadbolt.admin.bypass: true
-            deadbolt.admin.signs: true
+            deadbolt.admin.commands: true
             deadbolt.admin.snoop: true
     deadbolt.admin.create:
         description: Allows admin protection of all for other users
