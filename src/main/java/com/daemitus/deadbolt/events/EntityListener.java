@@ -19,7 +19,7 @@ public class EntityListener extends org.bukkit.event.entity.EntityListener {
 
     public EntityListener(final Deadbolt plugin) {
         this.plugin = plugin;
-        Bukkit.getPluginManager().registerEvent(Type.ENTITY_EXPLODE, this, Priority.Lowest, plugin);
+        Bukkit.getPluginManager().registerEvent(Type.ENTITY_EXPLODE, this, Priority.Highest, plugin);
     }
 
     @Override
