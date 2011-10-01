@@ -64,7 +64,6 @@ public class PermissionsBukkitBridge extends JavaPlugin implements DeadboltBridg
                 getInherited(g, groupNames);
             }
         }
-
     }
 
     @Override

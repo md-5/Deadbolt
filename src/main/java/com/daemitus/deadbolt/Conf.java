@@ -20,8 +20,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.material.MaterialData;
 import org.bukkit.util.config.Configuration;
 
 public final class Conf {
@@ -308,5 +310,19 @@ public final class Conf {
         while (match.find())
             i++;
         return i;
+    }
+
+    public static org.bukkit.block.Sign getSignState(Block signBlock) {
+        BlockState state = signBlock.getState();
+        return (state instanceof org.bukkit.block.Sign)
+                ? (org.bukkit.block.Sign) signBlock.getState()
+                : null;
+    }
+
+    public static org.bukkit.material.Sign getSignData(Block signBlock) {
+        MaterialData data = signBlock.getState().getData();
+        return (data instanceof org.bukkit.material.Sign)
+                ? (org.bukkit.material.Sign) signBlock.getState().getData()
+                : null;
     }
 }

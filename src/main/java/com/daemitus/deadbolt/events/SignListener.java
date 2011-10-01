@@ -158,7 +158,7 @@ public class SignListener extends org.bukkit.event.block.BlockListener {
                 owner = player.getName();
             else
                 owner = dbg.getOwner();
-
+        
         if (isPrivate) {
             //is it owned?            
             if (owner != null)

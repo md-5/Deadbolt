@@ -12,7 +12,6 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.plugin.PluginManager;
 
 public class EntityListener extends org.bukkit.event.entity.EntityListener {
 
@@ -29,7 +28,6 @@ public class EntityListener extends org.bukkit.event.entity.EntityListener {
             return;
         if (!Conf.explosionProtection)
             return;
-
         for (Block block : event.blockList()) {
             if (DeadboltGroup.getRelated(block).getOwner() != null) {
                 event.setCancelled(true);

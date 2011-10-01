@@ -124,8 +124,13 @@ public class DeadboltGroup {
                 Block baseBlock = block;
                 while (baseBlock.getType().equals(block.getType()))
                     baseBlock = baseBlock.getRelative(BlockFace.DOWN);
-                dbg.add(baseBlock);
-                parseAdjacent(baseBlock, dbg);
+                if (dbg.add(baseBlock))
+                    parseAdjacent(baseBlock, dbg);
+                Block topBlock = block;
+                while (topBlock.getType().equals(block.getType()))
+                    topBlock = topBlock.getRelative(BlockFace.UP);
+                if (dbg.add(topBlock))
+                    parseAdjacent(topBlock, dbg);
                 break;
         }
 
@@ -153,7 +158,6 @@ public class DeadboltGroup {
                         case FENCE_GATE:
                             parseAdjacent(adjacent, dbg);
                     }
-
             }
         }
 
@@ -187,35 +191,20 @@ public class DeadboltGroup {
 
     public static boolean parseAdjacent(Block attached, DeadboltGroup dbg) {
         boolean added = false;
-        for (BlockFace bf : Conf.CARDINAL_FACES) {
-            Block signBlock = attached.getRelative(bf);
-            if (!signBlock.getType().equals(Material.WALL_SIGN)
-                    || (bf.equals(BlockFace.EAST) && signBlock.getData() != 2)
-                    || (bf.equals(BlockFace.WEST) && signBlock.getData() != 3)
-                    || (bf.equals(BlockFace.NORTH) && signBlock.getData() != 4)
-                    || (bf.equals(BlockFace.SOUTH) && signBlock.getData() != 5))
-                continue;
-            Sign sign = (Sign) signBlock.getState();
-            added = added || parseSign(sign, dbg);
-        }
-        if (added)
-            dbg.add(attached);
+        for (BlockFace bf : Conf.CARDINAL_FACES) 
+            added = parseSignAttached(attached.getRelative(bf), attached, dbg) ||added ;
         return added;
     }
 
     public static boolean parseSignAttached(Block signBlock, Block attached, DeadboltGroup dbg) {
-        if (signBlock.getType().equals(Material.WALL_SIGN)
-                && ((signBlock.getData() == 2 && signBlock.getRelative(BlockFace.WEST).equals(attached))
-                || (signBlock.getData() == 3 && signBlock.getRelative(BlockFace.EAST).equals(attached))
-                || (signBlock.getData() == 4 && signBlock.getRelative(BlockFace.SOUTH).equals(attached))
-                || (signBlock.getData() == 5 && signBlock.getRelative(BlockFace.NORTH).equals(attached)))) {
-            Sign sign = (Sign) signBlock.getState();
-            if (parseSign(sign, dbg)) {
-                dbg.add(attached);
-                return true;
-            }
-        }
-        return false;
+        if (!signBlock.getType().equals(Material.WALL_SIGN))
+            return false;
+        if (!signBlock.getRelative(Conf.getSignData(signBlock).getAttachedFace()).equals(attached))
+            return false;
+        if (!parseSign(Conf.getSignState(signBlock), dbg))
+            return false;
+        dbg.add(attached);
+        return true;
     }
 
     public static boolean parseSignBlock(Block signBlock, DeadboltGroup dbg) {
@@ -237,7 +226,7 @@ public class DeadboltGroup {
                     dbg.timer = Integer.valueOf(line.substring(line.length() - 2, line.length() - 1));
                 else if (Conf.isEveryone(line))
                     dbg.everyone = true;
-                else
+                else if (!dbg.authorized.contains(line.toLowerCase()))
                     dbg.authorized.add(line.toLowerCase());
             }
             dbg.add(sign.getBlock());
@@ -245,7 +234,8 @@ public class DeadboltGroup {
         } else if (Conf.isMoreUsers(ident)) {
             for (int i = 1; i < 4; i++) {
                 line = Conf.getLine(sign, i);
-                dbg.authorized.add(line.toLowerCase());
+                if (!dbg.authorized.contains(line.toLowerCase()))
+                    dbg.authorized.add(line.toLowerCase());
             }
             dbg.add(sign.getBlock());
             return true;
@@ -255,16 +245,7 @@ public class DeadboltGroup {
 
     public static Block getBlockSignAttachedTo(Block block) {
         if (block.getType().equals(Material.WALL_SIGN))
-            switch (block.getData()) {
-                case 2:
-                    return block.getRelative(BlockFace.WEST);
-                case 3:
-                    return block.getRelative(BlockFace.EAST);
-                case 4:
-                    return block.getRelative(BlockFace.SOUTH);
-                case 5:
-                    return block.getRelative(BlockFace.NORTH);
-            }
+            return block.getRelative(Conf.getSignData(block).getAttachedFace());
         return null;
     }
 
@@ -312,13 +293,13 @@ public class DeadboltGroup {
         if (player == null) {//null? check for everyone
             return everyone;
         } else if (isOwnerOrNull(player)
-                || authorized.contains(Conf.truncate(player.getName(), 15))
-                || authorized.contains(Conf.truncate(player.getName(), 14))
-                || authorized.contains(Conf.truncate(player.getName(), 13))
+                || authorized.contains(Conf.truncate(player.getName(), 15).toLowerCase())
+                || authorized.contains(Conf.truncate(player.getName(), 14).toLowerCase())
+                || authorized.contains(Conf.truncate(player.getName(), 13).toLowerCase())
                 || Bridge.isAuthorized(player, authorized)
-                || everyone)
+                || everyone) {
             return true;
-
+        }
         return false;
     }
 
