@@ -86,7 +86,8 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
     }
 
     private boolean canQuickProtect(Player player, Block block) {
-
+        if (!Conf.quickSigns)
+            return false;
         switch (block.getType()) {
             case CHEST:
                 if (player.hasPermission(Perm.user_create_chest))
@@ -122,7 +123,6 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
                 break;
             default:
                 return true;
-
         }
         Conf.sendMessage(player, String.format(Conf.msg_deny_block_perm, block.getType().name()), ChatColor.RED);
         return false;

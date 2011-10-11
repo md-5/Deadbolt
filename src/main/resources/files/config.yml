@@ -34,3 +34,5 @@ timed-door-sounds: false            #Gives timed doors the same effect as when o
 clear-sign-selection: false         #Clear sign selection after using /deadbolt <line> <text>
 
 vertical-trapdoors: false           #Related trapdoor groups travel vertically, in addition to horizontally
+
+quick-signs: true                   #Allows right click placement of signs automatically on the target

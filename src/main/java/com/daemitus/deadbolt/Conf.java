@@ -66,6 +66,7 @@ public final class Conf {
     /* 32 */ public static boolean timedDoorSounds = false;
     /* 34 */ public static boolean deselectSign = false;
     /* 36 */ public static boolean verticalTrapdoors = false;
+    /* 38 */ public static boolean quickSigns = true;
     //------------------------------------------------------------------------//
     /*  1 */ public static String signtext_private;
     /*  2 */ public static String signtext_moreusers;
@@ -155,6 +156,7 @@ public final class Conf {
         /* 32 */ silentDoorSounds = config.getBoolean("silent-door-sounds", silentDoorSounds);
         /* 34 */ timedDoorSounds = config.getBoolean("timed-door-sounds", timedDoorSounds);
         /* 36 */ verticalTrapdoors = config.getBoolean("vertical-trapdoors", verticalTrapdoors);
+        /* 38 */ quickSigns = config.getBoolean("quick-signs", quickSigns);
 
         /*  1 */ String language = config.getString("language", "english.yml");
         File langfile = new File(plugin.getDataFolder() + File.separator + language);
