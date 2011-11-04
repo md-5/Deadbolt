@@ -58,15 +58,16 @@ public final class Conf {
     /*  3 */ public static boolean groupContainers = true;
     /*  5 */ public static boolean pistonProtection = true;
     /*  6 */ public static boolean redstoneProtection = true;
-    /*  9 */ public static boolean explosionProtection = true;
-    /* 10 */ public static boolean broadcastTNT = true;
-    /* 11 */ public static int broadcastTNTRadius = 25;
-    /* 29 */ public static int defaultTimer = 0;
-    /* 31 */ public static boolean silentDoorSounds = false;
-    /* 32 */ public static boolean timedDoorSounds = false;
-    /* 34 */ public static boolean deselectSign = false;
-    /* 36 */ public static boolean verticalTrapdoors = false;
-    /* 38 */ public static boolean quickSigns = true;
+    /*  9 */ public static boolean endermanProtection = true;
+    /* 11 */ public static boolean explosionProtection = true;
+    /* 12 */ public static boolean broadcastTNT = true;
+    /* 13 */ public static int broadcastTNTRadius = 25;
+    /* 31 */ public static int defaultTimer = 0;
+    /* 33 */ public static boolean silentDoorSounds = false;
+    /* 34 */ public static boolean timedDoorSounds = false;
+    /* 36 */ public static boolean deselectSign = false;
+    /* 38 */ public static boolean verticalTrapdoors = false;
+    /* 40 */ public static boolean quickSigns = true;
     //------------------------------------------------------------------------//
     /*  1 */ public static String signtext_private;
     /*  2 */ public static String signtext_moreusers;
@@ -129,17 +130,18 @@ public final class Conf {
         /*  3 */ groupContainers = config.getBoolean("group-containers", groupContainers);
         /*  5 */ pistonProtection = config.getBoolean("piston-protection", pistonProtection);
         /*  7 */ redstoneProtection = config.getBoolean("redstone-protection", redstoneProtection);
-        /*  9 */ explosionProtection = config.getBoolean("explosion-protection", explosionProtection);
-        /* 10 */ broadcastTNT = config.getBoolean("broadcast-tnt-fizzle", broadcastTNT);
-        /* 11 */ broadcastTNTRadius = config.getInt("broadcast-tnt-fizzle-radius", broadcastTNTRadius);
-        /* 20 */ default_color_private[0] = "§" + config.getString("default_color_private_line_1", default_color_private[0]);
-        /* 21 */ default_color_private[1] = "§" + config.getString("default_color_private_line_2", default_color_private[1]);
-        /* 22 */ default_color_private[2] = "§" + config.getString("default_color_private_line_3", default_color_private[2]);
-        /* 23 */ default_color_private[3] = "§" + config.getString("default_color_private_line_4", default_color_private[3]);
-        /* 24 */ default_color_moreusers[0] = "§" + config.getString("default_color_moreusers_line_1", default_color_moreusers[0]);
-        /* 25 */ default_color_moreusers[1] = "§" + config.getString("default_color_moreusers_line_2", default_color_moreusers[1]);
-        /* 26 */ default_color_moreusers[2] = "§" + config.getString("default_color_moreusers_line_3", default_color_moreusers[2]);
-        /* 27 */ default_color_moreusers[3] = "§" + config.getString("default_color_moreusers_line_4", default_color_moreusers[3]);
+        /*  9 */ endermanProtection = config.getBoolean("enderman-protection", endermanProtection);
+        /* 11 */ explosionProtection = config.getBoolean("explosion-protection", explosionProtection);
+        /* 12 */ broadcastTNT = config.getBoolean("broadcast-tnt-fizzle", broadcastTNT);
+        /* 13 */ broadcastTNTRadius = config.getInt("broadcast-tnt-fizzle-radius", broadcastTNTRadius);
+        /* 22 */ default_color_private[0] = "§" + config.getString("default_color_private_line_1", default_color_private[0]);
+        /* 23 */ default_color_private[1] = "§" + config.getString("default_color_private_line_2", default_color_private[1]);
+        /* 24 */ default_color_private[2] = "§" + config.getString("default_color_private_line_3", default_color_private[2]);
+        /* 25 */ default_color_private[3] = "§" + config.getString("default_color_private_line_4", default_color_private[3]);
+        /* 26 */ default_color_moreusers[0] = "§" + config.getString("default_color_moreusers_line_1", default_color_moreusers[0]);
+        /* 27 */ default_color_moreusers[1] = "§" + config.getString("default_color_moreusers_line_2", default_color_moreusers[1]);
+        /* 28 */ default_color_moreusers[2] = "§" + config.getString("default_color_moreusers_line_3", default_color_moreusers[2]);
+        /* 29 */ default_color_moreusers[3] = "§" + config.getString("default_color_moreusers_line_4", default_color_moreusers[3]);
         for (int i = 0; i < 4; i++) {
             if (!COLORPATTERN.matcher(default_color_private[i]).matches()) {
                 default_color_private[i] = "§0";
@@ -151,12 +153,12 @@ public final class Conf {
             }
         }
 
-        /* 29 */ defaultTimer = config.getInt("default_door_timer", defaultTimer);
-        /* 31 */ deselectSign = config.getBoolean("clear-sign-selection", deselectSign);
-        /* 32 */ silentDoorSounds = config.getBoolean("silent-door-sounds", silentDoorSounds);
-        /* 34 */ timedDoorSounds = config.getBoolean("timed-door-sounds", timedDoorSounds);
-        /* 36 */ verticalTrapdoors = config.getBoolean("vertical-trapdoors", verticalTrapdoors);
-        /* 38 */ quickSigns = config.getBoolean("quick-signs", quickSigns);
+        /* 31 */ defaultTimer = config.getInt("default_door_timer", defaultTimer);
+        /* 33 */ deselectSign = config.getBoolean("clear-sign-selection", deselectSign);
+        /* 34 */ silentDoorSounds = config.getBoolean("silent-door-sounds", silentDoorSounds);
+        /* 36 */ timedDoorSounds = config.getBoolean("timed-door-sounds", timedDoorSounds);
+        /* 38 */ verticalTrapdoors = config.getBoolean("vertical-trapdoors", verticalTrapdoors);
+        /* 40 */ quickSigns = config.getBoolean("quick-signs", quickSigns);
 
         /*  1 */ String language = config.getString("language", "english.yml");
         File langfile = new File(plugin.getDataFolder() + File.separator + language);

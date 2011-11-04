@@ -19,8 +19,8 @@ public class DeadboltGroup {
     private static final Set<Block> toggledBlocks = new HashSet<Block>();
     private String owner = null;
     private List<String> authorized = new ArrayList<String>();
-    private Set<Block> related = new HashSet<Block>();
-    private Set<Block> traversed = new HashSet<Block>();
+    private List<Block> related = new ArrayList<Block>();
+    private List<Block> traversed = new ArrayList<Block>();
     private int timer = Conf.defaultTimer;
     private boolean everyone = false;
 
@@ -28,8 +28,16 @@ public class DeadboltGroup {
     }
 
     public boolean add(Block block) {
-        boolean r1 = traversed.add(block);
-        boolean r2 = related.add(block);
+        boolean r1 = false;
+        if (!traversed.contains(block)) {
+            traversed.add(block);
+            r1 = true;
+        }
+        boolean r2 = false;
+        if (!related.contains(block)) {
+            related.add(block);
+            r2 = true;
+        }
         return r1 && r2;
     }
 
@@ -191,8 +199,8 @@ public class DeadboltGroup {
 
     public static boolean parseAdjacent(Block attached, DeadboltGroup dbg) {
         boolean added = false;
-        for (BlockFace bf : Conf.CARDINAL_FACES) 
-            added = parseSignAttached(attached.getRelative(bf), attached, dbg) ||added ;
+        for (BlockFace bf : Conf.CARDINAL_FACES)
+            added = parseSignAttached(attached.getRelative(bf), attached, dbg) || added;
         return added;
     }
 

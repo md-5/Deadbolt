@@ -6,6 +6,8 @@ piston-protection: true             #Prevents doors and trapdoors from being bro
 
 redstone-protection: true           #Denies redstone from toggling doors and trapdoors
 
+enderman-protection: true           #Prevents endermen from breaking doors
+
 explosion-protection: true          #Protect owned blocks from explosions
 broadcast-tnt-fizzle: false         #For TNT, broadcast that it failed
 broadcast-tnt-fizzle-radius: 25     #Radius in blocks to broadcast failure

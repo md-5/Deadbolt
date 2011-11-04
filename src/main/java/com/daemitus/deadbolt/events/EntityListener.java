@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
+import org.bukkit.event.entity.EndermanPickupEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 public class EntityListener extends org.bukkit.event.entity.EntityListener {
@@ -20,6 +21,17 @@ public class EntityListener extends org.bukkit.event.entity.EntityListener {
     public EntityListener(final Deadbolt plugin) {
         this.plugin = plugin;
         Bukkit.getPluginManager().registerEvent(Type.ENTITY_EXPLODE, this, Priority.Highest, plugin);
+        Bukkit.getPluginManager().registerEvent(Type.ENDERMAN_PICKUP, this, Priority.Highest, plugin);
+    }
+
+    @Override
+    public void onEndermanPickup(EndermanPickupEvent event) {
+        if (event.isCancelled())
+            return;
+        if (Conf.endermanProtection)
+            return;
+        if (Deadbolt.isProtected(event.getBlock()))
+            event.setCancelled(true);
     }
 
     @Override
