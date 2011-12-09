@@ -1,37 +1,48 @@
 package com.daemitus.deadbolt;
 
-import com.daemitus.deadbolt.bridge.Bridge;
+import com.daemitus.deadbolt.events.RedstoneListener;
 import com.daemitus.deadbolt.commands.DeadboltCommandExecutor;
 import com.daemitus.deadbolt.events.BlockListener;
 import com.daemitus.deadbolt.events.EntityListener;
+import com.daemitus.deadbolt.events.PistonListener;
 import com.daemitus.deadbolt.events.PlayerListener;
 import com.daemitus.deadbolt.events.SignListener;
+import com.daemitus.deadbolt.listener.ListenerManager;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Deadbolt extends JavaPlugin {
 
+    public static final Logger logger = Bukkit.getServer().getLogger();
+
     @Override
     public void onEnable() {
+        PluginManager pm = this.getServer().getPluginManager();
+        SignListener signListener = new SignListener(this, pm);
+        BlockListener blockListener = new BlockListener(this, pm);
+        PlayerListener playerListener = new PlayerListener(this, pm);
+        EntityListener entityListener = new EntityListener(this, pm);
+        PistonListener pistonListener = new PistonListener(this, pm);
+        RedstoneListener redstoneListener = new RedstoneListener(this, pm);
 
-        new Conf(this);
-        new SignListener(this);
-        new BlockListener(this);
-        new EntityListener(this);
-        new PlayerListener(this);
+        Config.load(this);
+        final ListenerManager listenerManager = new ListenerManager(this);
+        listenerManager.load(this.getDataFolder() + "/listeners");
 
         this.getCommand("deadbolt").setExecutor(new DeadboltCommandExecutor(this));
 
-        Bukkit.getLogger().log(Level.INFO, String.format("Deadbolt v%1$s enabled", this.getDescription().getVersion()));
+        logger.log(Level.INFO, String.format("Deadbolt %1$s Enabled", this.getDescription().getVersion()));
     }
 
     @Override
     public void onDisable() {
-        Bukkit.getLogger().log(Level.INFO, String.format("Deadbolt v%1$s disabled", this.getDescription().getVersion()));
+        logger.log(Level.INFO, String.format("Deadbolt %1$s Disabled", this.getDescription().getVersion()));
     }
 
     /**
@@ -41,7 +52,7 @@ public class Deadbolt extends JavaPlugin {
      * @return If <name> is authorized to use <block>
      */
     public static boolean isAuthorized(Player player, Block block) {
-        return DeadboltGroup.getRelated(block).isAuthorized(player);
+        return Deadbolted.get(block).isUser(player);
     }
 
     /**
@@ -51,7 +62,7 @@ public class Deadbolt extends JavaPlugin {
      * @return If <name> owns <block>
      */
     public static boolean isOwner(Player player, Block block) {
-        return DeadboltGroup.getRelated(block).isOwner(player);
+        return Deadbolted.get(block).isOwner(player);
     }
 
     /**
@@ -60,7 +71,7 @@ public class Deadbolt extends JavaPlugin {
      * @return A List<String> containing everything on any [Private] or [More Users] signs associated with <block>
      */
     public static List<String> getAllNames(Block block) {
-        return DeadboltGroup.getRelated(block).getAuthorized();
+        return Deadbolted.get(block).getUsers();
     }
 
     /**
@@ -69,7 +80,7 @@ public class Deadbolt extends JavaPlugin {
      * @return The text on the line below [Private] on the sign associated with <block>. null if unprotected
      */
     public static String getOwnerName(Block block) {
-        return DeadboltGroup.getRelated(block).getOwner();
+        return Deadbolted.get(block).getOwner();
     }
 
     /**
@@ -78,25 +89,6 @@ public class Deadbolt extends JavaPlugin {
      * @return If <block> is owned
      */
     public static boolean isProtected(Block block) {
-        return DeadboltGroup.getRelated(block).getOwner() != null;
-    }
-
-    /**
-     * Register a bridge with Deadbolt for use in authorizing users to interact with various protected blocks.
-     * <br>Requires implementing <pre>com.daemitus.deadbolt.bridge.DeadboltBridge</pre>
-     * @param bridge Class to be added
-     * @return Success or failure
-     */
-    public static boolean registerBridge(Object bridge) {
-        return Bridge.registerBridge(bridge);
-    }
-
-    /**
-     * Unregister a bridge from Deadbolt
-     * @param bridge Class to be removed
-     * @return Success or failure
-     */
-    public static boolean unregisterBridge(Object bridge) {
-        return Bridge.unregisterBridge(bridge);
+        return Deadbolted.get(block).isProtected();
     }
 }
