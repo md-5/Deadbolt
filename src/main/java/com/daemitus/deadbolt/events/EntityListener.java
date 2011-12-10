@@ -1,59 +1,59 @@
 package com.daemitus.deadbolt.events;
 
-import com.daemitus.deadbolt.Conf;
+import com.daemitus.deadbolt.tasks.ProtectionRegenTask;
+import com.daemitus.deadbolt.Config;
 import com.daemitus.deadbolt.Deadbolt;
-import com.daemitus.deadbolt.DeadboltGroup;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import com.daemitus.deadbolt.Deadbolted;
+import com.daemitus.deadbolt.listener.ListenerManager;
+import java.util.HashSet;
+import java.util.Set;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.entity.EndermanPickupEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.plugin.PluginManager;
 
-public class EntityListener extends org.bukkit.event.entity.EntityListener {
+public final class EntityListener extends org.bukkit.event.entity.EntityListener {
 
     private final Deadbolt plugin;
 
-    public EntityListener(final Deadbolt plugin) {
+    public EntityListener(final Deadbolt plugin, final PluginManager pm) {
         this.plugin = plugin;
-        Bukkit.getPluginManager().registerEvent(Type.ENTITY_EXPLODE, this, Priority.Highest, plugin);
-        Bukkit.getPluginManager().registerEvent(Type.ENDERMAN_PICKUP, this, Priority.Highest, plugin);
+        pm.registerEvent(Type.ENTITY_EXPLODE, this, Priority.High, plugin);
+        pm.registerEvent(Type.ENDERMAN_PICKUP, this, Priority.High, plugin);
     }
 
     @Override
     public void onEndermanPickup(EndermanPickupEvent event) {
         if (event.isCancelled())
             return;
-        if (Conf.endermanProtection)
+        if (!Config.deny_endermen)
             return;
-        if (Deadbolt.isProtected(event.getBlock()))
+        Block block = event.getBlock();
+        Deadbolted db = Deadbolted.get(block);
+        if (db.isProtected()
+                && !ListenerManager.canEndermanPickup(db, event)) {
             event.setCancelled(true);
+        }
     }
 
     @Override
     public void onEntityExplode(EntityExplodeEvent event) {
         if (event.isCancelled())
             return;
-        if (!Conf.explosionProtection)
+        if (!Config.deny_explosions)
             return;
+        Set<Block> protectedBlocks = new HashSet<Block>();
         for (Block block : event.blockList()) {
-            if (DeadboltGroup.getRelated(block).getOwner() != null) {
-                event.setCancelled(true);
-                if (Conf.broadcastTNT && event.getEntity() instanceof TNTPrimed) {
-                    for (Entity entity : event.getEntity().getNearbyEntities(Conf.broadcastTNTRadius,
-                            Conf.broadcastTNTRadius,
-                            Conf.broadcastTNTRadius)) {
-                        if (entity instanceof Player) {
-                            Conf.sendMessage((Player) entity, Conf.msg_tnt_fizzle, ChatColor.YELLOW);
-                        }
-                    }
+            if (!protectedBlocks.contains(block)) {
+                Deadbolted db = Deadbolted.get(block);
+                if (db.isProtected() && !ListenerManager.canEntityExplode(db, event)) {
+                    protectedBlocks.addAll(db.blocks);
                 }
-                return;
             }
         }
+        for (Block block : protectedBlocks) 
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new ProtectionRegenTask(block), 1);
     }
 }

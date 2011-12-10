@@ -1,16 +1,23 @@
 language: english.yml               #File to load for messages
 
-group-containers: true               #Allows furnaces/dispensers to act like chests, one sign for all connected blocks
+vertical_trapdoors: true            #Allows trapdoors to link with each other vertically
+group_furnaces: true                #Allows furnaces to act like chests, one sign for all connected blocks
+group_dispensers: true              #Allows dispensers to act like chests, one sign for all connected blocks
 
-piston-protection: true             #Prevents doors and trapdoors from being broken
+deny_quick_signs: false             #Allows right click placement of signs automatically on the target
+clear_sign_selection: false         #Clear sign selection after using /deadbolt <line> <text>
 
-redstone-protection: true           #Denies redstone from toggling doors and trapdoors
+deny_explosions: true               #Denies explosions from breaking protected blocks
+deny_endermen: true                 #Denies endermen from breaking protected blocks
+deny_pistons: true                  #Denies pistons from breaking protected blocks
+deny_redstone: true                 #Denies redstone from toggling protected blocks
+deny_redstone_specific_ids: [64, 71, 96] #List of blockIDs protected by redstone unless overrode by [everyone]
+deny_timed_doors: false             #Denies function of the [timer: x] tag on signs
+forced_timed_doors: false           #Forces timed doors on every protected (trap)door
+forced_timed_doors_delay: 3         #Default delay used with forced timed doors
+timed_door_dounds: true             #Enables sound effects on timed doors
 
-enderman-protection: true           #Prevents endermen from breaking doors
-
-explosion-protection: true          #Protect owned blocks from explosions
-broadcast-tnt-fizzle: false         #For TNT, broadcast that it failed
-broadcast-tnt-fizzle-radius: 25     #Radius in blocks to broadcast failure
+silent_door_sounds: true            #Gives traditional wood door sounds to silent ones (iron doors)
 
 #Standard multiplayer color scheme
 #0 Black          6 Gold           c Red            
@@ -19,22 +26,11 @@ broadcast-tnt-fizzle-radius: 25     #Radius in blocks to broadcast failure
 #3 Teal           9 Blue           f White          
 #4 Dark Red       a Bright Green   
 #5 Purple         b Aqua           
-default_color_private_line_1: 0     
-default_color_private_line_2: 0     
-default_color_private_line_3: 0     
-default_color_private_line_4: 0     
-default_color_moreusers_line_1: 0   
-default_color_moreusers_line_2: 0   
-default_color_moreusers_line_3: 0   
-default_color_moreusers_line_4: 0   
-
-default_door_timer: 0               #The delay after which a door will toggle again, 0 to disable
-
-silent-door-sounds: false           #Gives normally silent doors the same effects as wooden ones
-timed-door-sounds: false            #Gives timed doors the same effect as when opened, if silent, stays silent
-
-clear-sign-selection: false         #Clear sign selection after using /deadbolt <line> <text>
-
-vertical-trapdoors: false           #Related trapdoor groups travel vertically, in addition to horizontally
-
-quick-signs: true                   #Allows right click placement of signs automatically on the target
+default_colors_private_line_1: 0     
+default_colors_private_line_2: 0     
+default_colors_private_line_3: 0     
+default_colors_private_line_4: 0     
+default_colors_moreusers_line_1: 0   
+default_colors_moreusers_line_2: 0   
+default_colors_moreusers_line_3: 0   
+default_colors_moreusers_line_4: 0                 

@@ -1,11 +1,10 @@
 package com.daemitus.deadbolt.events;
 
-import com.daemitus.deadbolt.Conf;
+import com.daemitus.deadbolt.Config;
 import com.daemitus.deadbolt.Deadbolt;
-import com.daemitus.deadbolt.DeadboltGroup;
+import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.Perm;
-import com.daemitus.deadbolt.bridge.Bridge;
-import org.bukkit.Bukkit;
+import com.daemitus.deadbolt.listener.ListenerManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,34 +18,29 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.PluginManager;
 
 public class PlayerListener extends org.bukkit.event.player.PlayerListener {
 
     private final Deadbolt plugin;
 
-    public PlayerListener(final Deadbolt plugin) {
+    public PlayerListener(final Deadbolt plugin, final PluginManager pm) {
         this.plugin = plugin;
-
-        Bukkit.getPluginManager().registerEvent(Type.PLAYER_INTERACT, this, Priority.Normal, plugin);
-        Bukkit.getPluginManager().registerEvent(Type.PLAYER_QUIT, this, Priority.Normal, plugin);
+        pm.registerEvent(Type.PLAYER_INTERACT, this, Priority.Normal, plugin);
+        pm.registerEvent(Type.PLAYER_QUIT, this, Priority.Normal, plugin);
     }
 
     @Override
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-            if (!handleLeftClick(event)) {
-                event.setUseInteractedBlock(Result.DENY);
-                event.setUseItemInHand(Result.DENY);
-            }
-            return;
+        if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)
+                && !handleLeftClick(event)) {
+            event.setUseInteractedBlock(Result.DENY);
+            event.setUseItemInHand(Result.DENY);
         }
-
-        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            if (!handleRightClick(event)) {
-                event.setUseInteractedBlock(Result.DENY);
-                event.setUseItemInHand(Result.DENY);
-            }
-            return;
+        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                && !handleRightClick(event)) {
+            event.setUseInteractedBlock(Result.DENY);
+            event.setUseItemInHand(Result.DENY);
         }
     }
 
@@ -64,7 +58,7 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
 
     private boolean handleRightClick(PlayerInteractEvent event) {
         if (event.getPlayer().getItemInHand().getType().equals(Material.SIGN))
-            return placeSign(event);
+            return placeQuickSign(event);
         else {
             switch (event.getClickedBlock().getType()) {
                 case WOODEN_DOOR:
@@ -85,51 +79,10 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
         }
     }
 
-    private boolean canQuickProtect(Player player, Block block) {
-        if (!Conf.quickSigns)
-            return false;
-        switch (block.getType()) {
-            case CHEST:
-                if (player.hasPermission(Perm.user_create_chest))
-                    return true;
-                break;
-            case DISPENSER:
-                if (player.hasPermission(Perm.user_create_dispenser))
-                    return true;
-                break;
-            case FURNACE:
-                if (player.hasPermission(Perm.user_create_furnace))
-                    return true;
-                break;
-            case BURNING_FURNACE:
-                if (player.hasPermission(Perm.user_create_furnace))
-                    return true;
-                break;
-            case WOODEN_DOOR:
-                if (player.hasPermission(Perm.user_create_door))
-                    return true;
-                break;
-            case IRON_DOOR_BLOCK:
-                if (player.hasPermission(Perm.user_create_door))
-                    return true;
-                break;
-            case TRAP_DOOR:
-                if (player.hasPermission(Perm.user_create_trapdoor))
-                    return true;
-                break;
-            case FENCE_GATE:
-                if (player.hasPermission(Perm.user_create_fencegate))
-                    return true;
-                break;
-            default:
-                return true;
-        }
-        Conf.sendMessage(player, String.format(Conf.msg_deny_block_perm, block.getType().name()), ChatColor.RED);
-        return false;
-    }
-
-    private boolean placeSign(PlayerInteractEvent event) {
+    private boolean placeQuickSign(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
         Block against = event.getClickedBlock();
+
         switch (against.getType()) {
             case CHEST:
             case DISPENSER:
@@ -140,128 +93,134 @@ public class PlayerListener extends org.bukkit.event.player.PlayerListener {
             case TRAP_DOOR:
             case FENCE_GATE:
 
-                if (!canQuickProtect(event.getPlayer(), against))
+                if (!canQuickProtect(player, against)) {
+                    Config.sendMessage(player, ChatColor.RED, Config.msg_deny_block_perm, against.getType().name());
                     return false;
-                if (!Bridge.canProtect(event.getPlayer(), against))
-                    return false;
+                }
+
                 BlockFace clickedFace = event.getBlockFace();
+                if (!Config.CARDINAL_FACES.contains(clickedFace))
+                    return false;
+
                 Block signBlock = against.getRelative(clickedFace);
                 if (!signBlock.getType().equals(Material.AIR))
                     return false;
 
-                signBlock.setType(Material.WALL_SIGN);
-                switch (clickedFace) {
-                    case NORTH:
-                        signBlock.setData((byte) 4);
-                        break;
-                    case SOUTH:
-                        signBlock.setData((byte) 5);
-                        break;
-                    case EAST:
-                        signBlock.setData((byte) 2);
-                        break;
-                    case WEST:
-                        signBlock.setData((byte) 3);
-                        break;
-                    default:
-                        signBlock.setType(Material.AIR);
-                        return false;
-                }
+                Deadbolted db = Deadbolted.get(against);
+                if (!ListenerManager.canSignChangeQuick(db, event))
+                    return false;
 
-                Player player = event.getPlayer();
-                DeadboltGroup dbg = DeadboltGroup.getRelated(against);
-                Sign sign = (Sign) signBlock.getState();
-                if (dbg.getOwner() == null) {
-                    sign.setLine(0, Conf.formatLine(Conf.default_color_private[0] + "[" + Conf.signtext_private + "]"));
-                    sign.setLine(1, Conf.formatLine(Conf.default_color_private[1] + player.getName()));
-                } else if (dbg.isOwner(player)) {
-                    sign.setLine(0, Conf.formatLine(Conf.default_color_moreusers[0] + "[" + Conf.signtext_moreusers + "]"));
-                } else if (player.hasPermission(Perm.admin_create)) {
-                    sign.setLine(0, Conf.formatLine(Conf.default_color_moreusers[0] + "[" + Conf.signtext_moreusers + "]"));
-                    Conf.sendMessage(player, String.format(Conf.msg_admin_sign_placed, dbg.getOwner()), ChatColor.RED);
+                signBlock.setTypeIdAndData(Material.WALL_SIGN.getId(), Config.getByteFromFacing(clickedFace), false);
+                Sign signState = (Sign) signBlock.getState();
+
+                if (!db.isProtected()) {
+                    signState.setLine(0, Config.formatForSign(Config.default_colors_private[0] + Config.locale_private));
+                    signState.setLine(1, Config.formatForSign(Config.default_colors_private[1] + Config.truncateName(player.getName())));
+                } else if (db.isOwner(player)) {
+                    signState.setLine(0, Config.formatForSign(Config.default_colors_moreusers[0] + Config.locale_moreusers));
+                } else if (Config.hasPermission(player, Perm.admin_create)) {
+                    signState.setLine(0, Config.formatForSign(Config.default_colors_moreusers[0] + Config.locale_moreusers));
+                    Config.sendMessage(player, ChatColor.RED, Config.msg_admin_sign_placed, db.getOwner());
                 } else {
-                    Conf.sendMessage(player, String.format(Conf.msg_deny_sign_quickplace, dbg.getOwner()), ChatColor.RED);
+                    Config.sendMessage(player, ChatColor.RED, Config.msg_deny_sign_quickplace, db.getOwner());
                     signBlock.setType(Material.AIR);
                     return false;
                 }
 
-                sign.update(true);
-
+                signState.update(true);
                 ItemStack held = player.getItemInHand();
                 held.setAmount(held.getAmount() - 1);
                 if (held.getAmount() == 0)
                     player.setItemInHand(null);
-
-                //WorldServer worldServer = ((CraftWorld) player.getWorld()).getHandle();
-                //TileEntitySign tileEntitySign = (TileEntitySign) worldServer.getTileEntity(signBlock.getX(), signBlock.getY(), signBlock.getZ());
-                //EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
-                //entityPlayer.a(tileEntitySign);
                 return false;
             default:
                 return true;
         }
     }
 
+    private boolean canQuickProtect(Player player, Block block) {
+        if (Config.deny_quick_signs)
+            return false;
+        switch (block.getType()) {
+            case CHEST:
+                return player.hasPermission(Perm.user_create_chest);
+            case DISPENSER:
+                return player.hasPermission(Perm.user_create_dispenser);
+            case FURNACE:
+                return player.hasPermission(Perm.user_create_furnace);
+            case BURNING_FURNACE:
+                return player.hasPermission(Perm.user_create_furnace);
+            case WOODEN_DOOR:
+                return player.hasPermission(Perm.user_create_door);
+            case IRON_DOOR_BLOCK:
+                return player.hasPermission(Perm.user_create_door);
+            case TRAP_DOOR:
+                return player.hasPermission(Perm.user_create_trapdoor);
+            case FENCE_GATE:
+                return player.hasPermission(Perm.user_create_fencegate);
+            default:
+                return false;
+        }
+    }
+
     private boolean onPlayerInteractDoor(PlayerInteractEvent event) {
-        Block block = event.getClickedBlock();
         Player player = event.getPlayer();
-        DeadboltGroup dbg = DeadboltGroup.getRelated(block);
-        if (dbg.getOwner() == null)
+        Block block = event.getClickedBlock();
+        Deadbolted db = Deadbolted.get(block);
+        if (!db.isProtected()) {
             return true;
-        else if (dbg.isAuthorized(player)) {
-            dbg.toggleBlocks(plugin, block.getType());
-            return false;
-        } else if (player.hasPermission(Perm.admin_bypass)) {
-            dbg.toggleBlocks(plugin, block.getType());
-            Conf.sendMessage(player, String.format(Conf.msg_admin_bypass, dbg.getOwner()), ChatColor.RED);
-            return false;
+        } else if (db.isUser(player) || ListenerManager.canPlayerInteract(db, event)) {
+            db.toggleDoors(block);
+            return true;
+        } else if (Config.hasPermission(player, Perm.admin_bypass)) {
+            db.toggleDoors(block);
+            Config.sendMessage(player, ChatColor.RED, Config.msg_admin_bypass, db.getOwner());
+            return true;
         } else {
-            Conf.sendMessage(player, Conf.msg_deny_access_door, ChatColor.RED);
+            Config.sendMessage(player, ChatColor.RED, Config.msg_deny_access_door);
             return false;
         }
     }
 
     private boolean onPlayerInteractContainer(PlayerInteractEvent event) {
-        Block block = event.getClickedBlock();
         Player player = event.getPlayer();
-        DeadboltGroup dbg = DeadboltGroup.getRelated(block);
-        if (dbg.getOwner() == null)
+        Block block = event.getClickedBlock();
+        Deadbolted db = Deadbolted.get(block);
+        if (!db.isProtected()) {
             return true;
-        if (dbg.isAuthorized(player)) {
+        } else if (db.isUser(player) || ListenerManager.canPlayerInteract(db, event)) {
             return true;
-        } else if (player.hasPermission(Perm.admin_container)) {
-            Conf.sendBroadcast(Perm.broadcast_admin_container, String.format(Conf.msg_admin_container, player.getName(), dbg.getOwner()), ChatColor.RED);
+        } else if (Config.hasPermission(player, Perm.admin_container)) {
+            Config.sendBroadcast(Perm.broadcast_admin_container, ChatColor.RED, Config.msg_admin_container, player.getName(), db.getOwner());
             return true;
         } else {
-            Conf.sendMessage(player, Conf.msg_deny_access_container, ChatColor.RED);
+            Config.sendMessage(player, ChatColor.RED, Config.msg_deny_access_container);
             return false;
         }
     }
 
     private boolean onPlayerInteractWallSign(PlayerInteractEvent event) {
-        Block block = event.getClickedBlock();
         Player player = event.getPlayer();
-        DeadboltGroup dbg = DeadboltGroup.getRelated(block);
-        if (dbg.getOwner() == null) {
+        Block block = event.getClickedBlock();
+        Deadbolted db = Deadbolted.get(block);
+        if (!db.isProtected()) {
             return true;
-        } else if (dbg.isOwner(player)) {
-            //((CraftPlayer) player).getHandle().a((TileEntitySign) ((CraftWorld) player.getWorld()).getHandle().getTileEntity(signBlock.getX(), signBlock.getY(), signBlock.getZ()));
-            Conf.selectedSign.put(player, block);
-            Conf.sendMessage(player, Conf.cmd_sign_selected, ChatColor.GOLD);
+        } else if (db.isOwner(player)) {
+            Config.selectedSign.put(player, block);
+            Config.sendMessage(player, ChatColor.GOLD, Config.cmd_sign_selected);
             return false;
-        } else if (player.hasPermission(Perm.admin_commands)) {
-            //((CraftPlayer) player).getHandle().a((TileEntitySign) ((CraftWorld) player.getWorld()).getHandle().getTileEntity(signBlock.getX(), signBlock.getY(), signBlock.getZ()));
-            Conf.selectedSign.put(player, block);
-            Conf.sendMessage(player, String.format(Conf.msg_admin_sign_selection, dbg.getOwner()), ChatColor.RED);
+        } else if (Config.hasPermission(player, Perm.admin_commands)) {
+            Config.selectedSign.put(player, block);
+            Config.sendMessage(player, ChatColor.RED, Config.msg_admin_sign_selection, db.getOwner());
             return false;
         } else {
-            Conf.sendMessage(player, Conf.msg_deny_sign_selection, ChatColor.RED);
+            Config.sendMessage(player, ChatColor.RED, Config.msg_deny_sign_selection);
             return false;
         }
     }
 
     @Override
     public void onPlayerQuit(PlayerQuitEvent event) {
-        Conf.selectedSign.remove(event.getPlayer());
+        Config.selectedSign.remove(event.getPlayer());
     }
 }
