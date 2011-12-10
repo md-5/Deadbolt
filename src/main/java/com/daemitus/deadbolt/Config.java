@@ -235,10 +235,8 @@ public final class Config {
             if (file.exists())
                 return true;
 
-            InputStream fis = plugin.getResource("files/" + file.getName());
-            if (fis == null)
-                return false;
             file.createNewFile();
+            InputStream fis = plugin.getResource("files/" + file.getName());
             FileOutputStream fos = new FileOutputStream(file);
 
             try {

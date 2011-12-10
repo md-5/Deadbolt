@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.material.Door;
 import org.bukkit.material.TrapDoor;
 
-public class Deadbolted {
+public final class Deadbolted {
 
     public Set<Block> blocks = new HashSet<Block>();
     private Set<Block> traversed = new HashSet<Block>();

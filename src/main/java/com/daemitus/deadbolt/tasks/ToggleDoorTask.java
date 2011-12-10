@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.block.Block;
 
-public class ToggleDoorTask implements Runnable {
+public final class ToggleDoorTask implements Runnable {
 
     public static Map<Block, Integer> timedBlocks = new HashMap<Block, Integer>();
     private final Block block;

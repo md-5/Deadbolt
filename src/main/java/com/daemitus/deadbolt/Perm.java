@@ -1,6 +1,6 @@
 package com.daemitus.deadbolt;
 
-public class Perm {
+public final class Perm {
 
     public static final String user_create_chest = "deadbolt.user.create.chest";
     public static final String user_create_dispenser = "deadbolt.user.create.dispenser";

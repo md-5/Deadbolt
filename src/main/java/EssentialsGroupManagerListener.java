@@ -12,7 +12,7 @@ import org.anjocaido.groupmanager.dataholder.OverloadedWorldHolder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class EssentialsGroupManagerListener extends DeadboltListener {
+public final class EssentialsGroupManagerListener extends DeadboltListener {
 
     private static final String patternBracketTooLong = "\\[.{14,}\\]";
     private GroupManager gm;

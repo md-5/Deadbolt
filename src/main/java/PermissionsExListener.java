@@ -12,7 +12,7 @@ import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-public class PermissionsExListener extends DeadboltListener {
+public final class PermissionsExListener extends DeadboltListener {
 
     private PermissionManager permissions;
     private static final String patternBracketTooLong = "\\[.{14,}\\]";

@@ -1,4 +1,0 @@
-deny_wilderness:      false  #Denies protecting of blocks in the wild
-wilderness_override:  false  #Allows ANYONE to break open locks in the wilderness
-mayor_override:       false  #Allows Mayors to break open locks in their town
-assistant_override:   false  #Allows Assistants to break open locks in their town

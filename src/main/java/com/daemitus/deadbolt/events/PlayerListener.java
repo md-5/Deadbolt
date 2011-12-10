@@ -20,7 +20,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 
-public class PlayerListener extends org.bukkit.event.player.PlayerListener {
+public final class PlayerListener extends org.bukkit.event.player.PlayerListener {
 
     private final Deadbolt plugin;
 

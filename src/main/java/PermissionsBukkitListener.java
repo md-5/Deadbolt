@@ -11,7 +11,7 @@ import java.util.Set;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class PermissionsBukkitListener extends DeadboltListener {
+public final class PermissionsBukkitListener extends DeadboltListener {
 
     private static final String patternBracketTooLong = "\\[.{14,}\\]";
     private PermissionsPlugin permissions;

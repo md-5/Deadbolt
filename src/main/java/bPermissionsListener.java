@@ -9,7 +9,7 @@ import java.util.List;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class bPermissionsListener extends DeadboltListener {
+public final class bPermissionsListener extends DeadboltListener {
 
     private WorldPermissionsManager permissions;
     protected static final String patternBracketTooLong = "\\[.{14,}\\]";

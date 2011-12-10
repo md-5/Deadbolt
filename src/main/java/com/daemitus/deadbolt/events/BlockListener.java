@@ -18,7 +18,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.plugin.PluginManager;
 
-public class BlockListener extends org.bukkit.event.block.BlockListener {
+public final class BlockListener extends org.bukkit.event.block.BlockListener {
 
     private final Deadbolt plugin;
 

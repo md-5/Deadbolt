@@ -9,8 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Door;
 import org.bukkit.material.TrapDoor;
 
-public class ProtectionRegenTask implements Runnable {
-//Thanks to Towny - saving me work
+public final class ProtectionRegenTask implements Runnable {
 
     private BlockState state;
     private ItemStack[] contents;

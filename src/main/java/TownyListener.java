@@ -12,9 +12,8 @@ import com.palmergames.bukkit.towny.object.TownyUniverse;
 import com.palmergames.bukkit.towny.object.TownyWorld;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -26,7 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class TownyListener extends DeadboltListener {
+public final class TownyListener extends DeadboltListener {
 
     private Deadbolt plugin;
     private static TownyUniverse towny;
@@ -43,13 +42,12 @@ public class TownyListener extends DeadboltListener {
 
     @Override
     public void load(final Deadbolt plugin) {
-        this.plugin = plugin;
-        towny = TownyUniverse.plugin.getTownyUniverse();
-
         try {
-            File configFile = new File(plugin.getDataFolder() + "/listeners/Towny/config.yml");
-            if (!configFile.exists())
-                getFile("config.yml");
+            this.plugin = plugin;
+            towny = TownyUniverse.plugin.getTownyUniverse();
+
+            File configFile = new File(plugin.getDataFolder() + "/listeners/TownyListener.yml");
+            checkFile(configFile);
             YamlConfiguration config = new YamlConfiguration();
             config.load(configFile);
             denyWilderness = config.getBoolean("deny_wilderness", denyWilderness);
@@ -63,6 +61,7 @@ public class TownyListener extends DeadboltListener {
         } catch (InvalidConfigurationException ex) {
             Deadbolt.logger.log(Level.SEVERE, null, ex);
         }
+
     }
 
     private String truncate(String text) {
@@ -71,37 +70,20 @@ public class TownyListener extends DeadboltListener {
         return text;
     }
 
-    private boolean getFile(String filename) {
-        try {//TODO dont save in jar, create programatically. just 4 lines really.
-            File dir = new File(plugin.getDataFolder() + "/listeners/Towny");
-            if (!dir.exists())
-                dir.mkdirs();
-            File file = new File(plugin.getDataFolder().getAbsolutePath() + "/listeners/Towny/" + filename);
-            file.createNewFile();
-
-            InputStream fis = plugin.getResource("Towny/" + filename);
-            FileOutputStream fos = new FileOutputStream(file);
-
-            try {
-                byte[] buf = new byte[1024];
-                int i = 0;
-                while ((i = fis.read(buf)) != -1) {
-                    fos.write(buf, 0, i);
-                }
-            } catch (Exception e) {
-                e.printStackTrace(System.out);
-            } finally {
-                if (fis != null) {
-                    fis.close();
-                }
-                if (fos != null) {
-                    fos.close();
-                }
-            }
-            Deadbolt.logger.log(Level.INFO, String.format("Deadbolt-Towny: Retrieved file %1$s", filename));
+    private boolean checkFile(File file) {
+        try {
+            if (!file.exists())
+                file.createNewFile();
+            FileWriter fw = new FileWriter(file);
+            fw.write("deny_wilderness:      false  #Denies protecting of blocks in the wild\n");
+            fw.write("wilderness_override:  false  #Allows ANYONE to break open locks in the wilderness\n");
+            fw.write("mayor_override:       false  #Allows Mayors to break open locks in their town\n");
+            fw.write("assistant_override:   false  #Allows Assistants to break open locks in their town\n");
+            fw.close();
+            Deadbolt.logger.log(Level.INFO, "[Deadbolt][" + this.getClass().getSimpleName() + "] Retrieved file " + file.getName());
             return true;
         } catch (IOException ex) {
-            Deadbolt.logger.log(Level.SEVERE, String.format("Deadbolt-Towny: Error retrieving %1$s", filename));
+            Deadbolt.logger.log(Level.SEVERE, "[Deadbolt][" + this.getClass().getSimpleName() + "] Error retrieving " + file.getName());
             return false;
         }
     }

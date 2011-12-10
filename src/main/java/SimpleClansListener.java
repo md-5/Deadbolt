@@ -10,7 +10,7 @@ import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class SimpleClansListener extends DeadboltListener {
+public final class SimpleClansListener extends DeadboltListener {
 
     private static final String patternBracketTooLong = "\\[.{14,}\\]";
     private SimpleClans sc;
