@@ -49,7 +49,7 @@ public final class EntityListener extends org.bukkit.event.entity.EntityListener
             if (!protectedBlocks.contains(block)) {
                 Deadbolted db = Deadbolted.get(block);
                 if (db.isProtected() && !ListenerManager.canEntityExplode(db, event)) {
-                    protectedBlocks.addAll(db.blocks);
+                    protectedBlocks.addAll(db.getBlocks());
                 }
             }
         }

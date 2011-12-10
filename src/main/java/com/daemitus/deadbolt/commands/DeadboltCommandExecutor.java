@@ -175,7 +175,7 @@ public class DeadboltCommandExecutor implements CommandExecutor {
             case IRON_DOOR_BLOCK:
             case TRAP_DOOR:
             case FENCE_GATE:
-                for (Block b : db.blocks)
+                for (Block b : db.getBlocks())
                     if (b.getType().equals(block.getType()))
                         b.setData((byte) (b.getData() ^ 0x4));
                 break;

@@ -20,7 +20,7 @@ import org.bukkit.material.TrapDoor;
 
 public final class Deadbolted {
 
-    public Set<Block> blocks = new HashSet<Block>();
+    private Set<Block> blocks = new HashSet<Block>();
     private Set<Block> traversed = new HashSet<Block>();
     private String owner = null;
     private Set<String> users = new HashSet<String>();
@@ -28,6 +28,10 @@ public final class Deadbolted {
 
     public Deadbolted(final Deadbolt plugin) {
         Deadbolted.plugin = plugin;
+    }
+
+    public static Deadbolted get(Block block) {
+        return new Deadbolted(block);
     }
 
     private Deadbolted(Block block) {
@@ -90,7 +94,7 @@ public final class Deadbolted {
             return;
         for (BlockFace bf : Config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
-            if (horizontal && adjacent.getState().getData() instanceof Door) {
+            if (horizontal && adjacent.getType().equals(block.getType())) {
                 searchDoor(adjacent, horizontal, vertical);
             } else if (adjacent.getType().equals(Material.WALL_SIGN)) {
                 parseSignAttached(adjacent, block);
@@ -98,14 +102,14 @@ public final class Deadbolted {
         }
         if (vertical) {
             Block adjacentUp = block.getRelative(BlockFace.UP);
-            if (adjacentUp.getState().getData() instanceof Door) {
+            if (adjacentUp.getType().equals(block.getType())) {
                 searchDoor(adjacentUp, horizontal, vertical);
             } else {
                 parseNearbySigns(adjacentUp);
             }
             //Get the base block, regardless of type
             Block adjacentDown = block.getRelative(BlockFace.DOWN);
-            if (adjacentDown.getState().getData() instanceof Door) {
+            if (adjacentDown.getType().equals(block.getType())) {
                 searchDoor(adjacentDown, horizontal, vertical);
             } else {
                 parseNearbySigns(adjacentDown);
@@ -257,10 +261,6 @@ public final class Deadbolted {
         return false;
     }
 
-    public static Deadbolted get(Block block) {
-        return new Deadbolted(block);
-    }
-
     public boolean isProtected() {
         return owner != null && !owner.isEmpty();
     }
@@ -307,8 +307,11 @@ public final class Deadbolted {
         return new ArrayList<String>(users);
     }
 
-    public void toggleDoors(Block block) {
+    public Set<Block> getBlocks() {
+        return blocks;
+    }
 
+    public void toggleDoors(Block block) {
         Set<Block> clickedDoor = new HashSet<Block>();
         if (isNaturalOpen(block)) {
             clickedDoor.add(block);
@@ -322,16 +325,18 @@ public final class Deadbolted {
             }
         }
 
-        List<Block> validToggles = new ArrayList<Block>(blocks);
+        List<Block> validToggles = new ArrayList<Block>();
+        for(Block b:blocks)
+            if(b.getType().equals(block.getType()))
+                validToggles.add(b);
         validToggles.removeAll(clickedDoor);
+        
         for (Block b : validToggles)
             if (b.getType().equals(block.getType()))
-                toggle(b);
+                b.setData((byte) (b.getData() ^ 0x4));
 
         if (!isNaturalSound(block) && Config.silent_door_sounds)
             block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 10);
-
-
 
         if (Config.deny_timed_doors)
             return;
@@ -342,15 +347,16 @@ public final class Deadbolted {
             else
                 return;
         validToggles.addAll(clickedDoor);
+
         boolean runonce = true;
         for (Block bl : validToggles) {
-            if (ToggleDoorTask.timedBlocks.containsKey(bl)) {
-                plugin.getServer().getScheduler().cancelTask(ToggleDoorTask.timedBlocks.get(bl));
+            if (ToggleDoorTask.timedBlocks.add(bl)) {
+                plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new ToggleDoorTask(bl,
+                        (runonce && Config.timed_door_sounds && (isNaturalSound(bl) ? true : Config.silent_door_sounds))),
+                        delay * 20);
+                runonce = false;
             } else {
-                ToggleDoorTask.timedBlocks.put(bl, plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new ToggleDoorTask(bl)));
-                if (runonce && Config.timed_door_sounds && isNaturalSound(block) ? true : Config.silent_door_sounds) {
-                    block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 10);
-                }
+                ToggleDoorTask.timedBlocks.remove(bl);
             }
         }
     }
@@ -385,9 +391,5 @@ public final class Deadbolted {
             default:
                 return true;
         }
-    }
-
-    private void toggle(Block block) {
-        block.setData((byte) (block.getData() ^ 0x4));
     }
 }

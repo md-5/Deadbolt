@@ -301,7 +301,7 @@ public final class Config {
 
     public static int getTimer(String line) {
         try {
-            return Integer.parseInt(signtext_timer.matcher(line).replaceAll("$1%d"));
+            return Integer.parseInt(signtext_timer.matcher(line).replaceAll("$2"));
         } catch (NumberFormatException ex) {
             return -1;
         }

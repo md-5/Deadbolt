@@ -175,7 +175,7 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
                 boolean door = false;
                 boolean trap = false;
                 boolean gate = false;
-                for (Block setBlock : db.blocks) {
+                for (Block setBlock : db.getBlocks()) {
                     //not authorized to protect?
                     switch (setBlock.getType()) {
                         case CHEST:

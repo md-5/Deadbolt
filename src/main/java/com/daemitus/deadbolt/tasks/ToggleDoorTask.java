@@ -1,20 +1,27 @@
 package com.daemitus.deadbolt.tasks;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
+import org.bukkit.Effect;
 import org.bukkit.block.Block;
 
 public final class ToggleDoorTask implements Runnable {
 
-    public static Map<Block, Integer> timedBlocks = new HashMap<Block, Integer>();
+    public static Set<Block> timedBlocks = new HashSet<Block>();
     private final Block block;
+    private final boolean sound;
 
-    public ToggleDoorTask(Block block) {
+    public ToggleDoorTask(Block block, boolean sound) {
         this.block = block;
+        this.sound = sound;
     }
 
     @Override
     public void run() {
-        block.setData((byte) (block.getData() ^ 0x4));
+        if (timedBlocks.remove(block)) {
+            block.setData((byte) (block.getData() ^ 0x4));
+            if (sound)
+                block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 10);
+        }
     }
 }
