@@ -1,6 +1,7 @@
 package com.daemitus.deadbolt.tasks;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import org.bukkit.Effect;
 import org.bukkit.block.Block;
@@ -22,6 +23,15 @@ public final class ToggleDoorTask implements Runnable {
             block.setData((byte) (block.getData() ^ 0x4));
             if (sound)
                 block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 10);
+        }
+    }
+    
+    public static void cleanup() {
+        Iterator<Block> iter = timedBlocks.iterator();
+        while(iter.hasNext())  {
+            Block next = iter.next();
+            next.setData((byte) (next.getData() ^ 0x4));
+            iter.remove();
         }
     }
 }

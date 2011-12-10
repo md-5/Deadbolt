@@ -9,6 +9,7 @@ import com.daemitus.deadbolt.events.PlayerListener;
 import com.daemitus.deadbolt.events.ServerListener;
 import com.daemitus.deadbolt.events.SignListener;
 import com.daemitus.deadbolt.listener.ListenerManager;
+import com.daemitus.deadbolt.tasks.ToggleDoorTask;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,6 +45,7 @@ public final class Deadbolt extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        ToggleDoorTask.cleanup();
         logger.log(Level.INFO, "[Deadbolt] " + this.getDescription().getVersion() + " disabled");
     }
 
