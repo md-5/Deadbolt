@@ -10,13 +10,16 @@ import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EndermanPickupEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public interface ListenerInterface {
 
     public void load(final Deadbolt plugin);
-    
+
     public List<String> getDependencies();
+
+    public boolean canEntityInteract(Deadbolted db, EntityInteractEvent event);
 
     public boolean canEntityExplode(Deadbolted db, EntityExplodeEvent event);
 

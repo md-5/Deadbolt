@@ -11,6 +11,7 @@ import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EndermanPickupEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class DeadboltListener implements ListenerInterface {
@@ -22,6 +23,11 @@ public class DeadboltListener implements ListenerInterface {
     @Override
     public List<String> getDependencies() {
         return new ArrayList<String>();
+    }
+
+    @Override
+    public boolean canEntityInteract(Deadbolted db, EntityInteractEvent event) {
+        return false;
     }
 
     @Override

@@ -18,6 +18,7 @@ import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EndermanPickupEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -93,6 +94,13 @@ public final class ListenerManager {
                 }
             }
         }
+    }
+
+    public static boolean canEntityInteract(Deadbolted db, EntityInteractEvent event) {
+        boolean allow = false;
+        for (ListenerInterface listener : loaded)
+            allow |= listener.canEntityInteract(db, event);
+        return allow;
     }
 
     public static boolean canEntityExplode(Deadbolted db, EntityExplodeEvent event) {

@@ -7,6 +7,7 @@ group_dispensers: true              #Allows dispensers to act like chests, one s
 deny_quick_signs: false             #Allows right click placement of signs automatically on the target
 clear_sign_selection: false         #Clear sign selection after using /deadbolt <line> <text>
 
+deny_entity_interact: true          #Denies things such as snowmen opening doors
 deny_explosions: true               #Denies explosions from breaking protected blocks
 deny_endermen: true                 #Denies endermen from breaking protected blocks
 deny_pistons: true                  #Denies pistons from breaking protected blocks

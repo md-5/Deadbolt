@@ -25,12 +25,14 @@ import org.bukkit.entity.Player;
 
 public final class Config {
 
+
     //------------------------------------------------------------------------//
     private final Deadbolt plugin;
     private static final String TAG = "Deadbolt: ";
     //------------------------------------------------------------------------//
     public static boolean useOPlist = true;
     public static boolean deselectSign = false;
+    public static boolean deny_entity_interact = true;
     public static boolean deny_explosions = true;
     public static boolean deny_endermen = true;
     public static boolean deny_redstone = true;
@@ -117,7 +119,7 @@ public final class Config {
             YamlConfiguration config = new YamlConfiguration();
 
             File configFile = new File(plugin.getDataFolder() + "/config.yml");
-            checkFile(plugin, configFile);
+            checkFile(configFile);
             config.load(configFile);
 
             useOPlist = config.getBoolean("useOPlist", useOPlist);
@@ -149,9 +151,9 @@ public final class Config {
             String language = config.getString("language", "english.yml");
 
             File langFile = new File(plugin.getDataFolder() + "/" + language);
-            if (!checkFile(plugin, langFile)) {
+            if (!checkFile(langFile)) {
                 Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + langFile.getName() + " not found, defaulting to english.yml");
-                checkFile(plugin, langFile = new File(plugin.getDataFolder() + "/english.yml"));
+                checkFile(langFile = new File(plugin.getDataFolder() + "/english.yml"));
             }
             config.load(langFile);
 
@@ -230,11 +232,12 @@ public final class Config {
         }
     }
 
-    private static boolean checkFile(final Deadbolt plugin, File file) {
+    private boolean checkFile(File file) {
         try {
             if (file.exists())
                 return true;
 
+            file.getParentFile().mkdirs();
             file.createNewFile();
             InputStream fis = plugin.getResource("files/" + file.getName());
             FileOutputStream fos = new FileOutputStream(file);
@@ -245,8 +248,8 @@ public final class Config {
                 while ((i = fis.read(buf)) != -1) {
                     fos.write(buf, 0, i);
                 }
-            } catch (Exception e) {
-                e.printStackTrace(System.out);
+            } catch (IOException ex) {
+                Deadbolt.logger.log(Level.SEVERE, null, ex);
             } finally {
                 if (fis != null) {
                     fis.close();
@@ -258,7 +261,7 @@ public final class Config {
             Deadbolt.logger.log(Level.INFO, String.format("Deadbolt: Retrieved file %1$s", file.getName()));
             return true;
         } catch (IOException ex) {
-            Deadbolt.logger.log(Level.SEVERE, String.format("Deadbolt: Error retrieving %1$s", file.getName()));
+            Deadbolt.logger.log(Level.SEVERE, null, ex);
             return false;
         }
     }
