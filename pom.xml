@@ -26,6 +26,10 @@
             <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/artifactory/repo</url>
         </repository>
+        <repository>
+            <id>nexisonline-repo</id>
+            <url>http://repo.nexisonline.net:8080/nexus/content/groups/public/</url>
+        </repository>
     </repositories>
   
     <dependencies>
@@ -42,7 +46,7 @@
         <dependency>
             <groupId>ru.tehkode</groupId>
             <artifactId>PermissionsEx</artifactId>
-            <version>1.17</version>
+            <version>1.15</version>
         </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
