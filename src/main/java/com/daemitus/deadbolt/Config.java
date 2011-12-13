@@ -25,7 +25,6 @@ import org.bukkit.entity.Player;
 
 public final class Config {
 
-
     //------------------------------------------------------------------------//
     private final Deadbolt plugin;
     private static final String TAG = "Deadbolt: ";
@@ -159,28 +158,32 @@ public final class Config {
 
             String default_private = "private";
             locale_private = config.getString("signtext_private", default_private);
-            if (locale_private.length() > 13)
+            if (locale_private.length() > 13) {
                 Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_private + " is too long, defaulting to [" + (locale_private = default_private) + "]");
+            }
             signtext_private = Pattern.compile("\\[(?i)(" + default_private + "|" + locale_private + ")\\]");
             locale_private = "[" + locale_private + "]";
 
             String default_moreusers = "more users";
             locale_moreusers = config.getString("signtext_moreusers", default_moreusers);
-            if (locale_moreusers.length() > 13)
+            if (locale_moreusers.length() > 13) {
                 Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_moreusers + " is too long, defaulting to [" + (locale_private = default_moreusers) + "]");
+            }
             signtext_moreusers = Pattern.compile("\\[(?i)(" + default_moreusers + "|" + locale_moreusers + ")\\]");
             locale_moreusers = "[" + locale_moreusers + "]";
 
             String default_everyone = "everyone";
             String locale_everyone = config.getString("signtext_everyone", default_everyone);
-            if (locale_everyone.length() > 13)
+            if (locale_everyone.length() > 13) {
                 Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_everyone + " is too long, defaulting to [" + (locale_private = default_everyone) + "]");
+            }
             signtext_everyone = Pattern.compile("\\[(?i)(" + default_everyone + "|" + locale_everyone + ")\\]");
 
             String default_timer = "timer";
             String locale_timer = config.getString("signtext_timer", default_timer);
-            if (locale_timer.length() > 13)
+            if (locale_timer.length() > 13) {
                 Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_timer + " is too long, defaulting to [" + (locale_private = default_timer) + ":#]");
+            }
             signtext_timer = Pattern.compile("\\[(?i)(" + default_timer + "|" + locale_timer + "):\\s*([0-9]+)\\]");
 
 
@@ -234,8 +237,9 @@ public final class Config {
 
     private boolean checkFile(File file) {
         try {
-            if (file.exists())
+            if (file.exists()) {
                 return true;
+            }
 
             file.getParentFile().mkdirs();
             file.createNewFile();
@@ -320,15 +324,19 @@ public final class Config {
     }
 
     public static void sendMessage(Player player, ChatColor color, String message, String... args) {
-        if (!message.isEmpty())
+        if (!message.isEmpty()) {
             player.sendMessage(color + TAG + String.format(message, (Object[]) args));
+        }
     }
 
     public static void sendBroadcast(String permission, ChatColor color, String message, String... args) {
-        if (!message.isEmpty())
-            for (Player player : Bukkit.getServer().getOnlinePlayers())
-                if (player.hasPermission(permission))
+        if (!message.isEmpty()) {
+            for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+                if (player.hasPermission(permission)) {
                     player.sendMessage(color + TAG + String.format(message, (Object[]) args));
+                }
+            }
+        }
     }
 
     public static boolean hasPermission(Player player, String permission) {

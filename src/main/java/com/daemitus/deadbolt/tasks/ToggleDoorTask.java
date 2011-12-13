@@ -21,14 +21,15 @@ public final class ToggleDoorTask implements Runnable {
     public void run() {
         if (timedBlocks.remove(block)) {
             block.setData((byte) (block.getData() ^ 0x4));
-            if (sound)
+            if (sound) {
                 block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 10);
+            }
         }
     }
-    
+
     public static void cleanup() {
         Iterator<Block> iter = timedBlocks.iterator();
-        while(iter.hasNext())  {
+        while (iter.hasNext()) {
             Block next = iter.next();
             next.setData((byte) (next.getData() ^ 0x4));
             iter.remove();

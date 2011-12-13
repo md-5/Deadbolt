@@ -57,9 +57,9 @@ public final class PlayerListener extends org.bukkit.event.player.PlayerListener
     }
 
     private boolean handleRightClick(PlayerInteractEvent event) {
-        if (event.getPlayer().getItemInHand().getType().equals(Material.SIGN))
+        if (event.getPlayer().getItemInHand().getType().equals(Material.SIGN)) {
             return placeQuickSign(event);
-        else {
+        } else {
             switch (event.getClickedBlock().getType()) {
                 case WOODEN_DOOR:
                 case IRON_DOOR_BLOCK:
@@ -99,16 +99,19 @@ public final class PlayerListener extends org.bukkit.event.player.PlayerListener
                 }
 
                 BlockFace clickedFace = event.getBlockFace();
-                if (!Config.CARDINAL_FACES.contains(clickedFace))
+                if (!Config.CARDINAL_FACES.contains(clickedFace)) {
                     return false;
+                }
 
                 Block signBlock = against.getRelative(clickedFace);
-                if (!signBlock.getType().equals(Material.AIR))
+                if (!signBlock.getType().equals(Material.AIR)) {
                     return false;
+                }
 
                 Deadbolted db = Deadbolted.get(against);
-                if (!ListenerManager.canSignChangeQuick(db, event))
+                if (!ListenerManager.canSignChangeQuick(db, event)) {
                     return false;
+                }
 
                 signBlock.setTypeIdAndData(Material.WALL_SIGN.getId(), Config.getByteFromFacing(clickedFace), false);
                 Sign signState = (Sign) signBlock.getState();
@@ -130,8 +133,9 @@ public final class PlayerListener extends org.bukkit.event.player.PlayerListener
                 signState.update(true);
                 ItemStack held = player.getItemInHand();
                 held.setAmount(held.getAmount() - 1);
-                if (held.getAmount() == 0)
+                if (held.getAmount() == 0) {
                     player.setItemInHand(null);
+                }
                 return false;
             default:
                 return true;
@@ -139,8 +143,9 @@ public final class PlayerListener extends org.bukkit.event.player.PlayerListener
     }
 
     private boolean canQuickProtect(Player player, Block block) {
-        if (Config.deny_quick_signs)
+        if (Config.deny_quick_signs) {
             return false;
+        }
         switch (block.getType()) {
             case CHEST:
                 return player.hasPermission(Perm.user_create_chest);
