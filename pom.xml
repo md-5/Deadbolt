@@ -1,0 +1,53 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.daemitus</groupId>
+    <artifactId>Deadbolt</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>Deadbolt</name>
+    <url>https://github.com/daemitus/Deadbolt</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <scm>
+        <connection>scm:git:git://github.com/daemitus/Deadbolt.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/daemitus/Deadbolt.git</developerConnection>
+        <url>https://github.com/daemitus/Deadbolt</url>
+    </scm>
+
+    <repositories>
+        <repository>
+            <id>bukkit-repo</id>
+            <url>http://repo.bukkit.org/artifactory/repo</url>
+        </repository>
+    </repositories>
+  
+    <dependencies>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>1.0.0-R1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>de.bananaco</groupId>
+            <artifactId>bPermissions</artifactId>
+            <version>1337-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>ru.tehkode</groupId>
+            <artifactId>PermissionsEx</artifactId>
+            <version>1.17</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit-permissions</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+</project>
