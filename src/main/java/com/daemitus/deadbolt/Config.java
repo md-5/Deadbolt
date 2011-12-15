@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -24,7 +25,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 public final class Config {
-
 
     //------------------------------------------------------------------------//
     private final Deadbolt plugin;
@@ -115,121 +115,113 @@ public final class Config {
     }
 
     public void load() {
-        try {
-            YamlConfiguration config = new YamlConfiguration();
+        File configFile = new File(plugin.getDataFolder() + "/config.yml");
+        checkFile(configFile);
 
-            File configFile = new File(plugin.getDataFolder() + "/config.yml");
-            checkFile(configFile);
-            config.load(configFile);
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
 
-            useOPlist = config.getBoolean("useOPlist", useOPlist);
-            vertical_trapdoors = config.getBoolean("vertical_trapdoors", vertical_trapdoors);
-            group_furnaces = config.getBoolean("group_furnaces", group_furnaces);
-            group_dispensers = config.getBoolean("group_dispensers", group_dispensers);
-            deny_quick_signs = config.getBoolean("deny_quick_signs", deny_quick_signs);
-            deselectSign = config.getBoolean("clear_sign_selection", deselectSign);
-            deny_explosions = config.getBoolean("deny_explosions", deny_explosions);
-            deny_endermen = config.getBoolean("deny_endermen", deny_endermen);
-            deny_pistons = config.getBoolean("deny_pistons", deny_pistons);
-            deny_redstone = config.getBoolean("deny_redstone", deny_redstone);
-            redstone_protected_blockids = config.getList("deny_redstone_specific_ids", redstone_protected_blockids);
-            silent_door_sounds = config.getBoolean("silent_door_sounds", silent_door_sounds);
-            deny_timed_doors = config.getBoolean("deny_timed_doors", deny_timed_doors);
-            timed_door_sounds = config.getBoolean("timed_door_sounds", timed_door_sounds);
-            forced_timed_doors = config.getBoolean("forced_timed_doors", forced_timed_doors);
-            forced_timed_doors_delay = config.getInt("forced_timed_doors_delay", forced_timed_doors_delay);
+        useOPlist = config.getBoolean("useOPlist", useOPlist);
+        vertical_trapdoors = config.getBoolean("vertical_trapdoors", vertical_trapdoors);
+        group_furnaces = config.getBoolean("group_furnaces", group_furnaces);
+        group_dispensers = config.getBoolean("group_dispensers", group_dispensers);
+        deny_quick_signs = config.getBoolean("deny_quick_signs", deny_quick_signs);
+        deselectSign = config.getBoolean("clear_sign_selection", deselectSign);
+        deny_explosions = config.getBoolean("deny_explosions", deny_explosions);
+        deny_endermen = config.getBoolean("deny_endermen", deny_endermen);
+        deny_pistons = config.getBoolean("deny_pistons", deny_pistons);
+        deny_redstone = config.getBoolean("deny_redstone", deny_redstone);
+        redstone_protected_blockids = config.getList("deny_redstone_specific_ids", redstone_protected_blockids);
+        silent_door_sounds = config.getBoolean("silent_door_sounds", silent_door_sounds);
+        deny_timed_doors = config.getBoolean("deny_timed_doors", deny_timed_doors);
+        timed_door_sounds = config.getBoolean("timed_door_sounds", timed_door_sounds);
+        forced_timed_doors = config.getBoolean("forced_timed_doors", forced_timed_doors);
+        forced_timed_doors_delay = config.getInt("forced_timed_doors_delay", forced_timed_doors_delay);
 
-            default_colors_private[0] = "§" + config.getString("default_color_private_line_1", default_colors_private[0]);
-            default_colors_private[1] = "§" + config.getString("default_color_private_line_2", default_colors_private[1]);
-            default_colors_private[2] = "§" + config.getString("default_color_private_line_3", default_colors_private[2]);
-            default_colors_private[3] = "§" + config.getString("default_color_private_line_4", default_colors_private[3]);
-            default_colors_moreusers[0] = "§" + config.getString("default_color_moreusers_line_1", default_colors_moreusers[0]);
-            default_colors_moreusers[1] = "§" + config.getString("default_color_moreusers_line_2", default_colors_moreusers[1]);
-            default_colors_moreusers[2] = "§" + config.getString("default_color_moreusers_line_3", default_colors_moreusers[2]);
-            default_colors_moreusers[3] = "§" + config.getString("default_color_moreusers_line_4", default_colors_moreusers[3]);
+        default_colors_private[0] = "§" + config.getString("default_color_private_line_1", default_colors_private[0]);
+        default_colors_private[1] = "§" + config.getString("default_color_private_line_2", default_colors_private[1]);
+        default_colors_private[2] = "§" + config.getString("default_color_private_line_3", default_colors_private[2]);
+        default_colors_private[3] = "§" + config.getString("default_color_private_line_4", default_colors_private[3]);
+        default_colors_moreusers[0] = "§" + config.getString("default_color_moreusers_line_1", default_colors_moreusers[0]);
+        default_colors_moreusers[1] = "§" + config.getString("default_color_moreusers_line_2", default_colors_moreusers[1]);
+        default_colors_moreusers[2] = "§" + config.getString("default_color_moreusers_line_3", default_colors_moreusers[2]);
+        default_colors_moreusers[3] = "§" + config.getString("default_color_moreusers_line_4", default_colors_moreusers[3]);
 
-            String language = config.getString("language", "english.yml");
+        String language = config.getString("language", "english.yml");
 
-            File langFile = new File(plugin.getDataFolder() + "/" + language);
-            if (!checkFile(langFile)) {
-                Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + langFile.getName() + " not found, defaulting to english.yml");
-                checkFile(langFile = new File(plugin.getDataFolder() + "/english.yml"));
-            }
-            config.load(langFile);
-
-            String default_private = "private";
-            locale_private = config.getString("signtext_private", default_private);
-            if (locale_private.length() > 13)
-                Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_private + " is too long, defaulting to [" + (locale_private = default_private) + "]");
-            signtext_private = Pattern.compile("\\[(?i)(" + default_private + "|" + locale_private + ")\\]");
-            locale_private = "[" + locale_private + "]";
-
-            String default_moreusers = "more users";
-            locale_moreusers = config.getString("signtext_moreusers", default_moreusers);
-            if (locale_moreusers.length() > 13)
-                Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_moreusers + " is too long, defaulting to [" + (locale_private = default_moreusers) + "]");
-            signtext_moreusers = Pattern.compile("\\[(?i)(" + default_moreusers + "|" + locale_moreusers + ")\\]");
-            locale_moreusers = "[" + locale_moreusers + "]";
-
-            String default_everyone = "everyone";
-            String locale_everyone = config.getString("signtext_everyone", default_everyone);
-            if (locale_everyone.length() > 13)
-                Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_everyone + " is too long, defaulting to [" + (locale_private = default_everyone) + "]");
-            signtext_everyone = Pattern.compile("\\[(?i)(" + default_everyone + "|" + locale_everyone + ")\\]");
-
-            String default_timer = "timer";
-            String locale_timer = config.getString("signtext_timer", default_timer);
-            if (locale_timer.length() > 13)
-                Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_timer + " is too long, defaulting to [" + (locale_private = default_timer) + ":#]");
-            signtext_timer = Pattern.compile("\\[(?i)(" + default_timer + "|" + locale_timer + "):\\s*([0-9]+)\\]");
-
-
-            cmd_help_editsign = config.getString("cmd_help_editsign", cmd_help_editsign);
-            cmd_help_reload = config.getString("cmd_help_reload", cmd_help_reload);
-            cmd_help_fix = config.getString("cmd_help_fix", cmd_help_fix);
-            cmd_help_fixAll = config.getString("cmd_help_fixAll", cmd_help_fixAll);
-            cmd_fix_notowned = config.getString("cmd_fix_notowned", cmd_fix_notowned);
-            cmd_fix_bad_type = config.getString("cmd_fix_bad_type", cmd_fix_bad_type);
-            cmd_reload = config.getString("cmd_reload", cmd_reload);
-            cmd_sign_updated = config.getString("cmd_sign_updated", cmd_sign_updated);
-            cmd_sign_selected = config.getString("cmd_sign_selected", cmd_sign_selected);
-            cmd_sign_selected_error = config.getString("cmd_sign_selected_error", cmd_sign_selected_error);
-            cmd_sign_not_selected = config.getString("cmd_sign_not_selected", cmd_sign_not_selected);
-            cmd_identifier_not_changeable = config.getString("cmd_identifier_not_changeable", cmd_identifier_not_changeable);
-            cmd_owner_not_changeable = config.getString("cmd_owner_not_changeable", cmd_owner_not_changeable);
-            cmd_line_num_out_of_range = config.getString("cmd_line_num_out_of_range", cmd_line_num_out_of_range);
-            cmd_command_not_found = config.getString("cmd_command_not_found", cmd_command_not_found);
-            cmd_console_reload = config.getString("cmd_console_reload", cmd_console_reload);
-            cmd_console_command_not_found = config.getString("cmd_console_command_not_found", cmd_console_command_not_found);
-            msg_admin_break = config.getString("msg_admin_break", msg_admin_break);
-            msg_admin_bypass = config.getString("msg_admin_bypass", msg_admin_bypass);
-            msg_admin_sign_placed = config.getString("msg_admin_sign_placed", msg_admin_sign_placed);
-            msg_admin_sign_selection = config.getString("msg_admin_sign_selection", msg_admin_sign_selection);
-            msg_admin_block_fixed = config.getString("msg_admin_block_fixed", msg_admin_block_fixed);
-            msg_admin_container = config.getString("msg_admin_container", msg_admin_container);
-            msg_admin_warning_player_not_found = config.getString("msg_admin_warning_player_not_found", msg_admin_warning_player_not_found);
-            msg_deny_access_door = config.getString("msg_deny_access_door", msg_deny_access_door);
-            msg_deny_access_container = config.getString("msg_deny_access_container", msg_deny_access_container);
-            msg_deny_sign_selection = config.getString("msg_deny_sign_selection", msg_deny_sign_selection);
-            msg_deny_block_break = config.getString("msg_deny_block_break", msg_deny_block_break);
-            msg_deny_container_expansion = config.getString("msg_deny_container_expansion", msg_deny_container_expansion);
-            msg_deny_door_expansion = config.getString("msg_deny_door_expansion", msg_deny_door_expansion);
-            msg_deny_trapdoor_expansion = config.getString("msg_deny_trapdoor_expansion", msg_deny_trapdoor_expansion);
-            msg_deny_fencegate_expansion = config.getString("msg_deny_fencegate_expansion", msg_deny_fencegate_expansion);
-            msg_deny_sign_private_nothing_nearby = config.getString("msg_deny_sign_private_nothing_nearby", msg_deny_sign_private_nothing_nearby);
-            msg_deny_sign_private_already_owned = config.getString("msg_deny_sign_private_already_owned", msg_deny_sign_private_already_owned);
-            msg_deny_sign_moreusers_already_owned = config.getString("msg_deny_sign_moreusers_already_owned", msg_deny_sign_moreusers_already_owned);
-            msg_deny_sign_moreusers_no_private = config.getString("msg_deny_sign_moreusers_no_private", msg_deny_sign_moreusers_no_private);
-            msg_deny_sign_quickplace = config.getString("msg_deny_sign_quickplace", msg_deny_sign_quickplace);
-            msg_deny_block_perm = config.getString("msg_deny_block_perm", msg_deny_block_perm);
-            msg_reminder_lock_your_chests = config.getString("msg_reminder_lock_your_chests", msg_reminder_lock_your_chests);
-        } catch (FileNotFoundException ex) {
-            Deadbolt.logger.log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Deadbolt.logger.log(Level.SEVERE, null, ex);
-        } catch (InvalidConfigurationException ex) {
-            Deadbolt.logger.log(Level.SEVERE, null, ex);
+        File langFile = new File(plugin.getDataFolder() + "/" + language);
+        if (!checkFile(langFile)) {
+            Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + langFile.getName() + " not found, defaulting to english.yml");
+            checkFile(langFile = new File(plugin.getDataFolder() + "/english.yml"));
         }
+
+        config = YamlConfiguration.loadConfiguration(langFile);
+
+        String default_private = "private";
+        locale_private = config.getString("signtext_private", default_private);
+        if (locale_private.length() > 13)
+            Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_private + " is too long, defaulting to [" + (locale_private = default_private) + "]");
+        signtext_private = Pattern.compile("\\[(?i)(" + default_private + "|" + locale_private + ")\\]");
+        locale_private = "[" + locale_private + "]";
+
+        String default_moreusers = "more users";
+        locale_moreusers = config.getString("signtext_moreusers", default_moreusers);
+        if (locale_moreusers.length() > 13)
+            Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_moreusers + " is too long, defaulting to [" + (locale_private = default_moreusers) + "]");
+        signtext_moreusers = Pattern.compile("\\[(?i)(" + default_moreusers + "|" + locale_moreusers + ")\\]");
+        locale_moreusers = "[" + locale_moreusers + "]";
+
+        String default_everyone = "everyone";
+        String locale_everyone = config.getString("signtext_everyone", default_everyone);
+        if (locale_everyone.length() > 13)
+            Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_everyone + " is too long, defaulting to [" + (locale_private = default_everyone) + "]");
+        signtext_everyone = Pattern.compile("\\[(?i)(" + default_everyone + "|" + locale_everyone + ")\\]");
+
+        String default_timer = "timer";
+        String locale_timer = config.getString("signtext_timer", default_timer);
+        if (locale_timer.length() > 13)
+            Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_timer + " is too long, defaulting to [" + (locale_private = default_timer) + ":#]");
+        signtext_timer = Pattern.compile("\\[(?i)(" + default_timer + "|" + locale_timer + "):\\s*([0-9]+)\\]");
+
+
+        cmd_help_editsign = config.getString("cmd_help_editsign", cmd_help_editsign);
+        cmd_help_reload = config.getString("cmd_help_reload", cmd_help_reload);
+        cmd_help_fix = config.getString("cmd_help_fix", cmd_help_fix);
+        cmd_help_fixAll = config.getString("cmd_help_fixAll", cmd_help_fixAll);
+        cmd_fix_notowned = config.getString("cmd_fix_notowned", cmd_fix_notowned);
+        cmd_fix_bad_type = config.getString("cmd_fix_bad_type", cmd_fix_bad_type);
+        cmd_reload = config.getString("cmd_reload", cmd_reload);
+        cmd_sign_updated = config.getString("cmd_sign_updated", cmd_sign_updated);
+        cmd_sign_selected = config.getString("cmd_sign_selected", cmd_sign_selected);
+        cmd_sign_selected_error = config.getString("cmd_sign_selected_error", cmd_sign_selected_error);
+        cmd_sign_not_selected = config.getString("cmd_sign_not_selected", cmd_sign_not_selected);
+        cmd_identifier_not_changeable = config.getString("cmd_identifier_not_changeable", cmd_identifier_not_changeable);
+        cmd_owner_not_changeable = config.getString("cmd_owner_not_changeable", cmd_owner_not_changeable);
+        cmd_line_num_out_of_range = config.getString("cmd_line_num_out_of_range", cmd_line_num_out_of_range);
+        cmd_command_not_found = config.getString("cmd_command_not_found", cmd_command_not_found);
+        cmd_console_reload = config.getString("cmd_console_reload", cmd_console_reload);
+        cmd_console_command_not_found = config.getString("cmd_console_command_not_found", cmd_console_command_not_found);
+        msg_admin_break = config.getString("msg_admin_break", msg_admin_break);
+        msg_admin_bypass = config.getString("msg_admin_bypass", msg_admin_bypass);
+        msg_admin_sign_placed = config.getString("msg_admin_sign_placed", msg_admin_sign_placed);
+        msg_admin_sign_selection = config.getString("msg_admin_sign_selection", msg_admin_sign_selection);
+        msg_admin_block_fixed = config.getString("msg_admin_block_fixed", msg_admin_block_fixed);
+        msg_admin_container = config.getString("msg_admin_container", msg_admin_container);
+        msg_admin_warning_player_not_found = config.getString("msg_admin_warning_player_not_found", msg_admin_warning_player_not_found);
+        msg_deny_access_door = config.getString("msg_deny_access_door", msg_deny_access_door);
+        msg_deny_access_container = config.getString("msg_deny_access_container", msg_deny_access_container);
+        msg_deny_sign_selection = config.getString("msg_deny_sign_selection", msg_deny_sign_selection);
+        msg_deny_block_break = config.getString("msg_deny_block_break", msg_deny_block_break);
+        msg_deny_container_expansion = config.getString("msg_deny_container_expansion", msg_deny_container_expansion);
+        msg_deny_door_expansion = config.getString("msg_deny_door_expansion", msg_deny_door_expansion);
+        msg_deny_trapdoor_expansion = config.getString("msg_deny_trapdoor_expansion", msg_deny_trapdoor_expansion);
+        msg_deny_fencegate_expansion = config.getString("msg_deny_fencegate_expansion", msg_deny_fencegate_expansion);
+        msg_deny_sign_private_nothing_nearby = config.getString("msg_deny_sign_private_nothing_nearby", msg_deny_sign_private_nothing_nearby);
+        msg_deny_sign_private_already_owned = config.getString("msg_deny_sign_private_already_owned", msg_deny_sign_private_already_owned);
+        msg_deny_sign_moreusers_already_owned = config.getString("msg_deny_sign_moreusers_already_owned", msg_deny_sign_moreusers_already_owned);
+        msg_deny_sign_moreusers_no_private = config.getString("msg_deny_sign_moreusers_no_private", msg_deny_sign_moreusers_no_private);
+        msg_deny_sign_quickplace = config.getString("msg_deny_sign_quickplace", msg_deny_sign_quickplace);
+        msg_deny_block_perm = config.getString("msg_deny_block_perm", msg_deny_block_perm);
+        msg_reminder_lock_your_chests = config.getString("msg_reminder_lock_your_chests", msg_reminder_lock_your_chests);
     }
 
     private boolean checkFile(File file) {
@@ -237,28 +229,32 @@ public final class Config {
             if (file.exists())
                 return true;
 
-            file.getParentFile().mkdirs();
+            File dir = file.getParentFile();
+            if (!dir.exists())
+                dir.mkdir();
+
             file.createNewFile();
-            InputStream fis = plugin.getResource("files/" + file.getName());
-            FileOutputStream fos = new FileOutputStream(file);
+
+            InputStream in = null;
+            OutputStream out = null;
 
             try {
+                in = plugin.getResource("files/" + file.getName());
+                out = new FileOutputStream(file);
+
+                int len;
                 byte[] buf = new byte[1024];
-                int i = 0;
-                while ((i = fis.read(buf)) != -1) {
-                    fos.write(buf, 0, i);
-                }
-            } catch (IOException ex) {
-                Deadbolt.logger.log(Level.SEVERE, null, ex);
+                while ((len = in.read(buf)) > 0)
+                    out.write(buf, 0, len);
+
             } finally {
-                if (fis != null) {
-                    fis.close();
-                }
-                if (fos != null) {
-                    fos.close();
-                }
+                if (in != null)
+                    in.close();
+                if (out != null)
+                    out.close();
             }
-            Deadbolt.logger.log(Level.INFO, String.format("Deadbolt: Retrieved file %1$s", file.getName()));
+
+            Deadbolt.logger.log(Level.INFO, "[Deadbolt] Retrieved file " + file.getName());
             return true;
         } catch (IOException ex) {
             Deadbolt.logger.log(Level.SEVERE, null, ex);

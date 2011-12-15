@@ -7,6 +7,7 @@ import com.daemitus.deadbolt.Perm;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -128,9 +129,9 @@ public class DeadboltCommandExecutor implements CommandExecutor {
 
         if (db.isProtected()) {
             if (db.isOwner(player)) {
-                fixHelper(player, block);
+                fixHelper(player, block, true);
             } else if (Config.hasPermission(player, Perm.admin_commands)) {
-                fixHelper(player, block);
+                fixHelper(player, block, true);
                 Config.sendMessage(player, ChatColor.RED, Config.msg_admin_block_fixed, db.getOwner());
             } else {
                 Config.sendMessage(player, ChatColor.RED, Config.cmd_fix_notowned);
@@ -139,10 +140,12 @@ public class DeadboltCommandExecutor implements CommandExecutor {
         return true;
     }
 
-    private void fixHelper(Player player, Block block) {
+    private void fixHelper(Player player, Block block, boolean recurse) {
         switch (block.getType()) {
             case WOODEN_DOOR:
             case IRON_DOOR_BLOCK:
+                block.setData((byte) (block.getData() ^ 0x4));
+                break;
             case TRAP_DOOR:
             case FENCE_GATE:
                 block.setData((byte) (block.getData() ^ 0x4));
