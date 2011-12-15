@@ -32,15 +32,18 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
 
     @Override
     public void onSignChange(SignChangeEvent event) {
-        if (event.isCancelled())
+        if (event.isCancelled()) {
             return;
+        }
         Player player = event.getPlayer();
         Block block = event.getBlock();
         String[] lines = event.getLines();
 
-        if (Config.hasPermission(player, Perm.user_color))
-            for (int i = 0; i < 4; i++)
+        if (Config.hasPermission(player, Perm.user_color)) {
+            for (int i = 0; i < 4; i++) {
                 lines[i] = Config.createColor(lines[i]);
+            }
+        }
 
         String ident = Config.removeColor(lines[0]);
         boolean isPrivate = Config.isPrivate(ident);
@@ -48,11 +51,13 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
         if (!isPrivate && !isMoreUsers) {
             return;
         } else if (isPrivate) {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++) {
                 lines[i] = Config.formatForSign(Config.default_colors_private[i] + lines[i]);
+            }
         } else if (isMoreUsers) {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++) {
                 lines[i] = Config.formatForSign(Config.default_colors_moreusers[i] + lines[i]);
+            }
         }
 
         Deadbolted db = null;
@@ -71,8 +76,9 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
                 sign.update();
                 db = Deadbolted.get(block);
                 Result newresult = validateSignPlacement(db, player, isPrivate);
-                if (!newresult.equals(Result.DENY_SIGN_PRIVATE_NOTHING_NEARBY))
+                if (!newresult.equals(Result.DENY_SIGN_PRIVATE_NOTHING_NEARBY)) {
                     result = newresult;
+                }
 
             }
         }
@@ -83,9 +89,9 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
             case SUCCESS:
                 if (isPrivate) {
                     String owner = Config.removeColor(lines[1]);
-                    if (owner.isEmpty())
+                    if (owner.isEmpty()) {
                         lines[1] += player.getName();
-                    else {
+                    } else {
                         String name = Config.truncateName(player.getName());
                         if (!owner.equalsIgnoreCase(name)) {
                             if (Config.hasPermission(player, Perm.admin_create)) {
@@ -98,11 +104,13 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
                 }
 
                 Sign sign = (Sign) block.getState();
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < 4; i++) {
                     sign.setLine(i, lines[i]);
+                }
                 sign.update();
-                if (!ListenerManager.canSignChange(db, event))
+                if (!ListenerManager.canSignChange(db, event)) {
                     break;
+                }
                 return;
             case DENY_SIGN_PRIVATE_ALREADY_OWNED:
                 Config.sendMessage(player, ChatColor.RED, Config.msg_deny_sign_private_already_owned);
@@ -179,30 +187,36 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
                     //not authorized to protect?
                     switch (setBlock.getType()) {
                         case CHEST:
-                            if (!chest && !(chest = Config.hasPermission(player, Perm.user_create_chest)))
+                            if (!chest && !(chest = Config.hasPermission(player, Perm.user_create_chest))) {
                                 return Result.DENY_BLOCK_PERM_CHEST;
+                            }
                             break;
                         case DISPENSER:
-                            if (!dispenser && !(dispenser = Config.hasPermission(player, Perm.user_create_dispenser)))
+                            if (!dispenser && !(dispenser = Config.hasPermission(player, Perm.user_create_dispenser))) {
                                 return Result.DENY_BLOCK_PERM_DISPENSER;
+                            }
                             break;
                         case FURNACE:
                         case BURNING_FURNACE:
-                            if (!furnace && !(furnace = Config.hasPermission(player, Perm.user_create_furnace)))
+                            if (!furnace && !(furnace = Config.hasPermission(player, Perm.user_create_furnace))) {
                                 return Result.DENY_BLOCK_PERM_FURNACE;
+                            }
                             break;
                         case WOODEN_DOOR:
                         case IRON_DOOR_BLOCK:
-                            if (!door && !(door = Config.hasPermission(player, Perm.user_create_door)))
+                            if (!door && !(door = Config.hasPermission(player, Perm.user_create_door))) {
                                 return Result.DENY_BLOCK_PERM_DOOR;
+                            }
                             break;
                         case TRAP_DOOR:
-                            if (!trap && !(trap = Config.hasPermission(player, Perm.user_create_trapdoor)))
+                            if (!trap && !(trap = Config.hasPermission(player, Perm.user_create_trapdoor))) {
                                 return Result.DENY_BLOCK_PERM_TRAPDOOR;
+                            }
                             break;
                         case FENCE_GATE:
-                            if (!gate && !(gate = Config.hasPermission(player, Perm.user_create_fencegate)))
+                            if (!gate && !(gate = Config.hasPermission(player, Perm.user_create_fencegate))) {
                                 return Result.DENY_BLOCK_PERM_FENCEGATE;
+                            }
                             break;
 
                     }

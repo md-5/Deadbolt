@@ -24,10 +24,11 @@ public class DeadboltCommandExecutor implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player)
+        if (sender instanceof Player) {
             return onPlayerCommand((Player) sender, command, label, args);
-        else
+        } else {
             return onConsoleCommand(sender, command, label, args);
+        }
     }
 
     private boolean onPlayerCommand(Player player, Command command, String label, String[] args) {
@@ -38,17 +39,21 @@ public class DeadboltCommandExecutor implements CommandExecutor {
             player.sendMessage(ChatColor.RED + Config.cmd_help_editsign);
             player.sendMessage(ChatColor.RED + Config.cmd_help_fix);
             player.sendMessage(ChatColor.RED + Config.cmd_help_fixAll);
-            if (Config.hasPermission(player, Perm.command_reload))
+            if (Config.hasPermission(player, Perm.command_reload)) {
                 player.sendMessage(ChatColor.RED + Config.cmd_help_reload);
+            }
             return true;
         }
 
-        if (args[0].equalsIgnoreCase("reload"))
+        if (args[0].equalsIgnoreCase("reload")) {
             return reload(player);
-        if (args[0].equalsIgnoreCase("fix"))
+        }
+        if (args[0].equalsIgnoreCase("fix")) {
             return fix(player);
-        if (args[0].equalsIgnoreCase("fixall"))
+        }
+        if (args[0].equalsIgnoreCase("fixall")) {
             return fixAll(player);
+        }
         try {
             return lineChange(player, Integer.valueOf(args[0]), args);
         } catch (NumberFormatException ex) {
@@ -85,10 +90,12 @@ public class DeadboltCommandExecutor implements CommandExecutor {
         String lines[] = sign.getLines();
 
         String text = "";
-        for (int i = 1; i < args.length; i++)
+        for (int i = 1; i < args.length; i++) {
             text += args[i] + (i + 1 < args.length ? " " : "");
-        if (Config.hasPermission(player, Perm.user_color))
+        }
+        if (Config.hasPermission(player, Perm.user_color)) {
             text = Config.createColor(text);
+        }
         text = Config.formatForSign(text);
         if (lineNum == 0) {
             if (Config.removeColor(lines[0]).equalsIgnoreCase(Config.removeColor(text))) {
@@ -107,17 +114,21 @@ public class DeadboltCommandExecutor implements CommandExecutor {
         } else {
             lines[lineNum] = text;
         }
-        if (Config.deselectSign)
+        if (Config.deselectSign) {
             Config.selectedSign.remove(player);
+        }
 
         boolean isPrivate = Config.isPrivate(lines[0]);
         boolean isMoreUsers = Config.isMoreUsers(lines[0]);
-        if (isPrivate)
-            for (int i = 0; i < 4; i++)
+        if (isPrivate) {
+            for (int i = 0; i < 4; i++) {
                 lines[i] = Config.formatForSign(Config.default_colors_private[i] + lines[i]);
-        else if (isMoreUsers)
-            for (int i = 0; i < 4; i++)
+            }
+        } else if (isMoreUsers) {
+            for (int i = 0; i < 4; i++) {
                 lines[i] = Config.formatForSign(Config.default_colors_moreusers[i] + lines[i]);
+            }
+        }
         sign.update(true);
         Config.sendMessage(player, ChatColor.GOLD, Config.cmd_sign_updated);
         return true;
@@ -178,9 +189,11 @@ public class DeadboltCommandExecutor implements CommandExecutor {
             case IRON_DOOR_BLOCK:
             case TRAP_DOOR:
             case FENCE_GATE:
-                for (Block b : db.getBlocks())
-                    if (b.getType().equals(block.getType()))
+                for (Block b : db.getBlocks()) {
+                    if (b.getType().equals(block.getType())) {
                         b.setData((byte) (b.getData() ^ 0x4));
+                    }
+                }
                 break;
             default:
                 Config.sendMessage(player, ChatColor.RED, Config.cmd_fix_bad_type);
@@ -194,8 +207,9 @@ public class DeadboltCommandExecutor implements CommandExecutor {
             return true;
         }
 
-        if (args[0].equalsIgnoreCase("reload"))
+        if (args[0].equalsIgnoreCase("reload")) {
             return creload(sender);
+        }
 
         sender.sendMessage("[Deadbolt] " + Config.cmd_console_command_not_found);
         return true;

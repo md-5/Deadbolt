@@ -65,15 +65,17 @@ public final class TownyListener extends DeadboltListener {
     }
 
     private String truncate(String text) {
-        if (text.matches(patternBracketTooLong))
+        if (text.matches(patternBracketTooLong)) {
             return "[" + text.substring(1, 14) + "]";
+        }
         return text;
     }
 
     private boolean checkFile(File file) {
         try {
-            if (!file.exists())
+            if (!file.exists()) {
                 file.createNewFile();
+            }
             FileWriter fw = new FileWriter(file);
             fw.write("deny_wilderness:      false  #Denies protecting of blocks in the wild\n");
             fw.write("wilderness_override:  false  #Allows ANYONE to break open locks in the wilderness\n");
@@ -100,24 +102,35 @@ public final class TownyListener extends DeadboltListener {
 
                     Town town = resident.getTown();
                     if (db.getUsers().contains(truncate("[" + town.getName().toLowerCase() + "]")))//town check
+                    {
                         return true;
+                    }
                     if (db.getUsers().contains(truncate("+" + town.getName().toLowerCase() + "+"))
                             && (town.getMayor().equals(resident) || town.getAssistants().contains(resident)))//town assistant check
+                    {
                         return true;
+                    }
 
                     Nation nation = town.getNation();
                     if (db.getUsers().contains(truncate("[" + nation.getName() + "]").toLowerCase()))//nation check
+                    {
                         return true;
+                    }
                     if (db.getUsers().contains(truncate("+" + nation.getName().toLowerCase() + "+"))
                             && (nation.getCapital().getMayor().equals(resident) || nation.getAssistants().contains(resident)))//nation assistant check
+                    {
                         return true;
+                    }
 
-                    if (wildernessOverride && towny.isWilderness(block))
+                    if (wildernessOverride && towny.isWilderness(block)) {
                         return true;
-                    if (mayorOverride)
+                    }
+                    if (mayorOverride) {
                         return towny.getTownBlock(block.getLocation()).getTown().getMayor().equals(resident);
-                    if (assistantOverride)
+                    }
+                    if (assistantOverride) {
                         return towny.getTownBlock(block.getLocation()).getTown().getAssistants().contains(resident);
+                    }
                     break;
                 }
             }
@@ -145,12 +158,15 @@ public final class TownyListener extends DeadboltListener {
                         Resident resident = towny.getResident(player.getName());
                         Town town = towny.getTownBlock(block.getLocation()).getTown();
                         TownyPermission permissions = town.getPermissions();
-                        if (resident.hasTown() && resident.getTown().equals(town) && permissions.residentBuild)
+                        if (resident.hasTown() && resident.getTown().equals(town) && permissions.residentBuild) {
                             return true;
-                        if (resident.hasNation() && resident.getTown().getNation().equals(town.getNation()) && permissions.allyBuild)
+                        }
+                        if (resident.hasNation() && resident.getTown().getNation().equals(town.getNation()) && permissions.allyBuild) {
                             return true;
-                        if (permissions.outsiderBuild)
+                        }
+                        if (permissions.outsiderBuild) {
                             return true;
+                        }
                         Deadbolt.logger.warning("d");
                         return false;
 
@@ -182,12 +198,15 @@ public final class TownyListener extends DeadboltListener {
                         Resident resident = towny.getResident(player.getName());
                         Town town = towny.getTownBlock(block.getLocation()).getTown();
                         TownyPermission permissions = town.getPermissions();
-                        if (resident.hasTown() && resident.getTown().equals(town) && permissions.residentBuild)
+                        if (resident.hasTown() && resident.getTown().equals(town) && permissions.residentBuild) {
                             return true;
-                        if (resident.hasNation() && resident.getTown().getNation().equals(town.getNation()) && permissions.allyBuild)
+                        }
+                        if (resident.hasNation() && resident.getTown().getNation().equals(town.getNation()) && permissions.allyBuild) {
                             return true;
-                        if (permissions.outsiderBuild)
+                        }
+                        if (permissions.outsiderBuild) {
                             return true;
+                        }
                         Deadbolt.logger.warning("d");
                         return false;
 
