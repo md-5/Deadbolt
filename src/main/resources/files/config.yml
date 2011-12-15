@@ -1,0 +1,37 @@
+language: english.yml               #File to load for messages
+
+vertical_trapdoors: true            #Allows trapdoors to link with each other vertically
+group_furnaces: true                #Allows furnaces to act like chests, one sign for all connected blocks
+group_dispensers: true              #Allows dispensers to act like chests, one sign for all connected blocks
+
+deny_quick_signs: false             #Allows right click placement of signs automatically on the target
+clear_sign_selection: false         #Clear sign selection after using /deadbolt <line> <text>
+
+deny_entity_interact: true          #Denies things such as snowmen opening doors
+deny_explosions: true               #Denies explosions from breaking protected blocks
+deny_endermen: true                 #Denies endermen from breaking protected blocks
+deny_pistons: true                  #Denies pistons from breaking protected blocks
+deny_redstone: true                 #Denies redstone from toggling protected blocks
+deny_redstone_specific_ids: [64, 71, 96] #List of blockIDs protected by redstone unless overrode by [everyone]
+deny_timed_doors: false             #Denies function of the [timer: x] tag on signs
+forced_timed_doors: false           #Forces timed doors on every protected (trap)door
+forced_timed_doors_delay: 3         #Default delay used with forced timed doors
+timed_door_dounds: true             #Enables sound effects on timed doors
+
+silent_door_sounds: true            #Gives traditional wood door sounds to silent ones (iron doors)
+
+#Standard multiplayer color scheme
+#0 Black          6 Gold           c Red            
+#1 Dark Blue      7 Gray           d Pink           
+#2 Dark Green     8 Dark Gray      e Yellow         
+#3 Teal           9 Blue           f White          
+#4 Dark Red       a Bright Green   
+#5 Purple         b Aqua           
+default_colors_private_line_1: 0     
+default_colors_private_line_2: 0     
+default_colors_private_line_3: 0     
+default_colors_private_line_4: 0     
+default_colors_moreusers_line_1: 0   
+default_colors_moreusers_line_2: 0   
+default_colors_moreusers_line_3: 0   
+default_colors_moreusers_line_4: 0                 

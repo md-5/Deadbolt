@@ -30,21 +30,17 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
 
     @Override
     public void onBlockBreak(BlockBreakEvent event) {
-        if (event.isCancelled()) {
+        if (event.isCancelled())
             return;
-        }
         Player player = event.getPlayer();
         Block block = event.getBlock();
         Deadbolted db = Deadbolted.get(block);
-        if (!db.isProtected()) {
+        if (!db.isProtected())
             return;
-        }
-        if (db.isOwner(player)) {
+        if (db.isOwner(player))
             return;
-        }
-        if (ListenerManager.canBlockBreak(db, event)) {
+        if (ListenerManager.canBlockBreak(db, event))
             return;
-        }
         if (Config.hasPermission(player, Perm.admin_break)) {
             Config.sendBroadcast(Perm.admin_broadcast_break, ChatColor.RED, Config.msg_admin_break, player.getName(), db.getOwner());
             Deadbolt.logger.log(Level.INFO, String.format("[Deadbolt] " + Config.msg_admin_break, player.getName(), db.getOwner()));
@@ -74,9 +70,8 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
 
     @Override
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (event.isCancelled()) {
+        if (event.isCancelled())
             return;
-        }
         Player player = event.getPlayer();
         Block block = event.getBlockPlaced();
         Block against = event.getBlockAgainst();
@@ -94,9 +89,8 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
             case CHEST:
                 if (db.isProtected()) {
                     if (db.isOwner(player)) {
-                        if (Config.reminder.add(player)) {
+                        if (Config.reminder.add(player))
                             Config.sendMessage(player, ChatColor.GOLD, Config.msg_reminder_lock_your_chests);
-                        }
                     } else {
                         event.setCancelled(true);
                         Config.sendMessage(player, ChatColor.RED, Config.msg_deny_container_expansion);

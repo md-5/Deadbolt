@@ -32,21 +32,18 @@ public final class SimpleClansListener extends DeadboltListener {
         if (cp != null) {
             Clan clan = cp.getClan();
             if (clan != null) {
-                if (db.getUsers().contains(truncate("[" + clan.getName() + "]").toLowerCase())) {
+                if (db.getUsers().contains(truncate("[" + clan.getName() + "]").toLowerCase()))
                     return true;
-                }
-                if (db.getUsers().contains(truncate("[" + clan.getTag() + "]").toLowerCase())) {
+                if (db.getUsers().contains(truncate("[" + clan.getTag() + "]").toLowerCase()))
                     return true;
-                }
             }
         }
         return false;
     }
 
     private String truncate(String text) {
-        if (text.matches(patternBracketTooLong)) {
+        if (text.matches(patternBracketTooLong))
             return "[" + text.substring(1, 14) + "]";
-        }
         return text;
     }
 }

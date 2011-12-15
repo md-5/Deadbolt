@@ -28,54 +28,44 @@ public final class EntityListener extends org.bukkit.event.entity.EntityListener
 
     @Override
     public void onEntityInteract(EntityInteractEvent event) {
-        if (event.isCancelled()) {
+        if (event.isCancelled())
             return;
-        }
-        if (!Config.deny_entity_interact) {
+        if (!Config.deny_entity_interact)
             return;
-        }
         Block block = event.getBlock();
         Deadbolted db = Deadbolted.get(block);
-        if (db.isProtected() && !ListenerManager.canEntityInteract(db, event)) {
+        if (db.isProtected() && !ListenerManager.canEntityInteract(db, event))
             event.setCancelled(true);
-        }
     }
 
     @Override
     public void onEndermanPickup(EndermanPickupEvent event) {
-        if (event.isCancelled()) {
+        if (event.isCancelled())
             return;
-        }
-        if (!Config.deny_endermen) {
+        if (!Config.deny_endermen)
             return;
-        }
         Block block = event.getBlock();
         Deadbolted db = Deadbolted.get(block);
-        if (db.isProtected() && !ListenerManager.canEndermanPickup(db, event)) {
+        if (db.isProtected() && !ListenerManager.canEndermanPickup(db, event))
             event.setCancelled(true);
-        }
 
     }
 
     @Override
     public void onEntityExplode(EntityExplodeEvent event) {
-        if (event.isCancelled()) {
+        if (event.isCancelled())
             return;
-        }
-        if (!Config.deny_explosions) {
+        if (!Config.deny_explosions)
             return;
-        }
         Set<Block> protectedBlocks = new HashSet<Block>();
         for (Block block : event.blockList()) {
             if (!protectedBlocks.contains(block)) {
                 Deadbolted db = Deadbolted.get(block);
-                if (db.isProtected() && !ListenerManager.canEntityExplode(db, event)) {
+                if (db.isProtected() && !ListenerManager.canEntityExplode(db, event))
                     protectedBlocks.addAll(db.getBlocks());
-                }
             }
         }
-        for (Block block : protectedBlocks) {
+        for (Block block : protectedBlocks)
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new ProtectionRegenTask(block), 1);
-        }
     }
 }

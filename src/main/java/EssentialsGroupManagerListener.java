@@ -37,9 +37,8 @@ public final class EssentialsGroupManagerListener extends DeadboltListener {
         getInherited(group, groupNames, owh);
 
         for (String gName : groupNames) {
-            if (db.getUsers().contains(truncate("[" + gName + "]").toLowerCase())) {
+            if (db.getUsers().contains(truncate("[" + gName + "]").toLowerCase()))
                 return true;
-            }
         }
         return false;
     }
@@ -53,9 +52,8 @@ public final class EssentialsGroupManagerListener extends DeadboltListener {
     }
 
     private String truncate(String text) {
-        if (text.matches(patternBracketTooLong)) {
+        if (text.matches(patternBracketTooLong))
             return "[" + text.substring(1, 14) + "]";
-        }
         return text;
     }
 }

@@ -46,9 +46,8 @@ public final class Deadbolted {
             case WALL_SIGN:
                 BlockState state = block.getState();
                 org.bukkit.block.Sign signState = (Sign) state;
-                if (Config.isValidWallSign(signState)) {
+                if (Config.isValidWallSign(signState))
                     search(Config.getSignAttached(signState));
-                }
                 break;
             case WOODEN_DOOR:
             case IRON_DOOR_BLOCK:
@@ -75,9 +74,8 @@ public final class Deadbolted {
                     Block adjacent = block.getRelative(bf);
                     if (adjacent.getState().getData() instanceof TrapDoor) {
                         Block hinge = adjacent.getRelative(((TrapDoor) adjacent.getState().getData()).getAttachedFace());
-                        if (hinge.equals(block)) {
+                        if (hinge.equals(block))
                             search(adjacent);
-                        }
                     }
                 }
                 Block adjacentUp = block.getRelative(BlockFace.UP);
@@ -92,9 +90,8 @@ public final class Deadbolted {
     }
 
     private void searchDoor(Block block, boolean horizontal, boolean vertical) {
-        if (!add(block)) {
+        if (!add(block))
             return;
-        }
         for (BlockFace bf : Config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getType().equals(block.getType())) {
@@ -122,9 +119,8 @@ public final class Deadbolted {
     }
 
     private void searchFenceGate(Block block, boolean horizontal, boolean vertical) {
-        if (!add(block)) {
+        if (!add(block))
             return;
-        }
         for (BlockFace bf : Config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getType().equals(Material.FENCE_GATE)) {
@@ -135,20 +131,18 @@ public final class Deadbolted {
                 parseNearbySigns(adjacent);
             }
         }
-        if (vertical) {
+        if (vertical)
             for (BlockFace bf : Config.VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getType().equals(Material.FENCE_GATE)) {
                     searchFenceGate(adjacent, horizontal, vertical);
                 }
             }
-        }
     }
 
     private void searchTrapDoor(Block block, boolean horizontal, boolean vertical) {
-        if (!add(block)) {
+        if (!add(block))
             return;
-        }
         Block hinge = block.getRelative(((TrapDoor) block.getState().getData()).getAttachedFace());
         parseNearbySigns(hinge);
         add(hinge);
@@ -160,7 +154,7 @@ public final class Deadbolted {
                 parseSignAttached(adjacent, block);
             }
         }
-        if (vertical) {
+        if (vertical)
             for (BlockFace bf : Config.VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getState().getData() instanceof TrapDoor) {
@@ -169,18 +163,15 @@ public final class Deadbolted {
                     BlockState state = adjacent.getState();
                     org.bukkit.material.Sign signData = (org.bukkit.material.Sign) state.getData();
                     Block attached = adjacent.getRelative(signData.getAttachedFace());
-                    if (parseSign((Sign) state)) {
+                    if (parseSign((Sign) state))
                         add(adjacent, attached);
-                    }
                 }
             }
-        }
     }
 
     private void searchDispenser(Block block, boolean horizontal, boolean vertical) {
-        if (!add(block)) {
+        if (!add(block))
             return;
-        }
         for (BlockFace bf : Config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getState() instanceof Dispenser) {
@@ -189,20 +180,18 @@ public final class Deadbolted {
                 parseSignAttached(adjacent, block);
             }
         }
-        if (vertical) {
+        if (vertical)
             for (BlockFace bf : Config.VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getState() instanceof Dispenser) {
                     searchDispenser(adjacent, horizontal, vertical);
                 }
             }
-        }
     }
 
     private void searchFurnace(Block block, boolean horizontal, boolean vertical) {
-        if (!add(block)) {
+        if (!add(block))
             return;
-        }
         for (BlockFace bf : Config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getState() instanceof Furnace) {
@@ -211,20 +200,18 @@ public final class Deadbolted {
                 parseSignAttached(adjacent, block);
             }
         }
-        if (vertical) {
+        if (vertical)
             for (BlockFace bf : Config.VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getState() instanceof Furnace) {
                     searchFurnace(adjacent, horizontal, vertical);
                 }
             }
-        }
     }
 
     private void searchChest(Block block, boolean horizontal, boolean vertical) {
-        if (!add(block)) {
+        if (!add(block))
             return;
-        }
         for (BlockFace bf : Config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getState() instanceof Chest) {
@@ -233,31 +220,28 @@ public final class Deadbolted {
                 parseSignAttached(adjacent, block);
             }
         }
-        if (vertical) {
+        if (vertical)
             for (BlockFace bf : Config.VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getState() instanceof Chest) {
                     searchChest(adjacent, horizontal, vertical);
                 }
             }
-        }
     }
 
     private void parseNearbySigns(Block block) {
         for (BlockFace bf : Config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
-            if (adjacent.getState() instanceof Sign) {
+            if (adjacent.getState() instanceof Sign)
                 parseSignAttached(adjacent, block);
-            }
         }
     }
 
     private void parseSignAttached(Block signBlock, Block attached) {
-        if (signBlock.getRelative(Config.getFacingFromByte(signBlock.getData()).getOppositeFace()).equals(attached)) {
+        if (signBlock.getRelative(Config.getFacingFromByte(signBlock.getData()).getOppositeFace()).equals(attached))
             if (parseSign((Sign) signBlock.getState())) {
                 add(attached, signBlock);
             }
-        }
     }
 
     private boolean parseSign(Sign sign) {
@@ -292,11 +276,9 @@ public final class Deadbolted {
     }
 
     public boolean isEveryone() {
-        for (String line : users) {
-            if (Config.isEveryone(line)) {
+        for (String line : users)
+            if (Config.isEveryone(line))
                 return true;
-            }
-        }
         return false;
     }
 
@@ -312,9 +294,8 @@ public final class Deadbolted {
 
     private boolean add(Block... block) {
         boolean success = true;
-        for (Block b : block) {
+        for (Block b : block)
             success &= blocks.add(b) && traversed.add(b);
-        }
         return success;
     }
 
@@ -336,45 +317,35 @@ public final class Deadbolted {
             clickedDoor.add(block);
             if (isVerticallyJoined(block)) {
                 Block b = block;
-                while ((b = b.getRelative(BlockFace.UP)).getType().equals(block.getType())) {
+                while ((b = b.getRelative(BlockFace.UP)).getType().equals(block.getType()))
                     clickedDoor.add(b);
-                }
                 b = block;
-                while ((b = b.getRelative(BlockFace.DOWN)).getType().equals(block.getType())) {
+                while ((b = b.getRelative(BlockFace.DOWN)).getType().equals(block.getType()))
                     clickedDoor.add(b);
-                }
             }
         }
 
         List<Block> validToggles = new ArrayList<Block>();
-        for (Block b : blocks) {
-            if (b.getType().equals(block.getType())) {
+        for(Block b:blocks)
+            if(b.getType().equals(block.getType()))
                 validToggles.add(b);
-            }
-        }
         validToggles.removeAll(clickedDoor);
-
-        for (Block b : validToggles) {
-            if (b.getType().equals(block.getType())) {
+        
+        for (Block b : validToggles)
+            if (b.getType().equals(block.getType()))
                 b.setData((byte) (b.getData() ^ 0x4));
-            }
-        }
 
-        if (!isNaturalSound(block) && Config.silent_door_sounds) {
+        if (!isNaturalSound(block) && Config.silent_door_sounds)
             block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 10);
-        }
 
-        if (Config.deny_timed_doors) {
+        if (Config.deny_timed_doors)
             return;
-        }
         int delay = getTimer();
-        if (delay == -1) {
-            if (Config.forced_timed_doors) {
+        if (delay == -1)
+            if (Config.forced_timed_doors)
                 delay = Config.forced_timed_doors_delay;
-            } else {
+            else
                 return;
-            }
-        }
         validToggles.addAll(clickedDoor);
 
         boolean runonce = true;

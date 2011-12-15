@@ -37,9 +37,8 @@ public final class PermissionsExListener extends DeadboltListener {
         }
 
         for (String group : allGroupNames) {
-            if (db.getUsers().contains(truncate("[" + group + "]").toLowerCase())) {
+            if (db.getUsers().contains(truncate("[" + group + "]").toLowerCase()))
                 return true;
-            }
         }
         return false;
     }
@@ -53,9 +52,8 @@ public final class PermissionsExListener extends DeadboltListener {
     }
 
     private String truncate(String text) {
-        if (text.matches(patternBracketTooLong)) {
+        if (text.matches(patternBracketTooLong))
             return "[" + text.substring(1, 14) + "]";
-        }
         return text;
     }
 }

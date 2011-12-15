@@ -44,9 +44,8 @@ public final class ProtectionRegenTask implements Runnable {
             block.setTypeIdAndData(state.getTypeId(), state.getData().getData(), false);
             Sign sign = (Sign) block.getState();
             int i = 0;
-            for (String line : ((Sign) state).getLines()) {
+            for (String line : ((Sign) state).getLines())
                 sign.setLine(i++, line);
-            }
 
         } else if (state.getData() instanceof TrapDoor) {
             block.setTypeIdAndData(state.getTypeId(), state.getData().getData(), false);
