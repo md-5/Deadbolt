@@ -1,24 +1,40 @@
-language: english.yml               #File to load for messages
+#File to load for messages
+language: english.yml               
 
-vertical_trapdoors: true            #Allows trapdoors to link with each other vertically
-group_furnaces: true                #Allows furnaces to act like chests, one sign for all connected blocks
-group_dispensers: true              #Allows dispensers to act like chests, one sign for all connected blocks
+#Allows trapdoors to link with each other vertically
+vertical_trapdoors: true            
+#Allows furnaces to act like chests, one sign for all connected blocks
+group_furnaces: true                
+#Allows dispensers to act like chests, one sign for all connected blocks
+group_dispensers: true              
 
-deny_quick_signs: false             #Allows right click placement of signs automatically on the target
-clear_sign_selection: false         #Clear sign selection after using /deadbolt <line> <text>
+#Allows right click placement of signs automatically on the target
+deny_quick_signs: false             
+#Clear sign selection after using /deadbolt <line> <text>
+clear_sign_selection: false         
 
-deny_entity_interact: true          #Denies things such as snowmen opening doors
-deny_explosions: true               #Denies explosions from breaking protected blocks
-deny_endermen: true                 #Denies endermen from breaking protected blocks
-deny_pistons: true                  #Denies pistons from breaking protected blocks
-deny_redstone: true                 #Denies redstone from toggling protected blocks
-deny_redstone_specific_ids: [64, 71, 96] #List of blockIDs protected by redstone unless overrode by [everyone]
-deny_timed_doors: false             #Denies function of the [timer: x] tag on signs
-forced_timed_doors: false           #Forces timed doors on every protected (trap)door
-forced_timed_doors_delay: 3         #Default delay used with forced timed doors
-timed_door_dounds: true             #Enables sound effects on timed doors
-
-silent_door_sounds: true            #Gives traditional wood door sounds to silent ones (iron doors)
+#Denies things such as snowmen opening doors
+deny_entity_interact: true          
+#Denies explosions from breaking protected blocks
+deny_explosions: true               
+#Denies endermen from breaking protected blocks
+deny_endermen: true                 
+#Denies pistons from breaking protected blocks
+deny_pistons: true                  
+#Denies redstone from toggling protected blocks
+deny_redstone: true                 
+#List of blockIDs protected by redstone unless overrode by [everyone]
+deny_redstone_specific_ids: [64, 71, 96] 
+#Denies function of the [timer: x] tag on signs
+deny_timed_doors: false             
+#Forces timed doors on every protected (trap)door
+forced_timed_doors: false           
+#Default delay used with forced timed doors
+forced_timed_doors_delay: 3         
+#Enables sound effects on timed doors
+timed_door_dounds: true             
+#Gives traditional wood door sounds to silent ones (iron doors)
+silent_door_sounds: true            
 
 #Standard multiplayer color scheme
 #0 Black          6 Gold           c Red            
