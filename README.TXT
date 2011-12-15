@@ -1,1 +1,0 @@
-Deadbolt - Sign-based authorization for all your containers, doors, fence gates, and trapdoors. No databases or flatfiles.
