@@ -266,13 +266,19 @@ public final class Deadbolted {
     }
 
     public boolean isOwner(Player player) {
-        return owner.equalsIgnoreCase(Config.truncateName(player.getName()));
+        return Config.truncateName(owner).equalsIgnoreCase(Config.truncateName(player.getName()));
     }
 
     public boolean isUser(Player player) {
-        return isOwner(player)
-                || users.contains(Config.truncateName(player.getName().toLowerCase()))
-                || isEveryone();
+        if (isOwner(player) || isEveryone()) {
+            return true;
+        } else {
+            String name = Config.truncateName(player.getName());
+            for (String user : users)
+                if (Config.truncateName(user).equalsIgnoreCase(name))
+                    return true;
+        }
+        return false;
     }
 
     public boolean isEveryone() {
@@ -326,11 +332,11 @@ public final class Deadbolted {
         }
 
         List<Block> validToggles = new ArrayList<Block>();
-        for(Block b:blocks)
-            if(b.getType().equals(block.getType()))
+        for (Block b : blocks)
+            if (b.getType().equals(block.getType()))
                 validToggles.add(b);
         validToggles.removeAll(clickedDoor);
-        
+
         for (Block b : validToggles)
             if (b.getType().equals(block.getType()))
                 b.setData((byte) (b.getData() ^ 0x4));
