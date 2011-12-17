@@ -41,6 +41,9 @@ permissions:
             deadbolt.user.create.furnace: true
             deadbolt.user.create.trapdoor: true
             deadbolt.user.create.fencegate: true
+            deadbolt.user.create.brewery: true
+            deadbolt.user.create.cauldron: true
+            deadbolt.user.create.enchant: true
     deadbolt.user.create.chest:
         description: Allows user protection of chests
         default: true
@@ -58,6 +61,15 @@ permissions:
         default: true
     deadbolt.user.create.fencegate:
         description: Allows user protection of fencegates
+        default: true
+    deadbolt.user.create.brewery:
+        description: Allows user protection of brewing stands
+        default: true
+    deadbolt.user.create.cauldron:
+        description: Allows user protection of cauldrons
+        default: true
+    deadbolt.user.create.enchant:
+        description: Allows user protection of enchantment tables
         default: true
 #------------------------------------------------------------------------------#
     deadbolt.admin.*:

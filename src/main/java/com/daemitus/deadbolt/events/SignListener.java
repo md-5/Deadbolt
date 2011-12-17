@@ -27,7 +27,7 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
 
     private enum Result {
 
-        DENY_SIGN_PRIVATE_ALREADY_OWNED, ADMIN_SIGN_PLACED, DENY_SIGN_MOREUSERS_ALREADY_OWNED, DENY_SIGN_PRIVATE_NOTHING_NEARBY, DENY_SIGN_MOREUSERS_NO_PRIVATE, SUCCESS, PLACEHOLDER, DENY_BLOCK_PERM_CHEST, DENY_BLOCK_PERM_FURNACE, DENY_BLOCK_PERM_DISPENSER, DENY_BLOCK_PERM_FENCEGATE, DENY_BLOCK_PERM_DOOR, DENY_BLOCK_PERM_TRAPDOOR;
+        DENY_SIGN_PRIVATE_ALREADY_OWNED, ADMIN_SIGN_PLACED, DENY_SIGN_MOREUSERS_ALREADY_OWNED, DENY_SIGN_PRIVATE_NOTHING_NEARBY, DENY_SIGN_MOREUSERS_NO_PRIVATE, SUCCESS, PLACEHOLDER, DENY_BLOCK_PERM_CHEST, DENY_BLOCK_PERM_FURNACE, DENY_BLOCK_PERM_DISPENSER, DENY_BLOCK_PERM_FENCEGATE, DENY_BLOCK_PERM_DOOR, DENY_BLOCK_PERM_TRAPDOOR, DENY_BLOCK_PERM_BREWERY, DENY_BLOCK_PERM_CAULDRON, DENY_BLOCK_PERM_ENCHANT;
     }
 
     @Override
@@ -82,12 +82,10 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
             case SUCCESS:
                 if (isPrivate) {
                     String owner = Config.removeColor(lines[1]);
-                    if (owner.isEmpty())
-                        lines[1] += Config.truncateName(owner);
-                    else if (Config.hasPermission(player, Perm.admin_create) && plugin.getServer().getPlayer(owner) == null) {
+                    if (Config.hasPermission(player, Perm.admin_create) && plugin.getServer().getPlayerExact(owner) == null) {
                         Config.sendMessage(player, ChatColor.YELLOW, Config.msg_admin_warning_player_not_found, owner);
                     } else {
-                        lines[1] += Config.truncateName(owner);
+                        lines[1] = Config.default_colors_private[1] + Config.truncateName(player.getName());
                     }
                 }
 
@@ -124,6 +122,15 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
                 break;
             case DENY_BLOCK_PERM_FENCEGATE:
                 Config.sendMessage(player, ChatColor.RED, Config.msg_deny_block_perm, "fencegates");
+                break;
+            case DENY_BLOCK_PERM_BREWERY:
+                Config.sendMessage(player, ChatColor.RED, Config.msg_deny_block_perm, "brewing stands");
+                break;
+            case DENY_BLOCK_PERM_CAULDRON:
+                Config.sendMessage(player, ChatColor.RED, Config.msg_deny_block_perm, "cauldrons");
+                break;
+            case DENY_BLOCK_PERM_ENCHANT:
+                Config.sendMessage(player, ChatColor.RED, Config.msg_deny_block_perm, "enchantment tables");
                 break;
             default:
                 //case DENY_SIGN_PRIVATE_NOTHING_NEARBY:
@@ -169,6 +176,9 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
                 boolean door = false;
                 boolean trap = false;
                 boolean gate = false;
+                boolean brewery = false;
+                boolean cauldron = false;
+                boolean enchant = false;
                 for (Block setBlock : db.getBlocks()) {
                     //not authorized to protect?
                     switch (setBlock.getType()) {
@@ -198,10 +208,23 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
                             if (!gate && !(gate = Config.hasPermission(player, Perm.user_create_fencegate)))
                                 return Result.DENY_BLOCK_PERM_FENCEGATE;
                             break;
+                        case BREWING_STAND:
+                            if (!brewery && !(brewery = Config.hasPermission(player, Perm.user_create_brewery)))
+                                return Result.DENY_BLOCK_PERM_BREWERY;
+                            break;
+                        case CAULDRON:
+                            if (!cauldron && !(cauldron = Config.hasPermission(player, Perm.user_create_cauldron)))
+                                return Result.DENY_BLOCK_PERM_CAULDRON;
+                            break;
+                        case ENCHANTMENT_TABLE:
+                            if (!enchant && !(enchant = Config.hasPermission(player, Perm.user_create_enchant)))
+                                return Result.DENY_BLOCK_PERM_ENCHANT;
+                            break;
+
 
                     }
                 }
-                if (!chest && !dispenser && !furnace && !door && !trap && !gate) {
+                if (!chest && !dispenser && !furnace && !door && !trap && !gate && !brewery && !cauldron && !enchant) {
                     //never found a valid block to protect
                     return Result.DENY_SIGN_PRIVATE_NOTHING_NEARBY;
                 }

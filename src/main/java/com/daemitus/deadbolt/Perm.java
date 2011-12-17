@@ -8,6 +8,9 @@ public final class Perm {
     public static final String user_create_furnace = "deadbolt.user.create.furnace";
     public static final String user_create_trapdoor = "deadbolt.user.create.trapdoor";
     public static final String user_create_fencegate = "deadbolt.user.create.fencegate";
+    public static final String user_create_brewery = "deadbolt.user.create.brewery";
+    public static final String user_create_cauldron = "deadbolt.user.create.cauldron";
+    public static final String user_create_enchant = "deadbolt.user.create.enchant";
     public static final String user_color = "deadbolt.user.color";
     public static final String admin_create = "deadbolt.admin.create";
     public static final String admin_break = "deadbolt.admin.break";
