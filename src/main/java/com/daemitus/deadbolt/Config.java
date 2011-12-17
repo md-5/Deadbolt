@@ -1,7 +1,6 @@
 package com.daemitus.deadbolt;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +19,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -137,14 +135,14 @@ public final class Config {
         forced_timed_doors = config.getBoolean("forced_timed_doors", forced_timed_doors);
         forced_timed_doors_delay = config.getInt("forced_timed_doors_delay", forced_timed_doors_delay);
 
-        default_colors_private[0] = "§" + config.getString("default_color_private_line_1", default_colors_private[0]);
-        default_colors_private[1] = "§" + config.getString("default_color_private_line_2", default_colors_private[1]);
-        default_colors_private[2] = "§" + config.getString("default_color_private_line_3", default_colors_private[2]);
-        default_colors_private[3] = "§" + config.getString("default_color_private_line_4", default_colors_private[3]);
-        default_colors_moreusers[0] = "§" + config.getString("default_color_moreusers_line_1", default_colors_moreusers[0]);
-        default_colors_moreusers[1] = "§" + config.getString("default_color_moreusers_line_2", default_colors_moreusers[1]);
-        default_colors_moreusers[2] = "§" + config.getString("default_color_moreusers_line_3", default_colors_moreusers[2]);
-        default_colors_moreusers[3] = "§" + config.getString("default_color_moreusers_line_4", default_colors_moreusers[3]);
+        default_colors_private[0] = "§" + config.getString("default_colors_private_line_1", default_colors_private[0]);
+        default_colors_private[1] = "§" + config.getString("default_colors_private_line_2", default_colors_private[1]);
+        default_colors_private[2] = "§" + config.getString("default_colors_private_line_3", default_colors_private[2]);
+        default_colors_private[3] = "§" + config.getString("default_colors_private_line_4", default_colors_private[3]);
+        default_colors_moreusers[0] = "§" + config.getString("default_colors_moreusers_line_1", default_colors_moreusers[0]);
+        default_colors_moreusers[1] = "§" + config.getString("default_colors_moreusers_line_2", default_colors_moreusers[1]);
+        default_colors_moreusers[2] = "§" + config.getString("default_colors_moreusers_line_3", default_colors_moreusers[2]);
+        default_colors_moreusers[3] = "§" + config.getString("default_colors_moreusers_line_4", default_colors_moreusers[3]);
 
         String language = config.getString("language", "english.yml");
 
@@ -263,8 +261,10 @@ public final class Config {
     }
 
     public static String formatForSign(String line) {
-        line = UNNEEDED_COLOR.matcher(line).replaceAll("");
-        line = TWO_COLORS.matcher(line).replaceAll("$2$3");
+        while (UNNEEDED_COLOR.matcher(line).find())
+            line = UNNEEDED_COLOR.matcher(line).replaceAll("");
+        while (TWO_COLORS.matcher(line).find())
+            line = TWO_COLORS.matcher(line).replaceAll("$2$3");
         line = FORMAT_LENGTH.matcher(line).replaceAll("$1");
         line = line.substring(0, line.length() > 15 ? 15 : line.length());
         return line;

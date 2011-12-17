@@ -49,10 +49,10 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
             return;
         } else if (isPrivate) {
             for (int i = 0; i < 4; i++)
-                lines[i] = Config.formatForSign(Config.default_colors_private[i] + lines[i]);
+                lines[i] = Config.default_colors_private[i] + lines[i];
         } else if (isMoreUsers) {
             for (int i = 0; i < 4; i++)
-                lines[i] = Config.formatForSign(Config.default_colors_moreusers[i] + lines[i]);
+                lines[i] = Config.default_colors_moreusers[i] + lines[i];
         }
 
         Deadbolted db = null;
@@ -73,7 +73,6 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
                 Result newresult = validateSignPlacement(db, player, isPrivate);
                 if (!newresult.equals(Result.DENY_SIGN_PRIVATE_NOTHING_NEARBY))
                     result = newresult;
-
             }
         }
 
@@ -84,22 +83,17 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
                 if (isPrivate) {
                     String owner = Config.removeColor(lines[1]);
                     if (owner.isEmpty())
-                        lines[1] += player.getName();
-                    else {
-                        String name = Config.truncateName(player.getName());
-                        if (!owner.equalsIgnoreCase(name)) {
-                            if (Config.hasPermission(player, Perm.admin_create)) {
-                                Config.sendMessage(player, ChatColor.YELLOW, Config.msg_admin_warning_player_not_found, owner);
-                            } else {
-                                lines[1] += name;
-                            }
-                        }
+                        lines[1] += Config.truncateName(owner);
+                    else if (Config.hasPermission(player, Perm.admin_create) && plugin.getServer().getPlayer(owner) == null) {
+                        Config.sendMessage(player, ChatColor.YELLOW, Config.msg_admin_warning_player_not_found, owner);
+                    } else {
+                        lines[1] += Config.truncateName(owner);
                     }
                 }
 
                 Sign sign = (Sign) block.getState();
                 for (int i = 0; i < 4; i++)
-                    sign.setLine(i, lines[i]);
+                    sign.setLine(i, Config.formatForSign(lines[i]));
                 sign.update();
                 if (!ListenerManager.canSignChange(db, event))
                     break;

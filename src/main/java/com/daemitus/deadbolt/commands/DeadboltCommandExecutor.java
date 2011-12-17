@@ -7,7 +7,6 @@ import com.daemitus.deadbolt.Perm;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -97,7 +96,7 @@ public class DeadboltCommandExecutor implements CommandExecutor {
                 Config.sendMessage(player, ChatColor.RED, Config.cmd_identifier_not_changeable);
                 return true;
             }
-        } else if (lineNum == 1 && Config.isPrivate(lines[0])) {
+        } else if (lineNum == 1 && Config.isPrivate(Config.removeColor(lines[0]))) {
             if (Config.removeColor(lines[1]).equalsIgnoreCase(Config.removeColor(text))) {
                 lines[1] = text;
             } else {
@@ -110,8 +109,8 @@ public class DeadboltCommandExecutor implements CommandExecutor {
         if (Config.deselectSign)
             Config.selectedSign.remove(player);
 
-        boolean isPrivate = Config.isPrivate(lines[0]);
-        boolean isMoreUsers = Config.isMoreUsers(lines[0]);
+        boolean isPrivate = Config.isPrivate(Config.removeColor(lines[0]));
+        boolean isMoreUsers = Config.isMoreUsers(Config.removeColor(lines[0]));
         if (isPrivate)
             for (int i = 0; i < 4; i++)
                 lines[i] = Config.formatForSign(Config.default_colors_private[i] + lines[i]);
