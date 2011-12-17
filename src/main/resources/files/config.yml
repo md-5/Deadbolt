@@ -6,7 +6,13 @@ vertical_trapdoors: true
 #Allows furnaces to act like chests, one sign for all connected blocks
 group_furnaces: true                
 #Allows dispensers to act like chests, one sign for all connected blocks
-group_dispensers: true              
+group_dispensers: true
+#Allows cauldrons to act like chests, one sign for all connected blocks
+group_cauldrons: true
+#Allows enchantment tables to act like chests, one sign for all connected blocks
+group_enchantment_tables: true
+#Allows brewing stands to act like chests, one sign for all connected blocks
+group_brewing_stands: true
 
 #Allows right click placement of signs automatically on the target
 deny_quick_signs: false             

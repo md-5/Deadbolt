@@ -60,7 +60,16 @@ public final class Deadbolted {
                 searchTrapDoor(block, true, Config.vertical_trapdoors);
                 break;
             case DISPENSER:
-                searchDispenser(block, Config.group_dispensers, Config.group_dispensers);
+                searchSimpleBlock(block, Config.group_dispensers, Config.group_dispensers);
+                break;
+            case BREWING_STAND:
+                searchSimpleBlock(block, Config.group_brewing_stands, Config.group_brewing_stands);
+                break;
+            case ENCHANTMENT_TABLE:
+                searchSimpleBlock(block, Config.group_enchantment_tables, Config.group_enchantment_tables);
+                break;
+            case CAULDRON:
+                searchSimpleBlock(block, Config.group_cauldrons, Config.group_cauldrons);
                 break;
             case FURNACE:
             case BURNING_FURNACE:
@@ -169,13 +178,13 @@ public final class Deadbolted {
             }
     }
 
-    private void searchDispenser(Block block, boolean horizontal, boolean vertical) {
+    private void searchSimpleBlock(Block block, boolean horizontal, boolean vertical) {
         if (!add(block))
             return;
         for (BlockFace bf : Config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
-            if (horizontal && adjacent.getState() instanceof Dispenser) {
-                searchDispenser(adjacent, horizontal, vertical);
+            if (horizontal && adjacent.getType().equals(block.getType())) {
+                searchSimpleBlock(adjacent, horizontal, vertical);
             } else if (adjacent.getType().equals(Material.WALL_SIGN)) {
                 parseSignAttached(adjacent, block);
             }
@@ -183,8 +192,8 @@ public final class Deadbolted {
         if (vertical)
             for (BlockFace bf : Config.VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
-                if (adjacent.getState() instanceof Dispenser) {
-                    searchDispenser(adjacent, horizontal, vertical);
+                if (adjacent.getType().equals(block.getType())) {
+                    searchSimpleBlock(adjacent, horizontal, vertical);
                 }
             }
     }

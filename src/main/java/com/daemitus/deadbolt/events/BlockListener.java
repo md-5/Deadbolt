@@ -83,10 +83,13 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
 
         Deadbolted db = Deadbolted.get(block);
         switch (block.getType()) {
-            case FURNACE:
-            case BURNING_FURNACE:
-            case DISPENSER:
             case CHEST:
+            case FURNACE:
+            case CAULDRON:
+            case DISPENSER:
+            case BREWING_STAND:
+            case BURNING_FURNACE:            
+            case ENCHANTMENT_TABLE:
                 if (db.isProtected()) {
                     if (db.isOwner(player)) {
                         if (Config.reminder.add(player))

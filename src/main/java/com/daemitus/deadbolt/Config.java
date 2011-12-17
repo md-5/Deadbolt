@@ -42,6 +42,9 @@ public final class Config {
     public static boolean vertical_trapdoors = true;
     public static boolean group_furnaces = true;
     public static boolean group_dispensers = true;
+    public static boolean group_cauldrons = true;
+    public static boolean group_enchantment_tables = true;
+    public static boolean group_brewing_stands = true;
     public static boolean silent_door_sounds = true;
     public static boolean deny_timed_doors = false;
     public static boolean timed_door_sounds = true;
@@ -122,6 +125,9 @@ public final class Config {
         vertical_trapdoors = config.getBoolean("vertical_trapdoors", vertical_trapdoors);
         group_furnaces = config.getBoolean("group_furnaces", group_furnaces);
         group_dispensers = config.getBoolean("group_dispensers", group_dispensers);
+        group_cauldrons = config.getBoolean("group_cauldrons", group_cauldrons);
+        group_enchantment_tables = config.getBoolean("group_enchantment_tables", group_enchantment_tables);
+        group_brewing_stands = config.getBoolean("group_brewing_stands", group_brewing_stands);
         deny_quick_signs = config.getBoolean("deny_quick_signs", deny_quick_signs);
         deselectSign = config.getBoolean("clear_sign_selection", deselectSign);
         deny_explosions = config.getBoolean("deny_explosions", deny_explosions);

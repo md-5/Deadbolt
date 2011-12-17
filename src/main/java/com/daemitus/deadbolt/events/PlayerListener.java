@@ -68,8 +68,11 @@ public final class PlayerListener extends org.bukkit.event.player.PlayerListener
                     return onPlayerInteractDoor(event);
                 case CHEST:
                 case FURNACE:
-                case BURNING_FURNACE:
+                case CAULDRON:
                 case DISPENSER:
+                case BREWING_STAND:
+                case BURNING_FURNACE:
+                case ENCHANTMENT_TABLE:
                     return onPlayerInteractContainer(event);
                 case WALL_SIGN:
                     return onPlayerInteractWallSign(event);
@@ -92,6 +95,9 @@ public final class PlayerListener extends org.bukkit.event.player.PlayerListener
             case IRON_DOOR_BLOCK:
             case TRAP_DOOR:
             case FENCE_GATE:
+            case BREWING_STAND:
+            case ENCHANTMENT_TABLE:
+            case CAULDRON:
 
                 if (!canQuickProtect(player, against)) {
                     Config.sendMessage(player, ChatColor.RED, Config.msg_deny_block_perm, against.getType().name());
@@ -158,6 +164,12 @@ public final class PlayerListener extends org.bukkit.event.player.PlayerListener
                 return player.hasPermission(Perm.user_create_trapdoor);
             case FENCE_GATE:
                 return player.hasPermission(Perm.user_create_fencegate);
+            case BREWING_STAND:
+                return player.hasPermission(Perm.user_create_brewery);
+            case ENCHANTMENT_TABLE:
+                return player.hasPermission(Perm.user_create_enchant);
+            case CAULDRON:
+                return player.hasPermission(Perm.user_create_cauldron);
             default:
                 return false;
         }
