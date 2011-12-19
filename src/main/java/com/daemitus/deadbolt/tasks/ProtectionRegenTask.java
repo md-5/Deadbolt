@@ -13,7 +13,7 @@ public final class ProtectionRegenTask implements Runnable {
 
     private BlockState state;
     private ItemStack[] contents;
-
+    //currently disabled
     public ProtectionRegenTask(Block block) {
         this.state = block.getState();
 
