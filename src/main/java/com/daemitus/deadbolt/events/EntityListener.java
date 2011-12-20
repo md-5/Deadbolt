@@ -1,12 +1,9 @@
 package com.daemitus.deadbolt.events;
 
-import com.daemitus.deadbolt.tasks.ProtectionRegenTask;
 import com.daemitus.deadbolt.Config;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.listener.ListenerManager;
-import java.util.HashSet;
-import java.util.Set;
 import org.bukkit.block.Block;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;

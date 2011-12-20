@@ -5,6 +5,7 @@ import com.daemitus.deadbolt.Config;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.listener.ListenerManager;
+import com.daemitus.deadbolt.tasks.SignUpdateTask;
 import java.util.logging.Level;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -49,23 +50,8 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
 
         event.setCancelled(true);
         Config.sendMessage(player, ChatColor.RED, Config.msg_deny_block_break);
-        if (block.getType().equals(Material.WALL_SIGN)) {
-            //TODO blanked signs after breaking without permission
-            //FAILED
-            //plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new ProtectionRegenTask(block), 1);
-            //FAILED 
-            //block.setTypeIdAndData(block.getTypeId(), block.getData(), false);
-            //FAILED 
-            //((Sign)block.getState()).update(true);
-            //FAILED 
-            //Sign sign = (Sign)block.getState();
-            //for(int i = 0; i < 4; i++)
-            //    sign.setLine(i, sign.getLine(i));
-            //sign.update();
-            //FAILED
-            //block.setTypeIdAndData(block.getTypeId(), (byte) (block.getData() + 1), false);
-            //block.setTypeIdAndData(block.getTypeId(), block.getData() , false);
-        }
+        if (block.getType().equals(Material.WALL_SIGN))
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new SignUpdateTask(block), 1);
     }
 
     @Override
@@ -88,7 +74,7 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
             case CAULDRON:
             case DISPENSER:
             case BREWING_STAND:
-            case BURNING_FURNACE:            
+            case BURNING_FURNACE:
             case ENCHANTMENT_TABLE:
                 if (db.isProtected()) {
                     if (db.isOwner(player)) {
