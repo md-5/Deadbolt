@@ -35,7 +35,12 @@
       <dependency>
           <groupId>org.bukkit</groupId>
           <artifactId>bukkit</artifactId>
-          <version>1.0.1-R1</version>
+          <version>1.0.1-R2-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+          <groupId>org.bukkit</groupId>
+          <artifactId>craftbukkit</artifactId>
+          <version>1.0.1-R2-SNAPSHOT</version>
       </dependency>
       <dependency>
           <groupId>de.bananaco</groupId>
