@@ -38,18 +38,20 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
         Block block = event.getBlock();
         String[] lines = event.getLines();
 
-        //Fix for clientside sign hack
-        Sign sign = (Sign) block.getState();
-        String originalIdent = Config.getLine(sign, 0);
-        if (Config.isPrivate(originalIdent) || Config.isMoreUsers(originalIdent)) {
-            event.setCancelled(true);
-            return;
-        }
-        //End fix
-
         if (Config.hasPermission(player, Perm.user_color))
             for (int i = 0; i < 4; i++)
                 lines[i] = Config.createColor(lines[i]);
+
+        //fix for clientside sign edit hack
+        if (event.getBlock().getType().equals(Material.WALL_SIGN)) {
+            Sign sign = (Sign) event.getBlock().getState();
+            String ident = Config.getLine(sign, 0);
+            if (Config.isPrivate(ident) || Config.isMoreUsers(ident)) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+        //fix end
 
         String ident = Config.removeColor(lines[0]);
         boolean isPrivate = Config.isPrivate(ident);
@@ -67,6 +69,7 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
         Deadbolted db = null;
         Result result = Result.PLACEHOLDER;
         if (block.getType().equals(Material.WALL_SIGN)) {
+            Sign sign = (Sign) block.getState();
             sign.setLine(0, isPrivate ? Config.locale_private : Config.locale_moreusers);
             sign.update();
             db = Deadbolted.get(block);
@@ -74,6 +77,7 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
         } else {
             for (byte b = 0x2; b < 0x6 && !result.equals(Result.SUCCESS) && !result.equals(Result.ADMIN_SIGN_PLACED); b++) {
                 block.setTypeIdAndData(Material.WALL_SIGN.getId(), b, false);
+                Sign sign = (Sign) block.getState();
                 sign.setLine(0, isPrivate ? Config.locale_private : Config.locale_moreusers);
                 sign.update();
                 db = Deadbolted.get(block);
@@ -89,13 +93,16 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
             case SUCCESS:
                 if (isPrivate) {
                     String owner = Config.removeColor(lines[1]);
-                    if (Config.hasPermission(player, Perm.admin_create) && plugin.getServer().getPlayerExact(owner) == null) {
+                    if (owner.isEmpty()) {
+                        lines[1] = Config.default_colors_private[1] + Config.truncateName(player.getName());
+                    } else if (Config.hasPermission(player, Perm.admin_create) && plugin.getServer().getPlayerExact(owner) == null) {
                         Config.sendMessage(player, ChatColor.YELLOW, Config.msg_admin_warning_player_not_found, owner);
                     } else {
                         lines[1] = Config.default_colors_private[1] + Config.truncateName(player.getName());
                     }
                 }
 
+                Sign sign = (Sign) block.getState();
                 for (int i = 0; i < 4; i++)
                     sign.setLine(i, Config.formatForSign(lines[i]));
                 sign.update();
