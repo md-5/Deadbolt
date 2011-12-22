@@ -3,10 +3,10 @@ import com.daemitus.deadbolt.listener.DeadboltListener;
 import com.daemitus.deadbolt.Config;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
-//import com.palmergames.bukkit.towny.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
+import com.palmergames.bukkit.towny.object.TownBlock;
 import com.palmergames.bukkit.towny.object.TownyPermission;
 import com.palmergames.bukkit.towny.object.TownyUniverse;
 import com.palmergames.bukkit.towny.object.TownyWorld;
@@ -27,7 +27,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public final class TownyListener extends DeadboltListener {
 
-    private Deadbolt plugin;
     private static TownyUniverse towny;
     protected static final String patternBracketTooLong = "\\[.{14,}\\]";
     private static boolean denyWilderness = false;
@@ -43,7 +42,6 @@ public final class TownyListener extends DeadboltListener {
     @Override
     public void load(final Deadbolt plugin) {
         try {
-            this.plugin = plugin;
             towny = TownyUniverse.plugin.getTownyUniverse();
 
             File configFile = new File(plugin.getDataFolder() + "/listeners/TownyListener.yml");
@@ -90,7 +88,6 @@ public final class TownyListener extends DeadboltListener {
 
     @Override
     public boolean canPlayerInteract(Deadbolted db, PlayerInteractEvent event) {
-        //DEFAULT return false;
         Player player = event.getPlayer();
         Block block = event.getClickedBlock();
         try {
@@ -123,7 +120,7 @@ public final class TownyListener extends DeadboltListener {
             }
         } catch (Exception ex) {
         }
-        return false;
+        return super.canPlayerInteract(db, event);
     }
 
     @Override
@@ -143,13 +140,16 @@ public final class TownyListener extends DeadboltListener {
                 } else {
                     try {
                         Resident resident = towny.getResident(player.getName());
-                        Town town = towny.getTownBlock(block.getLocation()).getTown();
-                        TownyPermission permissions = town.getPermissions();
-                        if (resident.hasTown() && resident.getTown().equals(town) && permissions.residentBuild)
+                        TownBlock townBlock = towny.getTownBlock(block.getLocation());
+                        TownyPermission plotPerms = townBlock.getPermissions();
+                        Town town = townBlock.getTown();
+                        TownyPermission townPerms = town.getPermissions();
+                                            //todo rework plot permissions in                          
+                        if (resident.hasTown() && resident.getTown().equals(town) && townPerms.residentBuild)
                             return true;
-                        if (resident.hasNation() && resident.getTown().getNation().equals(town.getNation()) && permissions.allyBuild)
+                        if (resident.hasNation() && resident.getTown().getNation().equals(town.getNation()) && townPerms.allyBuild)
                             return true;
-                        if (permissions.outsiderBuild)
+                        if (townPerms.outsiderBuild)
                             return true;
                         Deadbolt.logger.warning("d");
                         return false;
@@ -160,7 +160,7 @@ public final class TownyListener extends DeadboltListener {
                 break;
             }
         }
-        return true;
+        return super.canSignChange(db, event);
     }
 
     @Override
@@ -197,6 +197,6 @@ public final class TownyListener extends DeadboltListener {
                 break;
             }
         }
-        return true;
+        return super.canSignChangeQuick(db, event);
     }
 }

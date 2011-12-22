@@ -241,7 +241,7 @@ public final class Deadbolted {
     private void parseNearbySigns(Block block) {
         for (BlockFace bf : Config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
-            if (adjacent.getState() instanceof Sign)
+            if (adjacent.getType().equals(Material.WALL_SIGN))
                 parseSignAttached(adjacent, block);
         }
     }

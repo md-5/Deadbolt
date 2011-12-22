@@ -21,7 +21,7 @@ public final class SimpleClansListener extends DeadboltListener {
     }
 
     @Override
-    public void load(Deadbolt plugin) {
+    public void load(final Deadbolt plugin) {
         sc = SimpleClans.getInstance();
     }
 
