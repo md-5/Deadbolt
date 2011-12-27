@@ -49,11 +49,11 @@ silent_door_sounds: true
 #3 Teal           9 Blue           f White          
 #4 Dark Red       a Bright Green   
 #5 Purple         b Aqua           
-default_colors_private_line_1: 0     
-default_colors_private_line_2: 0     
-default_colors_private_line_3: 0     
-default_colors_private_line_4: 0     
-default_colors_moreusers_line_1: 0   
-default_colors_moreusers_line_2: 0   
-default_colors_moreusers_line_3: 0   
-default_colors_moreusers_line_4: 0                 
+default_colors_private_line_1: "0"
+default_colors_private_line_2: "0"
+default_colors_private_line_3: "0"
+default_colors_private_line_4: "0"
+default_colors_moreusers_line_1: "0"
+default_colors_moreusers_line_2: "0"
+default_colors_moreusers_line_3: "0"
+default_colors_moreusers_line_4: "0"

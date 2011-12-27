@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -106,13 +107,12 @@ public final class Config {
     private static final Pattern PSEUDO_COLOR = Pattern.compile("\\&([0-9a-f])");
     private static final Pattern UNNEEDED_COLOR = Pattern.compile("^§0");
     private static final Pattern FORMAT_LENGTH = Pattern.compile("(^.{0,15}).*");
-    public static String[] default_colors_private = {"0", "0", "0", "0"};
-    public static String[] default_colors_moreusers = {"0", "0", "0", "0"};
+    public static String[] default_colors_private = {"", "", "", ""};
+    public static String[] default_colors_moreusers = {"", "", "", ""};
     //------------------------------------------------------------------------//    
 
     public Config(final Deadbolt plugin) {
         this.plugin = plugin;
-        load();
     }
 
     public void load() {
@@ -134,21 +134,21 @@ public final class Config {
         deny_endermen = config.getBoolean("deny_endermen", deny_endermen);
         deny_pistons = config.getBoolean("deny_pistons", deny_pistons);
         deny_redstone = config.getBoolean("deny_redstone", deny_redstone);
-        redstone_protected_blockids = config.getList("deny_redstone_specific_ids", redstone_protected_blockids);
+        redstone_protected_blockids = config.getIntegerList("deny_redstone_specific_ids"); //Why doesnt this have a default param
         silent_door_sounds = config.getBoolean("silent_door_sounds", silent_door_sounds);
         deny_timed_doors = config.getBoolean("deny_timed_doors", deny_timed_doors);
         timed_door_sounds = config.getBoolean("timed_door_sounds", timed_door_sounds);
         forced_timed_doors = config.getBoolean("forced_timed_doors", forced_timed_doors);
         forced_timed_doors_delay = config.getInt("forced_timed_doors_delay", forced_timed_doors_delay);
 
-        default_colors_private[0] = "§" + config.getString("default_colors_private_line_1", default_colors_private[0]);
-        default_colors_private[1] = "§" + config.getString("default_colors_private_line_2", default_colors_private[1]);
-        default_colors_private[2] = "§" + config.getString("default_colors_private_line_3", default_colors_private[2]);
-        default_colors_private[3] = "§" + config.getString("default_colors_private_line_4", default_colors_private[3]);
-        default_colors_moreusers[0] = "§" + config.getString("default_colors_moreusers_line_1", default_colors_moreusers[0]);
-        default_colors_moreusers[1] = "§" + config.getString("default_colors_moreusers_line_2", default_colors_moreusers[1]);
-        default_colors_moreusers[2] = "§" + config.getString("default_colors_moreusers_line_3", default_colors_moreusers[2]);
-        default_colors_moreusers[3] = "§" + config.getString("default_colors_moreusers_line_4", default_colors_moreusers[3]);
+        default_colors_private[0] = "§" + config.getString("default_colors_private_line_1", "0");
+        default_colors_private[1] = "§" + config.getString("default_colors_private_line_2", "0");
+        default_colors_private[2] = "§" + config.getString("default_colors_private_line_3", "0");
+        default_colors_private[3] = "§" + config.getString("default_colors_private_line_4", "0");
+        default_colors_moreusers[0] = "§" + config.getString("default_colors_moreusers_line_1", "0");
+        default_colors_moreusers[1] = "§" + config.getString("default_colors_moreusers_line_2", "0");
+        default_colors_moreusers[2] = "§" + config.getString("default_colors_moreusers_line_3", "0");
+        default_colors_moreusers[3] = "§" + config.getString("default_colors_moreusers_line_4", "0");
 
         String language = config.getString("language", "english.yml");
 

@@ -59,7 +59,7 @@ public class DeadboltCommandExecutor implements CommandExecutor {
 
     private boolean reload(Player player) {
         Config.sendMessage(player, ChatColor.RED, Config.cmd_reload);
-        plugin.loadExternals();
+        plugin.config.load();
         return true;
     }
 
@@ -202,7 +202,7 @@ public class DeadboltCommandExecutor implements CommandExecutor {
 
     private boolean creload(CommandSender sender) {
         sender.sendMessage("[Deadbolt] " + Config.cmd_console_reload);
-        plugin.loadExternals();
+        plugin.config.load();
         return true;
     }
 }

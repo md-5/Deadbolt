@@ -35,7 +35,11 @@ public final class Deadbolt extends JavaPlugin {
         new PistonListener(this, pm);
         new RedstoneListener(this, pm);
         new Deadbolted(this);
-        loadExternals();
+        config = new Config(this);
+        config.load();
+        listenerManager = new ListenerManager(this, this.getServer().getPluginManager());
+        listenerManager.registerListeners();
+        listenerManager.checkListeners();
         new ServerListener(this, pm);
 
         this.getCommand("deadbolt").setExecutor(new DeadboltCommandExecutor(this));
@@ -47,11 +51,6 @@ public final class Deadbolt extends JavaPlugin {
     public void onDisable() {
         ToggleDoorTask.cleanup();
         logger.log(Level.INFO, "[Deadbolt] " + this.getDescription().getVersion() + " disabled");
-    }
-
-    public void loadExternals() {
-        listenerManager = new ListenerManager(this, this.getServer().getPluginManager());
-        config = new Config(this);
     }
 
     /**

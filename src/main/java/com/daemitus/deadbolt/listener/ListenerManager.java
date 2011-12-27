@@ -33,11 +33,9 @@ public final class ListenerManager {
     public ListenerManager(final Deadbolt plugin, final PluginManager pm) {
         this.plugin = plugin;
         this.pm = pm;
-        registerListeners();
-        checkListeners();
     }
 
-    private void registerListeners() {
+    public void registerListeners() {
         loaded.clear();
         unloaded.clear();
         File dir = new File(plugin.getDataFolder() + "/listeners");
