@@ -95,8 +95,9 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
                     String owner = Config.removeColor(lines[1]);
                     if (owner.isEmpty()) {
                         lines[1] = Config.default_colors_private[1] + Config.truncateName(player.getName());
-                    } else if (Config.hasPermission(player, Perm.admin_create) && plugin.getServer().getPlayerExact(owner) == null) {
-                        Config.sendMessage(player, ChatColor.YELLOW, Config.msg_admin_warning_player_not_found, owner);
+                    } else if (Config.hasPermission(player, Perm.admin_create)) {
+                        if (plugin.getServer().getPlayerExact(owner) == null)
+                            Config.sendMessage(player, ChatColor.YELLOW, Config.msg_admin_warning_player_not_found, owner);
                     } else {
                         lines[1] = Config.default_colors_private[1] + Config.truncateName(player.getName());
                     }

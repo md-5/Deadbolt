@@ -3,6 +3,7 @@ import com.daemitus.deadbolt.listener.DeadboltListener;
 import com.daemitus.deadbolt.Config;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
+import com.palmergames.bukkit.towny.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -68,21 +70,20 @@ public final class TownyListener extends DeadboltListener {
         return text;
     }
 
-    private boolean checkFile(File file) {
+    private void checkFile(File file) {
         try {
-            if (!file.exists())
+            if (!file.exists()) {
                 file.createNewFile();
-            FileWriter fw = new FileWriter(file);
-            fw.write("deny_wilderness:      false  #Denies protecting of blocks in the wild\n");
-            fw.write("wilderness_override:  false  #Allows ANYONE to break open locks in the wilderness\n");
-            fw.write("mayor_override:       false  #Allows Mayors to break open locks in their town\n");
-            fw.write("assistant_override:   false  #Allows Assistants to break open locks in their town\n");
-            fw.close();
-            Deadbolt.logger.log(Level.INFO, "[Deadbolt][" + this.getClass().getSimpleName() + "] Retrieved file " + file.getName());
-            return true;
+                FileWriter fw = new FileWriter(file);
+                fw.write("deny_wilderness:      false  #Denies protecting of blocks in the wild\n");
+                fw.write("wilderness_override:  false  #Allows ANYONE to break open locks in the wilderness\n");
+                fw.write("mayor_override:       false  #Allows Mayors to break open locks in their town\n");
+                fw.write("assistant_override:   false  #Allows Assistants to break open locks in their town\n");
+                fw.close();
+                Deadbolt.logger.log(Level.INFO, "[Deadbolt][" + this.getClass().getSimpleName() + "] Retrieved file " + file.getName());
+            }
         } catch (IOException ex) {
             Deadbolt.logger.log(Level.SEVERE, "[Deadbolt][" + this.getClass().getSimpleName() + "] Error retrieving " + file.getName());
-            return false;
         }
     }
 
@@ -126,77 +127,135 @@ public final class TownyListener extends DeadboltListener {
     @Override
     public boolean canSignChange(Deadbolted db, SignChangeEvent event) {
         //DEFAULT return true;
-        Player player = event.getPlayer();
-        Block block = event.getBlock();
-        for (TownyWorld tw : towny.getWorlds()) {
-            if (tw.getName().equalsIgnoreCase(player.getWorld().getName()) && tw.isUsingTowny()) {
-                if (towny.isWilderness(block)) {
-                    if (denyWilderness) {
-                        Config.sendMessage(player, ChatColor.RED, "You can only protect blocks inside of a town");
-                        return false;
-                    } else {
-                        return true;
-                    }
-                } else {
-                    try {
-                        Resident resident = towny.getResident(player.getName());
-                        TownBlock townBlock = towny.getTownBlock(block.getLocation());
-                        TownyPermission plotPerms = townBlock.getPermissions();
-                        Town town = townBlock.getTown();
-                        TownyPermission townPerms = town.getPermissions();
-                                            //todo rework plot permissions in                          
-                        if (resident.hasTown() && resident.getTown().equals(town) && townPerms.residentBuild)
-                            return true;
-                        if (resident.hasNation() && resident.getTown().getNation().equals(town.getNation()) && townPerms.allyBuild)
-                            return true;
-                        if (townPerms.outsiderBuild)
-                            return true;
-                        Deadbolt.logger.warning("d");
-                        return false;
-
-                    } catch (Exception ex) {
-                    }
-                }
-                break;
-            }
-        }
-        return super.canSignChange(db, event);
+        return askTowny(event.getPlayer(), event.getBlock());
     }
 
     @Override
     public boolean canSignChangeQuick(Deadbolted db, PlayerInteractEvent event) {
         //DEFAULT return true;
-        Player player = event.getPlayer();
-        Block block = event.getClickedBlock();
-        for (TownyWorld tw : towny.getWorlds()) {
-            if (tw.getName().equalsIgnoreCase(player.getWorld().getName()) && tw.isUsingTowny()) {
-                if (towny.isWilderness(block)) {
-                    if (denyWilderness) {
-                        Config.sendMessage(player, ChatColor.RED, "You can only protect blocks inside of a town");
-                        return false;
-                    } else {
-                        return true;
-                    }
-                } else {
-                    try {
-                        Resident resident = towny.getResident(player.getName());
-                        Town town = towny.getTownBlock(block.getLocation()).getTown();
-                        TownyPermission permissions = town.getPermissions();
-                        if (resident.hasTown() && resident.getTown().equals(town) && permissions.residentBuild)
-                            return true;
-                        if (resident.hasNation() && resident.getTown().getNation().equals(town.getNation()) && permissions.allyBuild)
-                            return true;
-                        if (permissions.outsiderBuild)
-                            return true;
-                        Deadbolt.logger.warning("d");
-                        return false;
+        return askTowny(event.getPlayer(), event.getClickedBlock());
+    }
 
-                    } catch (Exception ex) {
-                    }
-                }
-                break;
+    private boolean askTowny(Player player, Block block) {
+        //OP check
+        if (Config.useOPlist && player.isOp())
+            return true;
+
+        //is this world using towny?
+        for (TownyWorld townyWorld : towny.getWorlds())
+            if (townyWorld.getName().equalsIgnoreCase(block.getWorld().getName()) && !townyWorld.isUsingTowny())
+                return true;
+
+        //wilderness check
+        if (towny.isWilderness(block)) {
+            if (denyWilderness) {
+                Config.sendMessage(player, ChatColor.RED, "You can only protect blocks inside of a town");
+                return false;
+            } else {
+                return true;
             }
         }
-        return super.canSignChangeQuick(db, event);
+
+        try {
+            Resident resident = towny.getResident(player.getName());
+            TownBlock townBlock = towny.getTownBlock(block.getLocation());
+
+            //Owner
+            if (resident.hasTownBlock(townBlock))
+                return true;
+
+            //Assistant
+            if (townBlock.hasTown() && townBlock.getTown().getAssistants().contains(resident))
+                return true;
+
+            //Mayor
+            if (townBlock.hasTown() && townBlock.getTown().getMayor().equals(resident))
+                return true;
+
+            //King
+            if (townBlock.hasTown() && townBlock.getTown().hasNation() && townBlock.getTown().getNation().isKing(resident))
+                return true;
+
+            if (townBlock.hasResident()) {
+                TownyPermission plotPerms = townBlock.getPermissions();
+
+                //Owner friend
+                if (plotPerms.residentBuild && isFriend(resident, townBlock))
+                    return true;
+
+                //Ally
+                boolean isAlly = isAlly(resident, townBlock);
+                if (plotPerms.allyBuild && isAlly)
+                    return true;
+
+                //Outsider
+                if (plotPerms.outsiderBuild && !isAlly)
+                    return true;
+
+            } else {
+                TownyPermission townPerms = townBlock.getTown().getPermissions();
+
+                //Member
+                boolean isResident = isResident(resident, townBlock);
+                if (townPerms.residentBuild && isResident)
+                    return true;
+
+                //Ally
+                boolean isAlly = isAlly(resident, townBlock);
+                if (townPerms.allyBuild && isAlly)
+                    return true;
+
+                //Outsider
+                if (townPerms.outsiderBuild && !isResident && !isAlly)
+                    return true;
+            }
+
+        } catch (NotRegisteredException ex) {
+        }
+        return false;
+    }
+
+    private boolean isResident(Resident resident, TownBlock townBlock) {
+        try {
+            if (townBlock.getTown().hasResident(resident))
+                return true;
+        } catch (NotRegisteredException ex) {
+        }
+        return false;
+    }
+
+    private boolean isFriend(Resident resident, TownBlock townBlock) {
+        try {
+            if (townBlock.getResident().hasFriend(resident))
+                return true;
+        } catch (NotRegisteredException ex) {
+        }
+
+        return false;
+    }
+
+    private boolean isAlly(Resident resident, TownBlock townBlock) {
+        try {
+            //Ally by town resident
+            if (townBlock.getTown().hasResident(resident))
+                return true;
+        } catch (NotRegisteredException ex) {
+        }
+
+        try {
+            //Ally by direct Nation membership
+            if (townBlock.getTown().getNation().hasTown(resident.getTown()))
+                return true;
+        } catch (NotRegisteredException ex) {
+        }
+
+        try {
+            //Ally by Nation alliance
+            if (townBlock.getTown().getNation().hasAlly(resident.getTown().getNation()))
+                return true;
+        } catch (NotRegisteredException ex) {
+        }
+
+        return false;
     }
 }

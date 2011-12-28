@@ -76,18 +76,17 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
             case BREWING_STAND:
             case BURNING_FURNACE:
             case ENCHANTMENT_TABLE:
-                if (db.isProtected()) {
-                    if (db.isOwner(player)) {
-                        if (Config.reminder.add(player))
-                            Config.sendMessage(player, ChatColor.GOLD, Config.msg_reminder_lock_your_chests);
-                    } else {
-                        event.setCancelled(true);
-                        Config.sendMessage(player, ChatColor.RED, Config.msg_deny_container_expansion);
-                    }
+                if (Config.reminder.add(player))
+                    Config.sendMessage(player, ChatColor.GOLD, Config.msg_reminder_lock_your_chests);
+                if (db.isProtected() && !db.isOwner(player)) {
+                    event.setCancelled(true);
+                    Config.sendMessage(player, ChatColor.RED, Config.msg_deny_container_expansion);
                 }
                 return;
             case IRON_DOOR_BLOCK:
             case WOODEN_DOOR:
+                if (Config.reminder.add(player))
+                    Config.sendMessage(player, ChatColor.GOLD, Config.msg_reminder_lock_your_chests);
                 if (db.isProtected() && !db.isOwner(player)) {
                     Config.sendMessage(player, ChatColor.RED, Config.msg_deny_door_expansion);
                     Block upBlock = block.getRelative(BlockFace.UP);
@@ -99,12 +98,16 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
                 }
                 return;
             case TRAP_DOOR:
+                if (Config.reminder.add(player))
+                    Config.sendMessage(player, ChatColor.GOLD, Config.msg_reminder_lock_your_chests);
                 if (db.isProtected() && !db.isOwner(player)) {
                     Config.sendMessage(player, ChatColor.RED, Config.msg_deny_trapdoor_expansion);
                     event.setCancelled(true);
                 }
                 return;
             case FENCE_GATE:
+                if (Config.reminder.add(player))
+                    Config.sendMessage(player, ChatColor.GOLD, Config.msg_reminder_lock_your_chests);
                 if (db.isProtected() && !db.isOwner(player)) {
                     Config.sendMessage(player, ChatColor.RED, Config.msg_deny_fencegate_expansion);
                     event.setCancelled(true);
