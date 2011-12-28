@@ -76,7 +76,7 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
             case BREWING_STAND:
             case BURNING_FURNACE:
             case ENCHANTMENT_TABLE:
-                if (Config.reminder.add(player))
+                if (Config.hasPermission(player, getPermission(block.getType())) && Config.reminder.add(player))
                     Config.sendMessage(player, ChatColor.GOLD, Config.msg_reminder_lock_your_chests);
                 if (db.isProtected() && !db.isOwner(player)) {
                     event.setCancelled(true);
@@ -85,7 +85,7 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
                 return;
             case IRON_DOOR_BLOCK:
             case WOODEN_DOOR:
-                if (Config.reminder.add(player))
+                if (Config.hasPermission(player, getPermission(block.getType())) && Config.reminder.add(player))
                     Config.sendMessage(player, ChatColor.GOLD, Config.msg_reminder_lock_your_chests);
                 if (db.isProtected() && !db.isOwner(player)) {
                     Config.sendMessage(player, ChatColor.RED, Config.msg_deny_door_expansion);
@@ -98,7 +98,7 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
                 }
                 return;
             case TRAP_DOOR:
-                if (Config.reminder.add(player))
+                if (Config.hasPermission(player, getPermission(block.getType())) && Config.reminder.add(player))
                     Config.sendMessage(player, ChatColor.GOLD, Config.msg_reminder_lock_your_chests);
                 if (db.isProtected() && !db.isOwner(player)) {
                     Config.sendMessage(player, ChatColor.RED, Config.msg_deny_trapdoor_expansion);
@@ -106,13 +106,40 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
                 }
                 return;
             case FENCE_GATE:
-                if (Config.reminder.add(player))
+                if (Config.hasPermission(player, getPermission(block.getType())) && Config.reminder.add(player))
                     Config.sendMessage(player, ChatColor.GOLD, Config.msg_reminder_lock_your_chests);
                 if (db.isProtected() && !db.isOwner(player)) {
                     Config.sendMessage(player, ChatColor.RED, Config.msg_deny_fencegate_expansion);
                     event.setCancelled(true);
                 }
                 return;
+        }
+    }
+
+    private String getPermission(Material type) {
+        switch (type) {
+            case CHEST:
+                return Perm.user_create_chest;
+            case FURNACE:
+            case BURNING_FURNACE:
+                return Perm.user_create_furnace;
+            case CAULDRON:
+                return Perm.user_create_cauldron;
+            case DISPENSER:
+                return Perm.user_create_dispenser;
+            case BREWING_STAND:
+                return Perm.user_create_brewery;
+            case ENCHANTMENT_TABLE:
+                return Perm.user_create_enchant;
+            case WOODEN_DOOR:
+            case IRON_DOOR_BLOCK:
+                return Perm.user_create_door;
+            case TRAP_DOOR:
+                return Perm.user_create_trapdoor;
+            case FENCE_GATE:
+                return Perm.user_create_fencegate;
+            default:
+                return null;
         }
     }
 }
