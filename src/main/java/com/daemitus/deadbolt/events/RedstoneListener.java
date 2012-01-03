@@ -22,12 +22,18 @@ public final class RedstoneListener extends org.bukkit.event.block.BlockListener
     @Override
     public void onBlockRedstoneChange(BlockRedstoneEvent event) {
         Block block = event.getBlock();
-        if (!Config.deny_redstone)
+        if (block == null) {
             return;
-        if (!Config.redstone_protected_blockids.contains(block.getTypeId()))
+        }
+        if (!Config.deny_redstone) {
             return;
+        }
+        if (!Config.redstone_protected_blockids.contains(block.getTypeId())) {
+            return;
+        }
         Deadbolted db = Deadbolted.get(block);
-        if (db.isProtected() && !ListenerManager.canRedstoneChange(db, event) && !db.isEveryone())
+        if (db.isProtected() && !ListenerManager.canRedstoneChange(db, event) && !db.isEveryone()) {
             event.setNewCurrent(event.getOldCurrent());
+        }
     }
 }
