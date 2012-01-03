@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -20,6 +19,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -119,7 +119,7 @@ public final class Config {
         File configFile = new File(plugin.getDataFolder() + "/config.yml");
         checkFile(configFile);
 
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
+        FileConfiguration config = plugin.getConfig();
 
         useOPlist = config.getBoolean("useOPlist", useOPlist);
         vertical_trapdoors = config.getBoolean("vertical_trapdoors", vertical_trapdoors);
