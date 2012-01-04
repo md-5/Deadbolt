@@ -1,6 +1,5 @@
 package com.daemitus.deadbolt.events;
 
-import com.daemitus.deadbolt.Config;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.Perm;
@@ -98,12 +97,12 @@ public final class PlayerListener extends org.bukkit.event.player.PlayerListener
             case CAULDRON:
 
                 if (!canQuickProtect(player, against)) {
-                    Config.sendMessage(player, ChatColor.RED, Config.msg_deny_block_perm, against.getType().name());
+                    plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_block_perm, against.getType().name());
                     return false;
                 }
 
                 BlockFace clickedFace = event.getBlockFace();
-                if (!Config.CARDINAL_FACES.contains(clickedFace)) {
+                if (!plugin.config.CARDINAL_FACES.contains(clickedFace)) {
                     return false;
                 }
 
@@ -117,19 +116,19 @@ public final class PlayerListener extends org.bukkit.event.player.PlayerListener
                     return false;
                 }
 
-                signBlock.setTypeIdAndData(Material.WALL_SIGN.getId(), Config.getByteFromFacing(clickedFace), false);
+                signBlock.setTypeIdAndData(Material.WALL_SIGN.getId(), plugin.config.getByteFromFacing(clickedFace), false);
                 Sign signState = (Sign) signBlock.getState();
 
                 if (!db.isProtected()) {
-                    signState.setLine(0, Config.formatForSign(Config.default_colors_private[0] + Config.locale_private));
-                    signState.setLine(1, Config.formatForSign(Config.default_colors_private[1] + Config.truncateName(player.getName())));
+                    signState.setLine(0, plugin.config.formatForSign(plugin.config.default_colors_private[0] + plugin.config.locale_private));
+                    signState.setLine(1, plugin.config.formatForSign(plugin.config.default_colors_private[1] + plugin.config.truncateName(player.getName())));
                 } else if (db.isOwner(player)) {
-                    signState.setLine(0, Config.formatForSign(Config.default_colors_moreusers[0] + Config.locale_moreusers));
-                } else if (Config.hasPermission(player, Perm.admin_create)) {
-                    signState.setLine(0, Config.formatForSign(Config.default_colors_moreusers[0] + Config.locale_moreusers));
-                    Config.sendMessage(player, ChatColor.RED, Config.msg_admin_sign_placed, db.getOwner());
+                    signState.setLine(0, plugin.config.formatForSign(plugin.config.default_colors_moreusers[0] + plugin.config.locale_moreusers));
+                } else if (plugin.config.hasPermission(player, Perm.admin_create)) {
+                    signState.setLine(0, plugin.config.formatForSign(plugin.config.default_colors_moreusers[0] + plugin.config.locale_moreusers));
+                    plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_admin_sign_placed, db.getOwner());
                 } else {
-                    Config.sendMessage(player, ChatColor.RED, Config.msg_deny_sign_quickplace, db.getOwner());
+                    plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_sign_quickplace, db.getOwner());
                     signBlock.setType(Material.AIR);
                     return false;
                 }
@@ -147,7 +146,7 @@ public final class PlayerListener extends org.bukkit.event.player.PlayerListener
     }
 
     private boolean canQuickProtect(Player player, Block block) {
-        if (Config.deny_quick_signs) {
+        if (plugin.config.deny_quick_signs) {
             return false;
         }
         switch (block.getType()) {
@@ -187,12 +186,12 @@ public final class PlayerListener extends org.bukkit.event.player.PlayerListener
         } else if (db.isUser(player) || ListenerManager.canPlayerInteract(db, event)) {
             db.toggleDoors(block);
             return true;
-        } else if (Config.hasPermission(player, Perm.admin_bypass)) {
+        } else if (plugin.config.hasPermission(player, Perm.admin_bypass)) {
             db.toggleDoors(block);
-            Config.sendMessage(player, ChatColor.RED, Config.msg_admin_bypass, db.getOwner());
+            plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_admin_bypass, db.getOwner());
             return true;
         } else {
-            Config.sendMessage(player, ChatColor.RED, Config.msg_deny_access_door);
+            plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_access_door);
             return false;
         }
     }
@@ -205,11 +204,11 @@ public final class PlayerListener extends org.bukkit.event.player.PlayerListener
             return true;
         } else if (db.isUser(player) || ListenerManager.canPlayerInteract(db, event)) {
             return true;
-        } else if (Config.hasPermission(player, Perm.admin_container)) {
-            Config.sendBroadcast(Perm.broadcast_admin_container, ChatColor.RED, Config.msg_admin_container, player.getName(), db.getOwner());
+        } else if (plugin.config.hasPermission(player, Perm.admin_container)) {
+            plugin.config.sendBroadcast(Perm.broadcast_admin_container, ChatColor.RED, plugin.config.msg_admin_container, player.getName(), db.getOwner());
             return true;
         } else {
-            Config.sendMessage(player, ChatColor.RED, Config.msg_deny_access_container);
+            plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_access_container);
             return false;
         }
     }
@@ -221,21 +220,21 @@ public final class PlayerListener extends org.bukkit.event.player.PlayerListener
         if (!db.isProtected()) {
             return true;
         } else if (db.isOwner(player)) {
-            Config.selectedSign.put(player, block);
-            Config.sendMessage(player, ChatColor.GOLD, Config.cmd_sign_selected);
+            plugin.config.selectedSign.put(player, block);
+            plugin.config.sendMessage(player, ChatColor.GOLD, plugin.config.cmd_sign_selected);
             return false;
-        } else if (Config.hasPermission(player, Perm.admin_commands)) {
-            Config.selectedSign.put(player, block);
-            Config.sendMessage(player, ChatColor.RED, Config.msg_admin_sign_selection, db.getOwner());
+        } else if (plugin.config.hasPermission(player, Perm.admin_commands)) {
+            plugin.config.selectedSign.put(player, block);
+            plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_admin_sign_selection, db.getOwner());
             return false;
         } else {
-            Config.sendMessage(player, ChatColor.RED, Config.msg_deny_sign_selection);
+            plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_sign_selection);
             return false;
         }
     }
 
     @Override
     public void onPlayerQuit(PlayerQuitEvent event) {
-        Config.selectedSign.remove(event.getPlayer());
+        plugin.config.selectedSign.remove(event.getPlayer());
     }
 }

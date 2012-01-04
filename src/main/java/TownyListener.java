@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -29,6 +28,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public final class TownyListener extends DeadboltListener {
 
+    private final Deadbolt plugin = Deadbolt.instance;
     private static TownyUniverse towny;
     protected static final String patternBracketTooLong = "\\[.{14,}\\]";
     private static boolean denyWilderness = false;
@@ -138,7 +138,7 @@ public final class TownyListener extends DeadboltListener {
 
     private boolean askTowny(Player player, Block block) {
         //OP check
-        if (Config.useOPlist && player.isOp())
+        if (plugin.config.useOPlist && player.isOp())
             return true;
 
         //is this world using towny?
@@ -149,7 +149,7 @@ public final class TownyListener extends DeadboltListener {
         //wilderness check
         if (towny.isWilderness(block)) {
             if (denyWilderness) {
-                Config.sendMessage(player, ChatColor.RED, "You can only protect blocks inside of a town");
+                plugin.config.sendMessage(player, ChatColor.RED, "You can only protect blocks inside of a town");
                 return false;
             } else {
                 return true;

@@ -1,6 +1,5 @@
 package com.daemitus.deadbolt.events;
 
-import com.daemitus.deadbolt.Config;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.listener.ListenerManager;
@@ -35,7 +34,7 @@ public final class EntityListener extends org.bukkit.event.entity.EntityListener
     public void onEndermanPickup(EndermanPickupEvent event) {
         if (event.isCancelled())
             return;
-        if (!Config.deny_endermen)
+        if (!plugin.config.deny_endermen)
             return;
         Block block = event.getBlock();
         Deadbolted db = Deadbolted.get(block);
@@ -48,7 +47,7 @@ public final class EntityListener extends org.bukkit.event.entity.EntityListener
     public void onEntityExplode(EntityExplodeEvent event) {
         if (event.isCancelled())
             return;
-        if (!Config.deny_explosions)
+        if (!plugin.config.deny_explosions)
             return;
         for (Block block : event.blockList()) {
             Deadbolted db = Deadbolted.get(block);

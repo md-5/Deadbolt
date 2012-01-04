@@ -1,6 +1,5 @@
 package com.daemitus.deadbolt.commands;
 
-import com.daemitus.deadbolt.Config;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.Perm;
@@ -34,11 +33,11 @@ public class DeadboltCommandExecutor implements CommandExecutor {
 
         if (arg == 0) {
             player.sendMessage(ChatColor.RED + "Deadbolt v" + plugin.getDescription().getVersion());
-            player.sendMessage(ChatColor.RED + Config.cmd_help_editsign);
-            player.sendMessage(ChatColor.RED + Config.cmd_help_fix);
-            player.sendMessage(ChatColor.RED + Config.cmd_help_fixAll);
-            if (Config.hasPermission(player, Perm.command_reload))
-                player.sendMessage(ChatColor.RED + Config.cmd_help_reload);
+            player.sendMessage(ChatColor.RED + plugin.config.cmd_help_editsign);
+            player.sendMessage(ChatColor.RED + plugin.config.cmd_help_fix);
+            player.sendMessage(ChatColor.RED + plugin.config.cmd_help_fixAll);
+            if (plugin.config.hasPermission(player, Perm.command_reload))
+                player.sendMessage(ChatColor.RED + plugin.config.cmd_help_reload);
             return true;
         }
 
@@ -53,29 +52,29 @@ public class DeadboltCommandExecutor implements CommandExecutor {
         } catch (NumberFormatException ex) {
         }
 
-        Config.sendMessage(player, ChatColor.RED, Config.cmd_command_not_found);
+        plugin.config.sendMessage(player, ChatColor.RED, plugin.config.cmd_command_not_found);
         return true;
     }
 
     private boolean reload(Player player) {
-        Config.sendMessage(player, ChatColor.RED, Config.cmd_reload);
+        plugin.config.sendMessage(player, ChatColor.RED, plugin.config.cmd_reload);
         plugin.config.load();
         return true;
     }
 
     private boolean lineChange(Player player, int lineNum, String[] args) {
         if (lineNum < 1 || lineNum > 4) {
-            Config.sendMessage(player, ChatColor.RED, Config.cmd_line_num_out_of_range);
+            plugin.config.sendMessage(player, ChatColor.RED, plugin.config.cmd_line_num_out_of_range);
             return true;
         }
-        Block block = Config.selectedSign.get(player);
+        Block block = plugin.config.selectedSign.get(player);
         if (block == null) {
-            Config.sendMessage(player, ChatColor.RED, Config.cmd_sign_not_selected);
+            plugin.config.sendMessage(player, ChatColor.RED, plugin.config.cmd_sign_not_selected);
             return true;
         }
         if (!block.getType().equals(Material.WALL_SIGN)) {
-            Config.sendMessage(player, ChatColor.RED, Config.cmd_sign_selected_error);
-            Config.selectedSign.remove(player);
+            plugin.config.sendMessage(player, ChatColor.RED, plugin.config.cmd_sign_selected_error);
+            plugin.config.selectedSign.remove(player);
             return true;
         }
 
@@ -86,39 +85,39 @@ public class DeadboltCommandExecutor implements CommandExecutor {
         String text = "";
         for (int i = 1; i < args.length; i++)
             text += args[i] + (i + 1 < args.length ? " " : "");
-        if (Config.hasPermission(player, Perm.user_color))
-            text = Config.createColor(text);
-        text = Config.formatForSign(text);
+        if (plugin.config.hasPermission(player, Perm.user_color))
+            text = plugin.config.createColor(text);
+        text = plugin.config.formatForSign(text);
         if (lineNum == 0) {
-            if (Config.removeColor(lines[0]).equalsIgnoreCase(Config.removeColor(text))) {
+            if (plugin.config.removeColor(lines[0]).equalsIgnoreCase(plugin.config.removeColor(text))) {
                 lines[0] = text;
             } else {
-                Config.sendMessage(player, ChatColor.RED, Config.cmd_identifier_not_changeable);
+                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.cmd_identifier_not_changeable);
                 return true;
             }
-        } else if (lineNum == 1 && Config.isPrivate(Config.removeColor(lines[0]))) {
-            if (Config.removeColor(lines[1]).equalsIgnoreCase(Config.removeColor(text))) {
+        } else if (lineNum == 1 && plugin.config.isPrivate(plugin.config.removeColor(lines[0]))) {
+            if (plugin.config.removeColor(lines[1]).equalsIgnoreCase(plugin.config.removeColor(text))) {
                 lines[1] = text;
             } else {
-                Config.sendMessage(player, ChatColor.RED, Config.cmd_owner_not_changeable);
+                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.cmd_owner_not_changeable);
                 return true;
             }
         } else {
             lines[lineNum] = text;
         }
-        if (Config.deselectSign)
-            Config.selectedSign.remove(player);
+        if (plugin.config.deselectSign)
+            plugin.config.selectedSign.remove(player);
 
-        boolean isPrivate = Config.isPrivate(Config.removeColor(lines[0]));
-        boolean isMoreUsers = Config.isMoreUsers(Config.removeColor(lines[0]));
+        boolean isPrivate = plugin.config.isPrivate(plugin.config.removeColor(lines[0]));
+        boolean isMoreUsers = plugin.config.isMoreUsers(plugin.config.removeColor(lines[0]));
         if (isPrivate)
             for (int i = 0; i < 4; i++)
-                lines[i] = Config.formatForSign(Config.default_colors_private[i] + lines[i]);
+                lines[i] = plugin.config.formatForSign(plugin.config.default_colors_private[i] + lines[i]);
         else if (isMoreUsers)
             for (int i = 0; i < 4; i++)
-                lines[i] = Config.formatForSign(Config.default_colors_moreusers[i] + lines[i]);
+                lines[i] = plugin.config.formatForSign(plugin.config.default_colors_moreusers[i] + lines[i]);
         sign.update(true);
-        Config.sendMessage(player, ChatColor.GOLD, Config.cmd_sign_updated);
+        plugin.config.sendMessage(player, ChatColor.GOLD, plugin.config.cmd_sign_updated);
         return true;
     }
 
@@ -129,11 +128,11 @@ public class DeadboltCommandExecutor implements CommandExecutor {
         if (db.isProtected()) {
             if (db.isOwner(player)) {
                 fixHelper(player, block, true);
-            } else if (Config.hasPermission(player, Perm.admin_commands)) {
+            } else if (plugin.config.hasPermission(player, Perm.admin_commands)) {
                 fixHelper(player, block, true);
-                Config.sendMessage(player, ChatColor.RED, Config.msg_admin_block_fixed, db.getOwner());
+                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_admin_block_fixed, db.getOwner());
             } else {
-                Config.sendMessage(player, ChatColor.RED, Config.cmd_fix_notowned);
+                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.cmd_fix_notowned);
             }
         }
         return true;
@@ -150,7 +149,7 @@ public class DeadboltCommandExecutor implements CommandExecutor {
                 block.setData((byte) (block.getData() ^ 0x4));
                 break;
             default:
-                Config.sendMessage(player, ChatColor.RED, Config.cmd_fix_bad_type);
+                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.cmd_fix_bad_type);
         }
     }
 
@@ -161,11 +160,11 @@ public class DeadboltCommandExecutor implements CommandExecutor {
         if (db.isProtected()) {
             if (db.isOwner(player)) {
                 fixAllHelper(player, block, db);
-            } else if (Config.hasPermission(player, Perm.admin_commands)) {
-                Config.sendMessage(player, ChatColor.RED, Config.msg_admin_block_fixed, db.getOwner());
+            } else if (plugin.config.hasPermission(player, Perm.admin_commands)) {
+                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_admin_block_fixed, db.getOwner());
                 fixAllHelper(player, block, db);
             } else {
-                Config.sendMessage(player, ChatColor.RED, Config.cmd_fix_notowned);
+                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.cmd_fix_notowned);
             }
         }
         return true;
@@ -182,7 +181,7 @@ public class DeadboltCommandExecutor implements CommandExecutor {
                         b.setData((byte) (b.getData() ^ 0x4));
                 break;
             default:
-                Config.sendMessage(player, ChatColor.RED, Config.cmd_fix_bad_type);
+                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.cmd_fix_bad_type);
         }
     }
 
@@ -196,12 +195,12 @@ public class DeadboltCommandExecutor implements CommandExecutor {
         if (args[0].equalsIgnoreCase("reload"))
             return creload(sender);
 
-        sender.sendMessage("[Deadbolt] " + Config.cmd_console_command_not_found);
+        sender.sendMessage("[Deadbolt] " + plugin.config.cmd_console_command_not_found);
         return true;
     }
 
     private boolean creload(CommandSender sender) {
-        sender.sendMessage("[Deadbolt] " + Config.cmd_console_reload);
+        sender.sendMessage("[Deadbolt] " + plugin.config.cmd_console_reload);
         plugin.config.load();
         return true;
     }

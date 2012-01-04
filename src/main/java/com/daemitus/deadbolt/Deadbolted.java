@@ -45,8 +45,8 @@ public final class Deadbolted {
             case WALL_SIGN:
                 BlockState state = block.getState();
                 org.bukkit.block.Sign signState = (Sign) state;
-                if (Config.isValidWallSign(signState))
-                    search(Config.getSignAttached(signState));
+                if (plugin.config.isValidWallSign(signState))
+                    search(plugin.config.getSignAttached(signState));
                 break;
             case WOODEN_DOOR:
             case IRON_DOOR_BLOCK:
@@ -56,29 +56,29 @@ public final class Deadbolted {
                 searchFenceGate(block, true, true);
                 break;
             case TRAP_DOOR:
-                searchTrapDoor(block, true, Config.vertical_trapdoors);
+                searchTrapDoor(block, true, plugin.config.vertical_trapdoors);
                 break;
             case DISPENSER:
-                searchSimpleBlock(block, Config.group_dispensers, Config.group_dispensers);
+                searchSimpleBlock(block, plugin.config.group_dispensers, plugin.config.group_dispensers);
                 break;
             case BREWING_STAND:
-                searchSimpleBlock(block, Config.group_brewing_stands, Config.group_brewing_stands);
+                searchSimpleBlock(block, plugin.config.group_brewing_stands, plugin.config.group_brewing_stands);
                 break;
             case ENCHANTMENT_TABLE:
-                searchSimpleBlock(block, Config.group_enchantment_tables, Config.group_enchantment_tables);
+                searchSimpleBlock(block, plugin.config.group_enchantment_tables, plugin.config.group_enchantment_tables);
                 break;
             case CAULDRON:
-                searchSimpleBlock(block, Config.group_cauldrons, Config.group_cauldrons);
+                searchSimpleBlock(block, plugin.config.group_cauldrons, plugin.config.group_cauldrons);
                 break;
             case FURNACE:
             case BURNING_FURNACE:
-                searchFurnace(block, Config.group_furnaces, Config.group_furnaces);
+                searchFurnace(block, plugin.config.group_furnaces, plugin.config.group_furnaces);
                 break;
             case CHEST:
                 searchChest(block, true, true);
                 break;
             default:
-                for (BlockFace bf : Config.CARDINAL_FACES) {
+                for (BlockFace bf : plugin.config.CARDINAL_FACES) {
                     Block adjacent = block.getRelative(bf);
                     if (adjacent.getState().getData() instanceof TrapDoor) {
                         Block hinge = adjacent.getRelative(((TrapDoor) adjacent.getState().getData()).getAttachedFace());
@@ -100,7 +100,7 @@ public final class Deadbolted {
     private void searchDoor(Block block, boolean horizontal, boolean vertical) {
         if (!add(block))
             return;
-        for (BlockFace bf : Config.CARDINAL_FACES) {
+        for (BlockFace bf : plugin.config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getType().equals(block.getType())) {
                 searchDoor(adjacent, horizontal, vertical);
@@ -129,7 +129,7 @@ public final class Deadbolted {
     private void searchFenceGate(Block block, boolean horizontal, boolean vertical) {
         if (!add(block))
             return;
-        for (BlockFace bf : Config.CARDINAL_FACES) {
+        for (BlockFace bf : plugin.config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getType().equals(Material.FENCE_GATE)) {
                 searchFenceGate(adjacent, horizontal, vertical);
@@ -140,7 +140,7 @@ public final class Deadbolted {
             }
         }
         if (vertical)
-            for (BlockFace bf : Config.VERTICAL_FACES) {
+            for (BlockFace bf : plugin.config.VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getType().equals(Material.FENCE_GATE)) {
                     searchFenceGate(adjacent, horizontal, vertical);
@@ -154,7 +154,7 @@ public final class Deadbolted {
         Block hinge = block.getRelative(((TrapDoor) block.getState().getData()).getAttachedFace());
         parseNearbySigns(hinge);
         add(hinge);
-        for (BlockFace bf : Config.CARDINAL_FACES) {
+        for (BlockFace bf : plugin.config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getState().getData() instanceof TrapDoor) {
                 searchTrapDoor(adjacent, horizontal, vertical);
@@ -163,7 +163,7 @@ public final class Deadbolted {
             }
         }
         if (vertical)
-            for (BlockFace bf : Config.VERTICAL_FACES) {
+            for (BlockFace bf : plugin.config.VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getState().getData() instanceof TrapDoor) {
                     searchTrapDoor(adjacent, horizontal, vertical);
@@ -180,7 +180,7 @@ public final class Deadbolted {
     private void searchSimpleBlock(Block block, boolean horizontal, boolean vertical) {
         if (!add(block))
             return;
-        for (BlockFace bf : Config.CARDINAL_FACES) {
+        for (BlockFace bf : plugin.config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getType().equals(block.getType())) {
                 searchSimpleBlock(adjacent, horizontal, vertical);
@@ -189,7 +189,7 @@ public final class Deadbolted {
             }
         }
         if (vertical)
-            for (BlockFace bf : Config.VERTICAL_FACES) {
+            for (BlockFace bf : plugin.config.VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getType().equals(block.getType())) {
                     searchSimpleBlock(adjacent, horizontal, vertical);
@@ -200,7 +200,7 @@ public final class Deadbolted {
     private void searchFurnace(Block block, boolean horizontal, boolean vertical) {
         if (!add(block))
             return;
-        for (BlockFace bf : Config.CARDINAL_FACES) {
+        for (BlockFace bf : plugin.config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getState() instanceof Furnace) {
                 searchFurnace(adjacent, horizontal, vertical);
@@ -209,7 +209,7 @@ public final class Deadbolted {
             }
         }
         if (vertical)
-            for (BlockFace bf : Config.VERTICAL_FACES) {
+            for (BlockFace bf : plugin.config.VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getState() instanceof Furnace) {
                     searchFurnace(adjacent, horizontal, vertical);
@@ -220,7 +220,7 @@ public final class Deadbolted {
     private void searchChest(Block block, boolean horizontal, boolean vertical) {
         if (!add(block))
             return;
-        for (BlockFace bf : Config.CARDINAL_FACES) {
+        for (BlockFace bf : plugin.config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getState() instanceof Chest) {
                 searchChest(adjacent, horizontal, vertical);
@@ -229,7 +229,7 @@ public final class Deadbolted {
             }
         }
         if (vertical)
-            for (BlockFace bf : Config.VERTICAL_FACES) {
+            for (BlockFace bf : plugin.config.VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getState() instanceof Chest) {
                     searchChest(adjacent, horizontal, vertical);
@@ -238,7 +238,7 @@ public final class Deadbolted {
     }
 
     private void parseNearbySigns(Block block) {
-        for (BlockFace bf : Config.CARDINAL_FACES) {
+        for (BlockFace bf : plugin.config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (adjacent.getType().equals(Material.WALL_SIGN))
                 parseSignAttached(adjacent, block);
@@ -246,24 +246,24 @@ public final class Deadbolted {
     }
 
     private void parseSignAttached(Block signBlock, Block attached) {
-        if (signBlock.getRelative(Config.getFacingFromByte(signBlock.getData()).getOppositeFace()).equals(attached))
+        if (signBlock.getRelative(plugin.config.getFacingFromByte(signBlock.getData()).getOppositeFace()).equals(attached))
             if (parseSign((Sign) signBlock.getState())) {
                 add(attached, signBlock);
             }
     }
 
     private boolean parseSign(Sign sign) {
-        String ident = Config.getLine(sign, 0);
-        if (Config.isPrivate(ident)) {
-            String line1 = Config.getLine(sign, 1).toLowerCase();
+        String ident = plugin.config.getLine(sign, 0);
+        if (plugin.config.isPrivate(ident)) {
+            String line1 = plugin.config.getLine(sign, 1).toLowerCase();
             owner = line1.isEmpty() ? owner : line1;
-            users.add(Config.getLine(sign, 2).toLowerCase());
-            users.add(Config.getLine(sign, 3).toLowerCase());
+            users.add(plugin.config.getLine(sign, 2).toLowerCase());
+            users.add(plugin.config.getLine(sign, 3).toLowerCase());
             return true;
-        } else if (Config.isMoreUsers(ident)) {
-            users.add(Config.getLine(sign, 1).toLowerCase());
-            users.add(Config.getLine(sign, 2).toLowerCase());
-            users.add(Config.getLine(sign, 3).toLowerCase());
+        } else if (plugin.config.isMoreUsers(ident)) {
+            users.add(plugin.config.getLine(sign, 1).toLowerCase());
+            users.add(plugin.config.getLine(sign, 2).toLowerCase());
+            users.add(plugin.config.getLine(sign, 3).toLowerCase());
             return true;
         }
         return false;
@@ -274,16 +274,16 @@ public final class Deadbolted {
     }
 
     public boolean isOwner(Player player) {
-        return Config.truncateName(owner).equalsIgnoreCase(Config.truncateName(player.getName()));
+        return plugin.config.truncateName(owner).equalsIgnoreCase(plugin.config.truncateName(player.getName()));
     }
 
     public boolean isUser(Player player) {
         if (isOwner(player) || isEveryone()) {
             return true;
         } else {
-            String name = Config.truncateName(player.getName());
+            String name = plugin.config.truncateName(player.getName());
             for (String user : users)
-                if (Config.truncateName(user).equalsIgnoreCase(name))
+                if (plugin.config.truncateName(user).equalsIgnoreCase(name))
                     return true;
         }
         return false;
@@ -291,14 +291,14 @@ public final class Deadbolted {
 
     public boolean isEveryone() {
         for (String line : users)
-            if (Config.isEveryone(line))
+            if (plugin.config.isEveryone(line))
                 return true;
         return false;
     }
 
     public int getTimer() {
         for (String line : users) {
-            int timer = Config.getTimer(line);
+            int timer = plugin.config.getTimer(line);
             if (timer != -1) {
                 return timer;
             }
@@ -349,15 +349,15 @@ public final class Deadbolted {
             if (b.getType().equals(block.getType()))
                 b.setData((byte) (b.getData() ^ 0x4));
 
-        if (!isNaturalSound(block) && Config.silent_door_sounds)
+        if (!isNaturalSound(block) && plugin.config.silent_door_sounds)
             block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 10);
 
-        if (Config.deny_timed_doors)
+        if (plugin.config.deny_timed_doors)
             return;
         int delay = getTimer();
         if (delay == -1)
-            if (Config.forced_timed_doors)
-                delay = Config.forced_timed_doors_delay;
+            if (plugin.config.forced_timed_doors)
+                delay = plugin.config.forced_timed_doors_delay;
             else
                 return;
         validToggles.addAll(clickedDoor);
@@ -366,7 +366,7 @@ public final class Deadbolted {
         for (Block bl : validToggles) {
             if (ToggleDoorTask.timedBlocks.add(bl)) {
                 plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new ToggleDoorTask(bl,
-                        (runonce && Config.timed_door_sounds && (isNaturalSound(bl) ? true : Config.silent_door_sounds))),
+                        (runonce && plugin.config.timed_door_sounds && (isNaturalSound(bl) ? true : plugin.config.silent_door_sounds))),
                         delay * 20);
                 runonce = false;
             } else {
@@ -391,7 +391,7 @@ public final class Deadbolted {
             case IRON_DOOR_BLOCK:
                 return true;
             case TRAP_DOOR:
-                return Config.vertical_trapdoors;
+                return plugin.config.vertical_trapdoors;
             default:
                 return false;
 

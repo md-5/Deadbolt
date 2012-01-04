@@ -1,7 +1,6 @@
 package com.daemitus.deadbolt.events;
 
 import com.daemitus.deadbolt.Perm;
-import com.daemitus.deadbolt.Config;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.listener.ListenerManager;
@@ -47,14 +46,14 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
         if (ListenerManager.canBlockBreak(db, event)) {
             return;
         }
-        if (Config.hasPermission(player, Perm.admin_break)) {
-            Config.sendBroadcast(Perm.admin_broadcast_break, ChatColor.RED, Config.msg_admin_break, player.getName(), db.getOwner());
-            Deadbolt.logger.log(Level.INFO, String.format("[Deadbolt] " + Config.msg_admin_break, player.getName(), db.getOwner()));
+        if (plugin.config.hasPermission(player, Perm.admin_break)) {
+            plugin.config.sendBroadcast(Perm.admin_broadcast_break, ChatColor.RED, plugin.config.msg_admin_break, player.getName(), db.getOwner());
+            Deadbolt.logger.log(Level.INFO, String.format("[Deadbolt] " + plugin.config.msg_admin_break, player.getName(), db.getOwner()));
             return;
         }
 
         event.setCancelled(true);
-        Config.sendMessage(player, ChatColor.RED, Config.msg_deny_block_break);
+        plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_block_break);
         if (block.getType().equals(Material.WALL_SIGN)) {
             plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new SignUpdateTask(block), 1);
         }
@@ -72,7 +71,7 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
         Player player = event.getPlayer();
         Block against = event.getBlockAgainst();
 
-        if (against.getType().equals(Material.WALL_SIGN) && Config.isValidWallSign((Sign) against.getState())) {
+        if (against.getType().equals(Material.WALL_SIGN) && plugin.config.isValidWallSign((Sign) against.getState())) {
             event.setCancelled(true);
             return;
         }
@@ -86,21 +85,21 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
             case BREWING_STAND:
             case BURNING_FURNACE:
             case ENCHANTMENT_TABLE:
-                if (Config.hasPermission(player, getPermission(block.getType())) && Config.reminder.add(player)) {
-                    Config.sendMessage(player, ChatColor.GOLD, Config.msg_reminder_lock_your_chests);
+                if (plugin.config.hasPermission(player, getPermission(block.getType())) && plugin.config.reminder.add(player)) {
+                    plugin.config.sendMessage(player, ChatColor.GOLD, plugin.config.msg_reminder_lock_your_chests);
                 }
                 if (db.isProtected() && !db.isOwner(player)) {
                     event.setCancelled(true);
-                    Config.sendMessage(player, ChatColor.RED, Config.msg_deny_container_expansion);
+                    plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_container_expansion);
                 }
                 return;
             case IRON_DOOR_BLOCK:
             case WOODEN_DOOR:
-                if (Config.hasPermission(player, getPermission(block.getType())) && Config.reminder.add(player)) {
-                    Config.sendMessage(player, ChatColor.GOLD, Config.msg_reminder_lock_your_chests);
+                if (plugin.config.hasPermission(player, getPermission(block.getType())) && plugin.config.reminder.add(player)) {
+                    plugin.config.sendMessage(player, ChatColor.GOLD, plugin.config.msg_reminder_lock_your_chests);
                 }
                 if (db.isProtected() && !db.isOwner(player)) {
-                    Config.sendMessage(player, ChatColor.RED, Config.msg_deny_door_expansion);
+                    plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_door_expansion);
                     Block upBlock = block.getRelative(BlockFace.UP);
                     block.setType(Material.STONE);
                     block.setType(Material.AIR);
@@ -110,20 +109,20 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
                 }
                 return;
             case TRAP_DOOR:
-                if (Config.hasPermission(player, getPermission(block.getType())) && Config.reminder.add(player)) {
-                    Config.sendMessage(player, ChatColor.GOLD, Config.msg_reminder_lock_your_chests);
+                if (plugin.config.hasPermission(player, getPermission(block.getType())) && plugin.config.reminder.add(player)) {
+                    plugin.config.sendMessage(player, ChatColor.GOLD, plugin.config.msg_reminder_lock_your_chests);
                 }
                 if (db.isProtected() && !db.isOwner(player)) {
-                    Config.sendMessage(player, ChatColor.RED, Config.msg_deny_trapdoor_expansion);
+                    plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_trapdoor_expansion);
                     event.setCancelled(true);
                 }
                 return;
             case FENCE_GATE:
-                if (Config.hasPermission(player, getPermission(block.getType())) && Config.reminder.add(player)) {
-                    Config.sendMessage(player, ChatColor.GOLD, Config.msg_reminder_lock_your_chests);
+                if (plugin.config.hasPermission(player, getPermission(block.getType())) && plugin.config.reminder.add(player)) {
+                    plugin.config.sendMessage(player, ChatColor.GOLD, plugin.config.msg_reminder_lock_your_chests);
                 }
                 if (db.isProtected() && !db.isOwner(player)) {
-                    Config.sendMessage(player, ChatColor.RED, Config.msg_deny_fencegate_expansion);
+                    plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_fencegate_expansion);
                     event.setCancelled(true);
                 }
                 return;

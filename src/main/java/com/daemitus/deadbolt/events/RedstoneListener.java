@@ -1,6 +1,5 @@
 package com.daemitus.deadbolt.events;
 
-import com.daemitus.deadbolt.Config;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.listener.ListenerManager;
@@ -25,7 +24,7 @@ public final class RedstoneListener extends org.bukkit.event.block.BlockListener
         if (block == null) {
             return;
         }
-        if (!Config.redstone_protected_blockids.contains(block.getTypeId())) {
+        if (!plugin.config.redstone_protected_blockids.contains(block.getTypeId())) {
             return;
         }
         Deadbolted db = Deadbolted.get(block);

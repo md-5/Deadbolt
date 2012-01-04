@@ -34,14 +34,14 @@ public final class Deadbolt extends JavaPlugin {
     @Override
     public void onEnable() {
         PluginManager pm = this.getServer().getPluginManager();
-        config = new Config(this);
+        config = new Config();
         config.load();
         new SignListener();
         new BlockListener();
         new PlayerListener();
-        EntityListener e = (Config.deny_entity_interact)?new EntityListener(): null;
-        PistonListener p = (Config.deny_pistons) ? new PistonListener(this, pm) : null;
-        RedstoneListener r = (Config.deny_redstone) ? new RedstoneListener(this, pm) : null;
+        EntityListener e = (config.deny_entity_interact)?new EntityListener(): null;
+        PistonListener p = (config.deny_pistons) ? new PistonListener(this, pm) : null;
+        RedstoneListener r = (config.deny_redstone) ? new RedstoneListener(this, pm) : null;
         new Deadbolted(this);
         listenerManager = new ListenerManager(this, this.getServer().getPluginManager());
         listenerManager.registerListeners();

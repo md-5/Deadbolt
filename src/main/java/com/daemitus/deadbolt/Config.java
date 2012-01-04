@@ -23,97 +23,93 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-public final class Config {
+public class Config {
 
     //------------------------------------------------------------------------//
-    private final Deadbolt plugin;
-    private static final String TAG = "Deadbolt: ";
+    private static final Deadbolt plugin = Deadbolt.instance;
+    private final String TAG = "Deadbolt: ";
     //------------------------------------------------------------------------//
-    public static boolean useOPlist = true;
-    public static boolean deselectSign = false;
-    public static boolean deny_entity_interact = true;
-    public static boolean deny_explosions = true;
-    public static boolean deny_endermen = true;
-    public static boolean deny_redstone = true;
-    public static boolean deny_pistons = true;
-    public static boolean deny_quick_signs = false;
-    public static List<Integer> redstone_protected_blockids = Arrays.asList(64, 71, 96);
-    public static Set<Player> reminder = new HashSet<Player>();
-    public static Map<Player, Block> selectedSign = new HashMap<Player, Block>();
-    public static boolean vertical_trapdoors = true;
-    public static boolean group_furnaces = true;
-    public static boolean group_dispensers = true;
-    public static boolean group_cauldrons = true;
-    public static boolean group_enchantment_tables = true;
-    public static boolean group_brewing_stands = true;
-    public static boolean silent_door_sounds = true;
-    public static boolean deny_timed_doors = false;
-    public static boolean timed_door_sounds = true;
-    public static boolean forced_timed_doors = false;
-    public static int forced_timed_doors_delay = 3;
+    public boolean useOPlist = true;
+    public boolean deselectSign = false;
+    public boolean deny_entity_interact = true;
+    public boolean deny_explosions = true;
+    public boolean deny_endermen = true;
+    public boolean deny_redstone = true;
+    public boolean deny_pistons = true;
+    public boolean deny_quick_signs = false;
+    public List<Integer> redstone_protected_blockids = Arrays.asList(64, 71, 96);
+    public Set<Player> reminder = new HashSet<Player>();
+    public Map<Player, Block> selectedSign = new HashMap<Player, Block>();
+    public boolean vertical_trapdoors = true;
+    public boolean group_furnaces = true;
+    public boolean group_dispensers = true;
+    public boolean group_cauldrons = true;
+    public boolean group_enchantment_tables = true;
+    public boolean group_brewing_stands = true;
+    public boolean silent_door_sounds = true;
+    public boolean deny_timed_doors = false;
+    public boolean timed_door_sounds = true;
+    public boolean forced_timed_doors = false;
+    public int forced_timed_doors_delay = 3;
     //------------------------------------------------------------------------//
-    public static String locale_private;
-    public static String locale_moreusers;
-    public static Pattern signtext_private;
-    public static Pattern signtext_moreusers;
-    public static Pattern signtext_everyone;
-    public static Pattern signtext_timer;
+    public String locale_private;
+    public String locale_moreusers;
+    public Pattern signtext_private;
+    public Pattern signtext_moreusers;
+    public Pattern signtext_everyone;
+    public Pattern signtext_timer;
     //------------------------------------------------------------------------//
-    public static final Set<BlockFace> CARDINAL_FACES = EnumSet.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
-    public static final Set<BlockFace> VERTICAL_FACES = EnumSet.of(BlockFace.UP, BlockFace.DOWN);
+    public final Set<BlockFace> CARDINAL_FACES = EnumSet.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
+    public final Set<BlockFace> VERTICAL_FACES = EnumSet.of(BlockFace.UP, BlockFace.DOWN);
     //------------------------------------------------------------------------//
-    public static String cmd_help_editsign = "/deadbolt <line number> <text> - Edit signs on locked containers, right click a sign first to select it";
-    public static String cmd_help_reload = "/deadbolt reload - Reload the config.yml and <language>.yml files";
-    public static String cmd_help_fix = "/deadbolt fix - toggle a single block";
-    public static String cmd_help_fixAll = "/deadbolt fixall - toggle all related blocks";
-    public static String cmd_reload = "Reloading settings...";
-    public static String cmd_fix_notowned = "You don't own that block";
-    public static String cmd_fix_bad_type = "You can only fix blocks that open and close";
-    public static String cmd_sign_updated = "Sign updated";
-    public static String cmd_sign_selected = "Sign selected, use /deadbolt <line number> <text>";
-    public static String cmd_sign_selected_error = "Selected sign has an error. Right click it again";
-    public static String cmd_sign_not_selected = "Nothing selected, right click a valid sign first";
-    public static String cmd_identifier_not_changeable = "The identifier on line 1 is not changeable, except for color.";
-    public static String cmd_owner_not_changeable = "The owner on line 2 is not changeable, except for color.";
-    public static String cmd_line_num_out_of_range = "Bad format, your line number should be 1,2,3,4";
-    public static String cmd_command_not_found = "No command found, use \"/deadbolt\" for options";
-    public static String cmd_console_reload = "Deadbolt - Reloading settings...";
-    public static String cmd_console_command_not_found = "Deadbolt - No command found, use \"deadbolt\" for options";
-    public static String msg_admin_break = "(Admin) %1$s broke a block owned by %2$s";
-    public static String msg_admin_bypass = "(Admin) Warning, this door is owned by %1$s, make sure to shut it";
-    public static String msg_admin_sign_placed = "(Admin) Warning, this block is owned by %1$s";
-    public static String msg_admin_sign_selection = "(Admin) Warning, selected a sign owned by %1$s";
-    public static String msg_admin_block_fixed = "(Admin) Warning, fixed a block owned by %1$s";
-    public static String msg_admin_container = "(Admin) %1$s opened a container owned by %2$s";
-    public static String msg_admin_warning_player_not_found = "%1$s is not online, make sure you have the correct name";
-    public static String msg_deny_access_door = "Access denied";
-    public static String msg_deny_access_container = "Access denied";
-    public static String msg_deny_sign_selection = "You don't own this sign";
-    public static String msg_deny_block_break = "You don't own this block";
-    public static String msg_deny_container_expansion = "You don't own the adjacent container";
-    public static String msg_deny_door_expansion = "You don't own the adjacent door";
-    public static String msg_deny_trapdoor_expansion = "You don't own the adjacent trapdoor/hinge block";
-    public static String msg_deny_fencegate_expansion = "You don't own the adjacent fencegate/nearby block";
-    public static String msg_deny_sign_private_nothing_nearby = "Nothing nearby to protect";
-    public static String msg_deny_sign_private_already_owned = "This block is already protected";
-    public static String msg_deny_sign_moreusers_already_owned = "You don't own this block";
-    public static String msg_deny_sign_moreusers_no_private = "No sign with [Private] nearby";
-    public static String msg_deny_sign_quickplace = "You cant protect this block, %1$s already has";
-    public static String msg_deny_block_perm = "You are not authorized to protect %1$s";
-    public static String msg_reminder_lock_your_chests = "Place a sign headed [Private] next to your block to lock it";
+    public String cmd_help_editsign = "/deadbolt <line number> <text> - Edit signs on locked containers, right click a sign first to select it";
+    public String cmd_help_reload = "/deadbolt reload - Reload the config.yml and <language>.yml files";
+    public String cmd_help_fix = "/deadbolt fix - toggle a single block";
+    public String cmd_help_fixAll = "/deadbolt fixall - toggle all related blocks";
+    public String cmd_reload = "Reloading settings...";
+    public String cmd_fix_notowned = "You don't own that block";
+    public String cmd_fix_bad_type = "You can only fix blocks that open and close";
+    public String cmd_sign_updated = "Sign updated";
+    public String cmd_sign_selected = "Sign selected, use /deadbolt <line number> <text>";
+    public String cmd_sign_selected_error = "Selected sign has an error. Right click it again";
+    public String cmd_sign_not_selected = "Nothing selected, right click a valid sign first";
+    public String cmd_identifier_not_changeable = "The identifier on line 1 is not changeable, except for color.";
+    public String cmd_owner_not_changeable = "The owner on line 2 is not changeable, except for color.";
+    public String cmd_line_num_out_of_range = "Bad format, your line number should be 1,2,3,4";
+    public String cmd_command_not_found = "No command found, use \"/deadbolt\" for options";
+    public String cmd_console_reload = "Deadbolt - Reloading settings...";
+    public String cmd_console_command_not_found = "Deadbolt - No command found, use \"deadbolt\" for options";
+    public String msg_admin_break = "(Admin) %1$s broke a block owned by %2$s";
+    public String msg_admin_bypass = "(Admin) Warning, this door is owned by %1$s, make sure to shut it";
+    public String msg_admin_sign_placed = "(Admin) Warning, this block is owned by %1$s";
+    public String msg_admin_sign_selection = "(Admin) Warning, selected a sign owned by %1$s";
+    public String msg_admin_block_fixed = "(Admin) Warning, fixed a block owned by %1$s";
+    public String msg_admin_container = "(Admin) %1$s opened a container owned by %2$s";
+    public String msg_admin_warning_player_not_found = "%1$s is not online, make sure you have the correct name";
+    public String msg_deny_access_door = "Access denied";
+    public String msg_deny_access_container = "Access denied";
+    public String msg_deny_sign_selection = "You don't own this sign";
+    public String msg_deny_block_break = "You don't own this block";
+    public String msg_deny_container_expansion = "You don't own the adjacent container";
+    public String msg_deny_door_expansion = "You don't own the adjacent door";
+    public String msg_deny_trapdoor_expansion = "You don't own the adjacent trapdoor/hinge block";
+    public String msg_deny_fencegate_expansion = "You don't own the adjacent fencegate/nearby block";
+    public String msg_deny_sign_private_nothing_nearby = "Nothing nearby to protect";
+    public String msg_deny_sign_private_already_owned = "This block is already protected";
+    public String msg_deny_sign_moreusers_already_owned = "You don't own this block";
+    public String msg_deny_sign_moreusers_no_private = "No sign with [Private] nearby";
+    public String msg_deny_sign_quickplace = "You cant protect this block, %1$s already has";
+    public String msg_deny_block_perm = "You are not authorized to protect %1$s";
+    public String msg_reminder_lock_your_chests = "Place a sign headed [Private] next to your block to lock it";
     //------------------------------------------------------------------------//
-    private static final Pattern DETECT_COLORS = Pattern.compile("§([0-9a-f])");
-    private static final Pattern TWO_COLORS = Pattern.compile("(§[0-9a-f])(\\s*)(§[0-9a-f])");
-    private static final Pattern PSEUDO_COLOR = Pattern.compile("\\&([0-9a-f])");
-    private static final Pattern UNNEEDED_COLOR = Pattern.compile("^§0");
-    private static final Pattern FORMAT_LENGTH = Pattern.compile("(^.{0,15}).*");
-    public static String[] default_colors_private = {"", "", "", ""};
-    public static String[] default_colors_moreusers = {"", "", "", ""};
+    private final Pattern DETECT_COLORS = Pattern.compile("§([0-9a-f])");
+    private final Pattern TWO_COLORS = Pattern.compile("(§[0-9a-f])(\\s*)(§[0-9a-f])");
+    private final Pattern PSEUDO_COLOR = Pattern.compile("\\&([0-9a-f])");
+    private final Pattern UNNEEDED_COLOR = Pattern.compile("^§0");
+    private final Pattern FORMAT_LENGTH = Pattern.compile("(^.{0,15}).*");
+    public String[] default_colors_private = {"", "", "", ""};
+    public String[] default_colors_moreusers = {"", "", "", ""};
     //------------------------------------------------------------------------//    
-
-    public Config(final Deadbolt plugin) {
-        this.plugin = plugin;
-    }
 
     public void load() {
         File configFile = new File(plugin.getDataFolder() + "/config.yml");
@@ -162,28 +158,32 @@ public final class Config {
 
         String default_private = "private";
         locale_private = config.getString("signtext_private", default_private);
-        if (locale_private.length() > 13)
+        if (locale_private.length() > 13) {
             Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_private + " is too long, defaulting to [" + (locale_private = default_private) + "]");
+        }
         signtext_private = Pattern.compile("\\[(?i)(" + default_private + "|" + locale_private + ")\\]");
         locale_private = "[" + locale_private + "]";
 
         String default_moreusers = "more users";
         locale_moreusers = config.getString("signtext_moreusers", default_moreusers);
-        if (locale_moreusers.length() > 13)
+        if (locale_moreusers.length() > 13) {
             Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_moreusers + " is too long, defaulting to [" + (locale_private = default_moreusers) + "]");
+        }
         signtext_moreusers = Pattern.compile("\\[(?i)(" + default_moreusers + "|" + locale_moreusers + ")\\]");
         locale_moreusers = "[" + locale_moreusers + "]";
 
         String default_everyone = "everyone";
         String locale_everyone = config.getString("signtext_everyone", default_everyone);
-        if (locale_everyone.length() > 13)
+        if (locale_everyone.length() > 13) {
             Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_everyone + " is too long, defaulting to [" + (locale_private = default_everyone) + "]");
+        }
         signtext_everyone = Pattern.compile("\\[(?i)(" + default_everyone + "|" + locale_everyone + ")\\]");
 
         String default_timer = "timer";
         String locale_timer = config.getString("signtext_timer", default_timer);
-        if (locale_timer.length() > 13)
+        if (locale_timer.length() > 13) {
             Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_timer + " is too long, defaulting to [" + (locale_private = default_timer) + ":#]");
+        }
         signtext_timer = Pattern.compile("\\[(?i)(" + default_timer + "|" + locale_timer + "):\\s*([0-9]+)\\]");
 
 
@@ -228,14 +228,16 @@ public final class Config {
         msg_reminder_lock_your_chests = config.getString("msg_reminder_lock_your_chests", msg_reminder_lock_your_chests);
     }
 
-    private boolean checkFile(File file) {
+    private static boolean checkFile(File file) {
         try {
-            if (file.exists())
+            if (file.exists()) {
                 return true;
+            }
 
             File dir = file.getParentFile();
-            if (!dir.exists())
+            if (!dir.exists()) {
                 dir.mkdir();
+            }
 
             file.createNewFile();
 
@@ -243,19 +245,22 @@ public final class Config {
             OutputStream out = null;
 
             try {
-                in = plugin.getResource("files/" + file.getName());
+                in = Deadbolt.instance.getResource("files/" + file.getName());
                 out = new FileOutputStream(file);
 
                 int len;
                 byte[] buf = new byte[1024];
-                while ((len = in.read(buf)) > 0)
+                while ((len = in.read(buf)) > 0) {
                     out.write(buf, 0, len);
+                }
 
             } finally {
-                if (in != null)
+                if (in != null) {
                     in.close();
-                if (out != null)
+                }
+                if (out != null) {
                     out.close();
+                }
             }
 
             Deadbolt.logger.log(Level.INFO, "[Deadbolt] Retrieved file " + file.getName());
@@ -266,45 +271,47 @@ public final class Config {
         }
     }
 
-    public static String formatForSign(String line) {
-        while (UNNEEDED_COLOR.matcher(line).find())
+    public String formatForSign(String line) {
+        while (UNNEEDED_COLOR.matcher(line).find()) {
             line = UNNEEDED_COLOR.matcher(line).replaceAll("");
-        while (TWO_COLORS.matcher(line).find())
+        }
+        while (TWO_COLORS.matcher(line).find()) {
             line = TWO_COLORS.matcher(line).replaceAll("$2$3");
+        }
         line = FORMAT_LENGTH.matcher(line).replaceAll("$1");
         line = line.substring(0, line.length() > 15 ? 15 : line.length());
         return line;
     }
 
-    public static String removeColor(String text) {
+    public String removeColor(String text) {
         return text == null ? null : DETECT_COLORS.matcher(text).replaceAll("");
     }
 
-    public static String createColor(String text) {
+    public String createColor(String text) {
         return text == null ? null : PSEUDO_COLOR.matcher(text).replaceAll("§$1");
     }
 
-    public static String getLine(Sign signBlock, int line) {
+    public String getLine(Sign signBlock, int line) {
         return DETECT_COLORS.matcher(signBlock.getLine(line)).replaceAll("");
     }
 
-    public static boolean isPrivate(String line) {
+    public boolean isPrivate(String line) {
         return signtext_private.matcher(line).matches();
     }
 
-    public static boolean isMoreUsers(String line) {
+    public boolean isMoreUsers(String line) {
         return signtext_moreusers.matcher(line).matches();
     }
 
-    public static boolean isEveryone(String line) {
+    public boolean isEveryone(String line) {
         return signtext_everyone.matcher(line).matches();
     }
 
-    public static boolean isTimer(String line) {
+    public boolean isTimer(String line) {
         return signtext_timer.matcher(line).matches();
     }
 
-    public static int getTimer(String line) {
+    public int getTimer(String line) {
         try {
             return Integer.parseInt(signtext_timer.matcher(line).replaceAll("$2"));
         } catch (NumberFormatException ex) {
@@ -312,29 +319,33 @@ public final class Config {
         }
     }
 
-    public static boolean isValidWallSign(Sign signState) {
+    public boolean isValidWallSign(Sign signState) {
         String line = getLine(signState, 0);
         return isPrivate(line) || isMoreUsers(line);
     }
 
-    public static Block getSignAttached(Sign signState) {
+    public Block getSignAttached(Sign signState) {
         return signState.getBlock().getRelative(((org.bukkit.material.Sign) signState.getData()).getAttachedFace());
     }
 
-    public static void sendMessage(Player player, ChatColor color, String message, String... args) {
-        if (!message.isEmpty())
+    public void sendMessage(Player player, ChatColor color, String message, String... args) {
+        if (!message.isEmpty()) {
             player.sendMessage(color + TAG + String.format(message, (Object[]) args));
+        }
     }
 
-    public static void sendBroadcast(String permission, ChatColor color, String message, String... args) {
-        if (!message.isEmpty())
-            for (Player player : Bukkit.getServer().getOnlinePlayers())
-                if (player.hasPermission(permission))
+    public void sendBroadcast(String permission, ChatColor color, String message, String... args) {
+        if (!message.isEmpty()) {
+            for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+                if (player.hasPermission(permission)) {
                     player.sendMessage(color + TAG + String.format(message, (Object[]) args));
+                }
+            }
+        }
     }
 
-    public static boolean hasPermission(Player player, String permission) {
-        return (Config.useOPlist ? player.isOp() : false) || player.hasPermission(permission);
+    public boolean hasPermission(Player player, String permission) {
+        return (useOPlist ? player.isOp() : false) || player.hasPermission(permission);
     }
 
     public static String truncateName(String name) {
@@ -369,6 +380,5 @@ public final class Config {
             default:
                 return 0x0;
         }
-
     }
 }
