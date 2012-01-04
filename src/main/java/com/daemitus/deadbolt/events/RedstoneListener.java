@@ -25,9 +25,6 @@ public final class RedstoneListener extends org.bukkit.event.block.BlockListener
         if (block == null) {
             return;
         }
-        if (!Config.deny_redstone) {
-            return;
-        }
         if (!Config.redstone_protected_blockids.contains(block.getTypeId())) {
             return;
         }

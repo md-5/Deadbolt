@@ -14,15 +14,13 @@ import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.PluginManager;
 
 public final class SignListener extends org.bukkit.event.block.BlockListener {
 
-    private final Deadbolt plugin;
+    private final Deadbolt plugin = Deadbolt.instance;
 
-    public SignListener(final Deadbolt plugin, final PluginManager pm) {
-        this.plugin = plugin;
-        pm.registerEvent(Type.SIGN_CHANGE, this, Priority.Normal, plugin);
+    public SignListener() {
+        plugin.getServer().getPluginManager().registerEvent(Type.SIGN_CHANGE, this, Priority.Normal, plugin);
     }
 
     private enum Result {

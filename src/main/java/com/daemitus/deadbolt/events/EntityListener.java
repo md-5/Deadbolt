@@ -10,24 +10,20 @@ import org.bukkit.event.Event.Type;
 import org.bukkit.event.entity.EndermanPickupEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
-import org.bukkit.plugin.PluginManager;
 
 public final class EntityListener extends org.bukkit.event.entity.EntityListener {
 
-    private final Deadbolt plugin;
+    private final Deadbolt plugin = Deadbolt.instance;
 
-    public EntityListener(final Deadbolt plugin, final PluginManager pm) {
-        this.plugin = plugin;
-        pm.registerEvent(Type.ENTITY_INTERACT, this, Priority.High, plugin);
-        pm.registerEvent(Type.ENTITY_EXPLODE, this, Priority.High, plugin);
-        pm.registerEvent(Type.ENDERMAN_PICKUP, this, Priority.High, plugin);
+    public EntityListener() {
+        plugin.getServer().getPluginManager().registerEvent(Type.ENTITY_INTERACT, this, Priority.High, plugin);
+        plugin.getServer().getPluginManager().registerEvent(Type.ENTITY_EXPLODE, this, Priority.High, plugin);
+        plugin.getServer().getPluginManager().registerEvent(Type.ENDERMAN_PICKUP, this, Priority.High, plugin);
     }
 
     @Override
     public void onEntityInteract(EntityInteractEvent event) {
         if (event.isCancelled())
-            return;
-        if (!Config.deny_entity_interact)
             return;
         Block block = event.getBlock();
         Deadbolted db = Deadbolted.get(block);

@@ -26,8 +26,6 @@ public final class PistonListener extends org.bukkit.event.block.BlockListener {
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
         if (event.isCancelled())
             return;
-        if (!Config.deny_pistons)
-            return;
         for (Block block : event.getBlocks()) {
             Deadbolted db = Deadbolted.get(block);
             if (Deadbolted.get(block).isProtected() && !ListenerManager.canPistonExtend(db, event))
@@ -38,8 +36,6 @@ public final class PistonListener extends org.bukkit.event.block.BlockListener {
     @Override
     public void onBlockPistonRetract(BlockPistonRetractEvent event) {
         if (event.isCancelled())
-            return;
-        if (!Config.deny_pistons)
             return;
         Block piston = event.getBlock();
         Block extension = piston.getRelative(event.getDirection());

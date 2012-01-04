@@ -21,22 +21,28 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Deadbolt extends JavaPlugin {
 
+    public static Deadbolt instance;
     public static final Logger logger = Bukkit.getServer().getLogger();
     public ListenerManager listenerManager;
     public Config config;
 
     @Override
+    public void onLoad() {
+        instance = this;
+    }
+
+    @Override
     public void onEnable() {
         PluginManager pm = this.getServer().getPluginManager();
-        new SignListener(this, pm);
-        new BlockListener(this, pm);
-        new PlayerListener(this, pm);
-        new EntityListener(this, pm);
-        new PistonListener(this, pm);
-        new RedstoneListener(this, pm);
-        new Deadbolted(this);
         config = new Config(this);
         config.load();
+        new SignListener();
+        new BlockListener();
+        new PlayerListener();
+        EntityListener e = (Config.deny_entity_interact)?new EntityListener(): null;
+        PistonListener p = (Config.deny_pistons) ? new PistonListener(this, pm) : null;
+        RedstoneListener r = (Config.deny_redstone) ? new RedstoneListener(this, pm) : null;
+        new Deadbolted(this);
         listenerManager = new ListenerManager(this, this.getServer().getPluginManager());
         listenerManager.registerListeners();
         listenerManager.checkListeners();

@@ -18,16 +18,14 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.PluginManager;
 
 public final class PlayerListener extends org.bukkit.event.player.PlayerListener {
 
-    private final Deadbolt plugin;
+    private final Deadbolt plugin = Deadbolt.instance;
 
-    public PlayerListener(final Deadbolt plugin, final PluginManager pm) {
-        this.plugin = plugin;
-        pm.registerEvent(Type.PLAYER_INTERACT, this, Priority.Normal, plugin);
-        pm.registerEvent(Type.PLAYER_QUIT, this, Priority.Normal, plugin);
+    public PlayerListener() {
+        plugin.getServer().getPluginManager().registerEvent(Type.PLAYER_INTERACT, this, Priority.Normal, plugin);
+        plugin.getServer().getPluginManager().registerEvent(Type.PLAYER_QUIT, this, Priority.Normal, plugin);
     }
 
     @Override
