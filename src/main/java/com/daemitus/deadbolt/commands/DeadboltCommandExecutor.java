@@ -3,6 +3,7 @@ package com.daemitus.deadbolt.commands;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.Perm;
+import com.daemitus.deadbolt.util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -86,17 +87,17 @@ public class DeadboltCommandExecutor implements CommandExecutor {
         for (int i = 1; i < args.length; i++)
             text += args[i] + (i + 1 < args.length ? " " : "");
         if (plugin.config.hasPermission(player, Perm.user_color))
-            text = plugin.config.createColor(text);
-        text = plugin.config.formatForSign(text);
+            text = Util.createColor(text);
+        text = Util.formatForSign(text);
         if (lineNum == 0) {
-            if (plugin.config.removeColor(lines[0]).equalsIgnoreCase(plugin.config.removeColor(text))) {
+            if (Util.removeColor(lines[0]).equalsIgnoreCase(Util.removeColor(text))) {
                 lines[0] = text;
             } else {
                 plugin.config.sendMessage(player, ChatColor.RED, plugin.config.cmd_identifier_not_changeable);
                 return true;
             }
-        } else if (lineNum == 1 && plugin.config.isPrivate(plugin.config.removeColor(lines[0]))) {
-            if (plugin.config.removeColor(lines[1]).equalsIgnoreCase(plugin.config.removeColor(text))) {
+        } else if (lineNum == 1 && plugin.config.isPrivate(Util.removeColor(lines[0]))) {
+            if (Util.removeColor(lines[1]).equalsIgnoreCase(Util.removeColor(text))) {
                 lines[1] = text;
             } else {
                 plugin.config.sendMessage(player, ChatColor.RED, plugin.config.cmd_owner_not_changeable);
@@ -108,14 +109,14 @@ public class DeadboltCommandExecutor implements CommandExecutor {
         if (plugin.config.deselectSign)
             plugin.config.selectedSign.remove(player);
 
-        boolean isPrivate = plugin.config.isPrivate(plugin.config.removeColor(lines[0]));
-        boolean isMoreUsers = plugin.config.isMoreUsers(plugin.config.removeColor(lines[0]));
+        boolean isPrivate = plugin.config.isPrivate(Util.removeColor(lines[0]));
+        boolean isMoreUsers = plugin.config.isMoreUsers(Util.removeColor(lines[0]));
         if (isPrivate)
             for (int i = 0; i < 4; i++)
-                lines[i] = plugin.config.formatForSign(plugin.config.default_colors_private[i] + lines[i]);
+                lines[i] = Util.formatForSign(plugin.config.default_colors_private[i] + lines[i]);
         else if (isMoreUsers)
             for (int i = 0; i < 4; i++)
-                lines[i] = plugin.config.formatForSign(plugin.config.default_colors_moreusers[i] + lines[i]);
+                lines[i] = Util.formatForSign(plugin.config.default_colors_moreusers[i] + lines[i]);
         sign.update(true);
         plugin.config.sendMessage(player, ChatColor.GOLD, plugin.config.cmd_sign_updated);
         return true;

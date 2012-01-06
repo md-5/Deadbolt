@@ -49,11 +49,6 @@
             <version>1.0.1-R2-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <version>1.0.1-R2-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>de.bananaco</groupId>
             <artifactId>bPermissions</artifactId>
             <version>1337-SNAPSHOT</version>

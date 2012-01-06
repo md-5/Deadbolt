@@ -1,5 +1,6 @@
 package com.daemitus.deadbolt;
 
+import com.daemitus.deadbolt.util.Util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -102,11 +103,6 @@ public class Config {
     public String msg_deny_block_perm = "You are not authorized to protect %1$s";
     public String msg_reminder_lock_your_chests = "Place a sign headed [Private] next to your block to lock it";
     //------------------------------------------------------------------------//
-    private final Pattern DETECT_COLORS = Pattern.compile("§([0-9a-f])");
-    private final Pattern TWO_COLORS = Pattern.compile("(§[0-9a-f])(\\s*)(§[0-9a-f])");
-    private final Pattern PSEUDO_COLOR = Pattern.compile("\\&([0-9a-f])");
-    private final Pattern UNNEEDED_COLOR = Pattern.compile("^§0");
-    private final Pattern FORMAT_LENGTH = Pattern.compile("(^.{0,15}).*");
     public String[] default_colors_private = {"", "", "", ""};
     public String[] default_colors_moreusers = {"", "", "", ""};
     //------------------------------------------------------------------------//    
@@ -271,30 +267,6 @@ public class Config {
         }
     }
 
-    public String formatForSign(String line) {
-        while (UNNEEDED_COLOR.matcher(line).find()) {
-            line = UNNEEDED_COLOR.matcher(line).replaceAll("");
-        }
-        while (TWO_COLORS.matcher(line).find()) {
-            line = TWO_COLORS.matcher(line).replaceAll("$2$3");
-        }
-        line = FORMAT_LENGTH.matcher(line).replaceAll("$1");
-        line = line.substring(0, line.length() > 15 ? 15 : line.length());
-        return line;
-    }
-
-    public String removeColor(String text) {
-        return text == null ? null : DETECT_COLORS.matcher(text).replaceAll("");
-    }
-
-    public String createColor(String text) {
-        return text == null ? null : PSEUDO_COLOR.matcher(text).replaceAll("§$1");
-    }
-
-    public String getLine(Sign signBlock, int line) {
-        return DETECT_COLORS.matcher(signBlock.getLine(line)).replaceAll("");
-    }
-
     public boolean isPrivate(String line) {
         return signtext_private.matcher(line).matches();
     }
@@ -320,12 +292,8 @@ public class Config {
     }
 
     public boolean isValidWallSign(Sign signState) {
-        String line = getLine(signState, 0);
+        String line = Util.getLine(signState, 0);
         return isPrivate(line) || isMoreUsers(line);
-    }
-
-    public Block getSignAttached(Sign signState) {
-        return signState.getBlock().getRelative(((org.bukkit.material.Sign) signState.getData()).getAttachedFace());
     }
 
     public void sendMessage(Player player, ChatColor color, String message, String... args) {
@@ -344,41 +312,8 @@ public class Config {
         }
     }
 
+    // TODO why do we need this?
     public boolean hasPermission(Player player, String permission) {
         return (useOPlist ? player.isOp() : false) || player.hasPermission(permission);
-    }
-
-    public static String truncateName(String name) {
-        return name.substring(0, name.length() > 13 ? 13 : name.length());
-    }
-
-    public static BlockFace getFacingFromByte(byte b) {
-        switch (b) {
-            case 0x2:
-                return BlockFace.EAST;
-            case 0x3:
-                return BlockFace.WEST;
-            case 0x4:
-                return BlockFace.NORTH;
-            case 0x5:
-                return BlockFace.SOUTH;
-            default:
-                return null;
-        }
-    }
-
-    public static byte getByteFromFacing(BlockFace bf) {
-        switch (bf) {
-            case EAST:
-                return 0x2;
-            case WEST:
-                return 0x3;
-            case NORTH:
-                return 0x4;
-            case SOUTH:
-                return 0x5;
-            default:
-                return 0x0;
-        }
     }
 }

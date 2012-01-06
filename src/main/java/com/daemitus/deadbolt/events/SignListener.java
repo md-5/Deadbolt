@@ -4,6 +4,7 @@ import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.Perm;
 import com.daemitus.deadbolt.listener.ListenerManager;
+import com.daemitus.deadbolt.util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -35,14 +36,16 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
         Block block = event.getBlock();
         String[] lines = event.getLines();
 
-        if (plugin.config.hasPermission(player, Perm.user_color))
-            for (int i = 0; i < 4; i++)
-                lines[i] = plugin.config.createColor(lines[i]);
+        if (plugin.config.hasPermission(player, Perm.user_color)){
+            for (int i = 0; i < 4; i++){
+                lines[i] = Util.createColor(lines[i]);
+            }
+        } 
 
         //fix for clientside sign edit hack
         if (event.getBlock().getType().equals(Material.WALL_SIGN)) {
             Sign sign = (Sign) event.getBlock().getState();
-            String ident = plugin.config.getLine(sign, 0);
+            String ident = Util.getLine(sign, 0);
             if (plugin.config.isPrivate(ident) || plugin.config.isMoreUsers(ident)) {
                 event.setCancelled(true);
                 return;
@@ -50,7 +53,7 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
         }
         //fix end
 
-        String ident = plugin.config.removeColor(lines[0]);
+        String ident = Util.removeColor(lines[0]);
         boolean isPrivate = plugin.config.isPrivate(ident);
         boolean isMoreUsers = plugin.config.isMoreUsers(ident);
         if (!isPrivate && !isMoreUsers) {
@@ -89,20 +92,20 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
                 plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_admin_sign_placed, db.getOwner());
             case SUCCESS:
                 if (isPrivate) {
-                    String owner = plugin.config.removeColor(lines[1]);
+                    String owner = Util.removeColor(lines[1]);
                     if (owner.isEmpty()) {
-                        lines[1] = plugin.config.default_colors_private[1] + plugin.config.truncateName(player.getName());
+                        lines[1] = plugin.config.default_colors_private[1] + Util.truncateName(player.getName());
                     } else if (plugin.config.hasPermission(player, Perm.admin_create)) {
                         if (plugin.getServer().getPlayerExact(owner) == null)
                             plugin.config.sendMessage(player, ChatColor.YELLOW, plugin.config.msg_admin_warning_player_not_found, owner);
                     } else {
-                        lines[1] = plugin.config.default_colors_private[1] + plugin.config.truncateName(player.getName());
+                        lines[1] = plugin.config.default_colors_private[1] + Util.truncateName(player.getName());
                     }
                 }
 
                 Sign sign = (Sign) block.getState();
                 for (int i = 0; i < 4; i++)
-                    sign.setLine(i, plugin.config.formatForSign(lines[i]));
+                    sign.setLine(i, Util.formatForSign(lines[i]));
                 sign.update();
                 if (!ListenerManager.canSignChange(db, event))
                     break;

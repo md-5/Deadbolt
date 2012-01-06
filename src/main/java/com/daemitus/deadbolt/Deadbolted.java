@@ -1,6 +1,7 @@
 package com.daemitus.deadbolt;
 
 import com.daemitus.deadbolt.tasks.ToggleDoorTask;
+import com.daemitus.deadbolt.util.Util;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -46,7 +47,7 @@ public final class Deadbolted {
                 BlockState state = block.getState();
                 org.bukkit.block.Sign signState = (Sign) state;
                 if (plugin.config.isValidWallSign(signState))
-                    search(plugin.config.getSignAttached(signState));
+                    search(Util.getSignAttached(signState));
                 break;
             case WOODEN_DOOR:
             case IRON_DOOR_BLOCK:
@@ -246,24 +247,24 @@ public final class Deadbolted {
     }
 
     private void parseSignAttached(Block signBlock, Block attached) {
-        if (signBlock.getRelative(plugin.config.getFacingFromByte(signBlock.getData()).getOppositeFace()).equals(attached))
+        if (signBlock.getRelative(Util.getFacingFromByte(signBlock.getData()).getOppositeFace()).equals(attached))
             if (parseSign((Sign) signBlock.getState())) {
                 add(attached, signBlock);
             }
     }
 
     private boolean parseSign(Sign sign) {
-        String ident = plugin.config.getLine(sign, 0);
+        String ident = Util.getLine(sign, 0);
         if (plugin.config.isPrivate(ident)) {
-            String line1 = plugin.config.getLine(sign, 1).toLowerCase();
+            String line1 = Util.getLine(sign, 1).toLowerCase();
             owner = line1.isEmpty() ? owner : line1;
-            users.add(plugin.config.getLine(sign, 2).toLowerCase());
-            users.add(plugin.config.getLine(sign, 3).toLowerCase());
+            users.add(Util.getLine(sign, 2).toLowerCase());
+            users.add(Util.getLine(sign, 3).toLowerCase());
             return true;
         } else if (plugin.config.isMoreUsers(ident)) {
-            users.add(plugin.config.getLine(sign, 1).toLowerCase());
-            users.add(plugin.config.getLine(sign, 2).toLowerCase());
-            users.add(plugin.config.getLine(sign, 3).toLowerCase());
+            users.add(Util.getLine(sign, 1).toLowerCase());
+            users.add(Util.getLine(sign, 2).toLowerCase());
+            users.add(Util.getLine(sign, 3).toLowerCase());
             return true;
         }
         return false;
@@ -274,16 +275,16 @@ public final class Deadbolted {
     }
 
     public boolean isOwner(Player player) {
-        return plugin.config.truncateName(owner).equalsIgnoreCase(plugin.config.truncateName(player.getName()));
+        return Util.truncateName(owner).equalsIgnoreCase(Util.truncateName(player.getName()));
     }
 
     public boolean isUser(Player player) {
         if (isOwner(player) || isEveryone()) {
             return true;
         } else {
-            String name = plugin.config.truncateName(player.getName());
+            String name = Util.truncateName(player.getName());
             for (String user : users)
-                if (plugin.config.truncateName(user).equalsIgnoreCase(name))
+                if (Util.truncateName(user).equalsIgnoreCase(name))
                     return true;
         }
         return false;

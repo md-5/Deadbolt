@@ -4,6 +4,7 @@ import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.Perm;
 import com.daemitus.deadbolt.listener.ListenerManager;
+import com.daemitus.deadbolt.util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -116,16 +117,16 @@ public final class PlayerListener extends org.bukkit.event.player.PlayerListener
                     return false;
                 }
 
-                signBlock.setTypeIdAndData(Material.WALL_SIGN.getId(), plugin.config.getByteFromFacing(clickedFace), false);
+                signBlock.setTypeIdAndData(Material.WALL_SIGN.getId(), Util.getByteFromFacing(clickedFace), false);
                 Sign signState = (Sign) signBlock.getState();
 
                 if (!db.isProtected()) {
-                    signState.setLine(0, plugin.config.formatForSign(plugin.config.default_colors_private[0] + plugin.config.locale_private));
-                    signState.setLine(1, plugin.config.formatForSign(plugin.config.default_colors_private[1] + plugin.config.truncateName(player.getName())));
+                    signState.setLine(0, Util.formatForSign(plugin.config.default_colors_private[0] + plugin.config.locale_private));
+                    signState.setLine(1, Util.formatForSign(plugin.config.default_colors_private[1] + Util.truncateName(player.getName())));
                 } else if (db.isOwner(player)) {
-                    signState.setLine(0, plugin.config.formatForSign(plugin.config.default_colors_moreusers[0] + plugin.config.locale_moreusers));
+                    signState.setLine(0, Util.formatForSign(plugin.config.default_colors_moreusers[0] + plugin.config.locale_moreusers));
                 } else if (plugin.config.hasPermission(player, Perm.admin_create)) {
-                    signState.setLine(0, plugin.config.formatForSign(plugin.config.default_colors_moreusers[0] + plugin.config.locale_moreusers));
+                    signState.setLine(0, Util.formatForSign(plugin.config.default_colors_moreusers[0] + plugin.config.locale_moreusers));
                     plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_admin_sign_placed, db.getOwner());
                 } else {
                     plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_sign_quickplace, db.getOwner());
