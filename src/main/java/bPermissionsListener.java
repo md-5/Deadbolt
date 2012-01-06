@@ -1,16 +1,17 @@
 
 import com.daemitus.deadbolt.listener.DeadboltListener;
+import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
-import de.bananaco.bpermissions.api.WorldManager;
+import de.bananaco.permissions.Permissions;
+import de.bananaco.permissions.worlds.WorldPermissionsManager;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public final class bPermissionsListener extends DeadboltListener {
 
-    private final WorldManager permissions = WorldManager.getInstance();
+    private WorldPermissionsManager permissions;
     protected static final String patternBracketTooLong = "\\[.{14,}\\]";
 
     @Override
@@ -18,12 +19,16 @@ public final class bPermissionsListener extends DeadboltListener {
         return Arrays.asList("bPermissions");
     }
 
+    @Override
+    public void load(final Deadbolt plugin) {
+        permissions = Permissions.getWorldPermissionsManager();
+    }
 
     @Override
     public boolean canPlayerInteract(Deadbolted db, PlayerInteractEvent event) {
         //DEFAULT return false;
         Player player = event.getPlayer();
-        Set<String> groups = permissions.getWorld(player.getWorld().getName()).getUser(player.getName()).getGroupsAsString();
+        List<String> groups = permissions.getPermissionSet(player.getLocation().getWorld()).getGroups(player);
         for (String gName : groups) {
             if (db.getUsers().contains(truncate("[" + gName + "]").toLowerCase()))
                 return true;
