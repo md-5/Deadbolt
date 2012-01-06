@@ -7,9 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
@@ -21,19 +19,13 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
+
 
 public final class ListenerManager {
 
-    private final Deadbolt plugin;
-    private final PluginManager pm;
+    private final Deadbolt plugin = Deadbolt.instance;
     private static List<ListenerInterface> loaded = new ArrayList<ListenerInterface>();
     private static List<ListenerInterface> unloaded = new ArrayList<ListenerInterface>();
-
-    public ListenerManager(final Deadbolt plugin, final PluginManager pm) {
-        this.plugin = plugin;
-        this.pm = pm;
-    }
 
     public void registerListeners() {
         loaded.clear();
@@ -69,16 +61,19 @@ public final class ListenerManager {
     }
 
     public void checkListeners() {
-        Set<String> pluginCache = new HashSet<String>();
-        for (Plugin pl : plugin.getServer().getPluginManager().getPlugins())
-            if (pl.isEnabled())
-                pluginCache.add(pl.getDescription().getName());
-
+        for (Plugin pl : plugin.getServer().getPluginManager().getPlugins()) {
+            if (pl.isEnabled()) {
+                checkListener(pl);
+            }
+        }
+    }
+    public void checkListener(Plugin pl) {
+        String name = pl.getDescription().getName();
         for (ListenerInterface listener : unloaded) {
             boolean enableListener = true;
-            for (String depends : listener.getDependencies())
-                enableListener &= pluginCache.contains(depends);
-
+            for (String depends : listener.getDependencies()) {
+                enableListener &= name.equals(depends);
+            }
             if (enableListener) {
                 if (!loaded.contains(listener)) {
                     loaded.add(listener);

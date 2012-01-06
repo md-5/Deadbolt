@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Deadbolt extends JavaPlugin {
@@ -26,29 +25,27 @@ public final class Deadbolt extends JavaPlugin {
     public ListenerManager listenerManager;
     public Config config;
 
-    @Override
-    public void onLoad() {
+    public Deadbolt() {
         instance = this;
     }
 
     @Override
     public void onEnable() {
-        PluginManager pm = this.getServer().getPluginManager();
         config = new Config();
         config.load();
         new SignListener();
         new BlockListener();
         new PlayerListener();
-        EntityListener e = (config.deny_entity_interact)?new EntityListener(): null;
-        PistonListener p = (config.deny_pistons) ? new PistonListener(this, pm) : null;
-        RedstoneListener r = (config.deny_redstone) ? new RedstoneListener(this, pm) : null;
+        EntityListener e = (config.deny_entity_interact) ? new EntityListener() : null;
+        PistonListener p = (config.deny_pistons) ? new PistonListener() : null;
+        RedstoneListener r = (config.deny_redstone) ? new RedstoneListener() : null;
         new Deadbolted(this);
-        listenerManager = new ListenerManager(this, this.getServer().getPluginManager());
+        listenerManager = new ListenerManager();
         listenerManager.registerListeners();
         listenerManager.checkListeners();
-        new ServerListener(this, pm);
+        new ServerListener();
 
-        this.getCommand("deadbolt").setExecutor(new DeadboltCommandExecutor(this));
+        getCommand("deadbolt").setExecutor(new DeadboltCommandExecutor(this));
 
         logger.log(Level.INFO, "[Deadbolt] " + this.getDescription().getVersion() + " enabled");
     }

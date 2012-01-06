@@ -3,19 +3,18 @@ package com.daemitus.deadbolt.events;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.listener.ListenerManager;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.block.BlockRedstoneEvent;
-import org.bukkit.plugin.PluginManager;
 
 public final class RedstoneListener extends org.bukkit.event.block.BlockListener {
 
-    private final Deadbolt plugin;
+    private final Deadbolt plugin = Deadbolt.instance;
 
-    public RedstoneListener(final Deadbolt plugin, final PluginManager pm) {
-        this.plugin = plugin;
-        pm.registerEvent(Type.REDSTONE_CHANGE, this, Priority.Low, plugin);
+    public RedstoneListener() {
+        Bukkit.getServer().getPluginManager().registerEvent(Type.REDSTONE_CHANGE, this, Priority.Low, plugin);
     }
 
     @Override
