@@ -31,7 +31,7 @@ public final class PermissionsExListener extends DeadboltListener {
     public boolean canPlayerInteract(Deadbolted db, PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Set<String> allGroupNames = new HashSet<String>();
-        for (PermissionGroup g : permissions.getUser(player).getGroups()) {
+        for (PermissionGroup g : permissions.getUser(player.getName()).getGroups()) {
             allGroupNames.add(g.getName());
             getInherited(g, allGroupNames);
         }
