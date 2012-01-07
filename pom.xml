@@ -70,7 +70,7 @@
         <dependency>
             <groupId>ru.tehkode</groupId>
             <artifactId>PermissionsEx</artifactId>
-            <version>1.15</version>
+            <version>1.18</version>
         </dependency>
     </dependencies>
 </project>
