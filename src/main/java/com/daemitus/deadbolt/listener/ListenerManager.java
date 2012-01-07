@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
@@ -135,6 +136,13 @@ public final class ListenerManager {
         boolean allow = false;
         for (ListenerInterface listener : loaded)
             allow |= listener.canBlockBreak(db, event);
+        return allow;
+    }
+    
+    public static boolean canBlockBurn(Deadbolted db, BlockBurnEvent event) {
+        boolean allow = false;
+        for (ListenerInterface listener : loaded)
+            allow |= listener.canBlockBurn(db, event);
         return allow;
     }
 

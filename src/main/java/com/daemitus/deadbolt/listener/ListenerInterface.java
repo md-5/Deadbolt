@@ -4,6 +4,7 @@ import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import java.util.List;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
@@ -32,6 +33,8 @@ public interface ListenerInterface {
     public boolean canPistonRetract(Deadbolted db, BlockPistonRetractEvent event);
 
     public boolean canBlockBreak(Deadbolted db, BlockBreakEvent event);
+    
+    public boolean canBlockBurn(Deadbolted db, BlockBurnEvent event);
 
     public boolean canPlayerInteract(Deadbolted db, PlayerInteractEvent event);
 

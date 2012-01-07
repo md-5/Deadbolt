@@ -138,7 +138,7 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
         }
         Block block = event.getBlock();
         Deadbolted db = Deadbolted.get(block);
-        if (db.isProtected() && !ListenerManager.canEndermanPickup(db, event)) {
+        if (db.isProtected() && !ListenerManager.canBlockBurn(db, event)) {
             event.setCancelled(true);
         }
     }
