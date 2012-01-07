@@ -56,28 +56,28 @@ public final class PlayerListener extends org.bukkit.event.player.PlayerListener
 
     private boolean handleRightClick(PlayerInteractEvent event) {
         if (event.getPlayer().getItemInHand().getType().equals(Material.SIGN) && !event.isCancelled()) {
-            return placeQuickSign(event);
-        } else {
-            switch (event.getClickedBlock().getType()) {
-                case WOODEN_DOOR:
-                case IRON_DOOR_BLOCK:
-                case TRAP_DOOR:
-                case FENCE_GATE:
-                    return onPlayerInteractDoor(event);
-                case CHEST:
-                case FURNACE:
-                case CAULDRON:
-                case DISPENSER:
-                case BREWING_STAND:
-                case BURNING_FURNACE:
-                case ENCHANTMENT_TABLE:
-                    return onPlayerInteractContainer(event);
-                case WALL_SIGN:
-                    return onPlayerInteractWallSign(event);
-                default:
-                    return true;
-            }
+            placeQuickSign(event);
         }
+        switch (event.getClickedBlock().getType()) {
+            case WOODEN_DOOR:
+            case IRON_DOOR_BLOCK:
+            case TRAP_DOOR:
+            case FENCE_GATE:
+                return onPlayerInteractDoor(event);
+            case CHEST:
+            case FURNACE:
+            case CAULDRON:
+            case DISPENSER:
+            case BREWING_STAND:
+            case BURNING_FURNACE:
+            case ENCHANTMENT_TABLE:
+                return onPlayerInteractContainer(event);
+            case WALL_SIGN:
+                return onPlayerInteractWallSign(event);
+            default:
+                return true;
+        }
+
     }
 
     private boolean placeQuickSign(PlayerInteractEvent event) {
