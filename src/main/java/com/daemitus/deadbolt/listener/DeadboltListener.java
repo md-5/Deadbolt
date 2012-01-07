@@ -5,6 +5,7 @@ import com.daemitus.deadbolt.Deadbolted;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
@@ -72,6 +73,10 @@ public class DeadboltListener implements ListenerInterface {
 
     @Override
     public boolean canSignChangeQuick(Deadbolted db, PlayerInteractEvent event) {
+        return true;
+    }
+
+    public boolean canBlockBurn(Deadbolted db, BlockBurnEvent event) {
         return true;
     }
 }
