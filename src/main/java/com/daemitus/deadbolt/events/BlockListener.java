@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 public final class BlockListener extends org.bukkit.event.block.BlockListener {
@@ -24,6 +25,7 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
     public BlockListener() {
         plugin.getServer().getPluginManager().registerEvent(Type.BLOCK_BREAK, this, Priority.Low, plugin);
         plugin.getServer().getPluginManager().registerEvent(Type.BLOCK_PLACE, this, Priority.Normal, plugin);
+        plugin.getServer().getPluginManager().registerEvent(Type.BLOCK_BURN, this, Priority.Normal, plugin);
     }
 
     @Override
@@ -128,6 +130,19 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
                 return;
         }
     }
+
+    @Override
+    public void onBlockBurn(BlockBurnEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        Block block = event.getBlock();
+        Deadbolted db = Deadbolted.get(block);
+        if (db.isProtected() && !ListenerManager.canEndermanPickup(db, event)) {
+            event.setCancelled(true);
+        }
+    }
+    
 
     private String getPermission(Material type) {
         switch (type) {
