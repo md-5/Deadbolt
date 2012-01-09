@@ -1,5 +1,6 @@
 package com.daemitus.deadbolt.tasks;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 
@@ -12,6 +13,6 @@ public class SignUpdateTask implements Runnable {
     }
 
     public void run() {
-        ((Sign) block.getState()).update(true);
+       if (block.getType() == Material.WALL_SIGN) ((Sign) block.getState()).update(true);
     }
 }
