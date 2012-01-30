@@ -11,24 +11,24 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Result;
-import org.bukkit.event.Event.Type;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
-public final class PlayerListener extends org.bukkit.event.player.PlayerListener {
+public final class PlayerListener implements Listener {
 
     private final Deadbolt plugin = Deadbolt.instance;
 
     public PlayerListener() {
-        plugin.getServer().getPluginManager().registerEvent(Type.PLAYER_INTERACT, this, Priority.Normal, plugin);
-        plugin.getServer().getPluginManager().registerEvent(Type.PLAYER_QUIT, this, Priority.Normal, plugin);
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)
                 && !handleLeftClick(event)) {
@@ -234,7 +234,7 @@ public final class PlayerListener extends org.bukkit.event.player.PlayerListener
         }
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(PlayerQuitEvent event) {
         plugin.config.selectedSign.remove(event.getPlayer());
     }

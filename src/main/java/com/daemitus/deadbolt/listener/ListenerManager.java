@@ -9,6 +9,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import org.bukkit.Bukkit;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
@@ -20,7 +21,6 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.Plugin;
-
 
 public final class ListenerManager {
 
@@ -68,23 +68,28 @@ public final class ListenerManager {
             }
         }
     }
+
     public void checkListener(Plugin pl) {
         String name = pl.getDescription().getName();
-        for (ListenerInterface listener : unloaded) {
-            boolean enableListener = true;
-            for (String depends : listener.getDependencies()) {
-                enableListener &= name.equals(depends);
-            }
-            if (enableListener) {
-                if (!loaded.contains(listener)) {
-                    loaded.add(listener);
-                    listener.load(plugin);
-                    Deadbolt.logger.log(Level.INFO, "[Deadbolt] " + listener.getClass().getSimpleName() + " is now enabled");
-                }
-            } else {
-                if (loaded.remove(listener)) {
-                    Deadbolt.logger.log(Level.INFO, "[Deadbolt] " + listener.getClass().getSimpleName() + " disabled due to one or more dependencies");
 
+        for (ListenerInterface listener : unloaded) {
+            if (listener.getDependencies().contains(name)) {
+                boolean enableListener = true;
+                for (String depends : listener.getDependencies()) {
+                    enableListener &= Bukkit.getServer().getPluginManager().getPlugin(depends).isEnabled();
+                }
+
+                if (enableListener) {
+                    if (!loaded.contains(listener)) {
+                        loaded.add(listener);
+                        listener.load(plugin);
+                        Deadbolt.logger.log(Level.INFO, "[Deadbolt] " + listener.getClass().getSimpleName() + " is now enabled");
+                    }
+                } else {
+                    if(loaded.contains(listener)) {
+                        loaded.remove(listener);
+                        Deadbolt.logger.log(Level.INFO, "[Deadbolt] " + listener.getClass().getSimpleName() + " disabled due to one or more dependencies");
+                    }                  
                 }
             }
         }
@@ -138,7 +143,7 @@ public final class ListenerManager {
             allow |= listener.canBlockBreak(db, event);
         return allow;
     }
-    
+
     public static boolean canBlockBurn(Deadbolted db, BlockBurnEvent event) {
         boolean allow = false;
         for (ListenerInterface listener : loaded)

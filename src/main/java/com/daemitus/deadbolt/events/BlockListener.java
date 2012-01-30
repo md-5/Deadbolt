@@ -12,23 +12,22 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-public final class BlockListener extends org.bukkit.event.block.BlockListener {
+public final class BlockListener implements Listener {
 
     private final Deadbolt plugin = Deadbolt.instance;
 
     public BlockListener() {
-        plugin.getServer().getPluginManager().registerEvent(Type.BLOCK_BREAK, this, Priority.Low, plugin);
-        plugin.getServer().getPluginManager().registerEvent(Type.BLOCK_PLACE, this, Priority.Normal, plugin);
-        plugin.getServer().getPluginManager().registerEvent(Type.BLOCK_BURN, this, Priority.Normal, plugin);
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.LOW)
     public void onBlockBreak(BlockBreakEvent event) {
         if (event.isCancelled()) {
             return;
@@ -61,7 +60,7 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
         }
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockPlace(BlockPlaceEvent event) {
         if (event.isCancelled()) {
             return;
@@ -131,7 +130,7 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
         }
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockBurn(BlockBurnEvent event) {
         if (event.isCancelled()) {
             return;
@@ -142,7 +141,6 @@ public final class BlockListener extends org.bukkit.event.block.BlockListener {
             event.setCancelled(true);
         }
     }
-    
 
     private String getPermission(Material type) {
         switch (type) {

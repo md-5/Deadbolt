@@ -6,21 +6,21 @@ import com.daemitus.deadbolt.listener.ListenerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 
-public final class PistonListener extends org.bukkit.event.block.BlockListener {
+public final class PistonListener implements Listener {
 
-    private  final Deadbolt plugin = Deadbolt.instance;
+    private final Deadbolt plugin = Deadbolt.instance;
 
     public PistonListener() {
-        Bukkit.getServer().getPluginManager().registerEvent(Type.BLOCK_PISTON_EXTEND, this, Priority.Low, plugin);
-        Bukkit.getServer().getPluginManager().registerEvent(Type.BLOCK_PISTON_RETRACT, this, Priority.Low, plugin);
+        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.LOW)
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
         if (event.isCancelled())
             return;
@@ -31,7 +31,7 @@ public final class PistonListener extends org.bukkit.event.block.BlockListener {
         }
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.LOW)
     public void onBlockPistonRetract(BlockPistonRetractEvent event) {
         if (event.isCancelled())
             return;

@@ -10,17 +10,18 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
-public final class SignListener extends org.bukkit.event.block.BlockListener {
+public final class SignListener implements Listener {
 
     private final Deadbolt plugin = Deadbolt.instance;
 
     public SignListener() {
-        plugin.getServer().getPluginManager().registerEvent(Type.SIGN_CHANGE, this, Priority.Normal, plugin);
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     private enum Result {
@@ -28,7 +29,7 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
         DENY_SIGN_PRIVATE_ALREADY_OWNED, ADMIN_SIGN_PLACED, DENY_SIGN_MOREUSERS_ALREADY_OWNED, DENY_SIGN_PRIVATE_NOTHING_NEARBY, DENY_SIGN_MOREUSERS_NO_PRIVATE, SUCCESS, PLACEHOLDER, DENY_BLOCK_PERM_CHEST, DENY_BLOCK_PERM_FURNACE, DENY_BLOCK_PERM_DISPENSER, DENY_BLOCK_PERM_FENCEGATE, DENY_BLOCK_PERM_DOOR, DENY_BLOCK_PERM_TRAPDOOR, DENY_BLOCK_PERM_BREWERY, DENY_BLOCK_PERM_CAULDRON, DENY_BLOCK_PERM_ENCHANT;
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onSignChange(SignChangeEvent event) {
         if (event.isCancelled())
             return;
@@ -36,11 +37,11 @@ public final class SignListener extends org.bukkit.event.block.BlockListener {
         Block block = event.getBlock();
         String[] lines = event.getLines();
 
-        if (plugin.config.hasPermission(player, Perm.user_color)){
-            for (int i = 0; i < 4; i++){
+        if (plugin.config.hasPermission(player, Perm.user_color)) {
+            for (int i = 0; i < 4; i++) {
                 lines[i] = Util.createColor(lines[i]);
             }
-        } 
+        }
 
         //fix for clientside sign edit hack
         if (event.getBlock().getType().equals(Material.WALL_SIGN)) {

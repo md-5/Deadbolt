@@ -4,23 +4,22 @@ import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.listener.ListenerManager;
 import org.bukkit.block.Block;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EndermanPickupEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 
-public final class EntityListener extends org.bukkit.event.entity.EntityListener {
+public final class EntityListener implements Listener {
 
     private final Deadbolt plugin = Deadbolt.instance;
 
     public EntityListener() {
-        plugin.getServer().getPluginManager().registerEvent(Type.ENTITY_INTERACT, this, Priority.High, plugin);
-        plugin.getServer().getPluginManager().registerEvent(Type.ENTITY_EXPLODE, this, Priority.High, plugin);
-        plugin.getServer().getPluginManager().registerEvent(Type.ENDERMAN_PICKUP, this, Priority.High, plugin);
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.HIGH)
     public void onEntityInteract(EntityInteractEvent event) {
         if (event.isCancelled())
             return;
@@ -30,7 +29,7 @@ public final class EntityListener extends org.bukkit.event.entity.EntityListener
             event.setCancelled(true);
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.HIGH)
     public void onEndermanPickup(EndermanPickupEvent event) {
         if (event.isCancelled())
             return;
@@ -40,10 +39,9 @@ public final class EntityListener extends org.bukkit.event.entity.EntityListener
         Deadbolted db = Deadbolted.get(block);
         if (db.isProtected() && !ListenerManager.canEndermanPickup(db, event))
             event.setCancelled(true);
-
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.HIGH)
     public void onEntityExplode(EntityExplodeEvent event) {
         if (event.isCancelled())
             return;
@@ -56,18 +54,5 @@ public final class EntityListener extends org.bukkit.event.entity.EntityListener
                 return;
             }
         }
-
-        /*
-        Set<Block> protectedBlocks = new HashSet<Block>();
-        for (Block block : event.blockList()) {
-        if (!protectedBlocks.contains(block)) {
-        Deadbolted db = Deadbolted.get(block);
-        if (db.isProtected() && !ListenerManager.canEntityExplode(db, event))
-        protectedBlocks.addAll(db.getBlocks());
-        }
-        }
-        for (Block block : protectedBlocks)
-        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new ProtectionRegenTask(block), 1);
-         */
     }
 }

@@ -4,6 +4,7 @@ import com.daemitus.deadbolt.Config;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.palmergames.bukkit.towny.NotRegisteredException;
+import com.palmergames.bukkit.towny.Towny;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -28,9 +30,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public final class TownyListener extends DeadboltListener {
 
-    private final Deadbolt plugin = Deadbolt.instance;
-    private static TownyUniverse towny;
-    protected static final String patternBracketTooLong = "\\[.{14,}\\]";
+    private TownyUniverse towny;
+    private static final String patternBracketTooLong = "\\[.{14,}\\]";
     private static boolean denyWilderness = false;
     private static boolean wildernessOverride = false;
     private static boolean mayorOverride = false;
@@ -44,7 +45,7 @@ public final class TownyListener extends DeadboltListener {
     @Override
     public void load(final Deadbolt plugin) {
         try {
-            towny = TownyUniverse.plugin.getTownyUniverse();
+            towny = ((Towny) Bukkit.getServer().getPluginManager().getPlugin("Towny")).getTownyUniverse();
 
             File configFile = new File(plugin.getDataFolder() + "/listeners/TownyListener.yml");
             checkFile(configFile);
@@ -61,7 +62,6 @@ public final class TownyListener extends DeadboltListener {
         } catch (InvalidConfigurationException ex) {
             Deadbolt.logger.log(Level.SEVERE, null, ex);
         }
-
     }
 
     private String truncate(String text) {
@@ -138,7 +138,7 @@ public final class TownyListener extends DeadboltListener {
 
     private boolean askTowny(Player player, Block block) {
         //OP check
-        if (plugin.config.useOPlist && player.isOp())
+        if (Deadbolt.instance.config.useOPlist && player.isOp())
             return true;
 
         //is this world using towny?
@@ -149,7 +149,7 @@ public final class TownyListener extends DeadboltListener {
         //wilderness check
         if (towny.isWilderness(block)) {
             if (denyWilderness) {
-                plugin.config.sendMessage(player, ChatColor.RED, "You can only protect blocks inside of a town");
+                Deadbolt.instance.config.sendMessage(player, ChatColor.RED, "You can only protect blocks inside of a town");
                 return false;
             } else {
                 return true;
