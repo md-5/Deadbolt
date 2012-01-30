@@ -38,7 +38,7 @@ forced_timed_doors: false
 #Default delay used with forced timed doors
 forced_timed_doors_delay: 3         
 #Enables sound effects on timed doors
-timed_door_dounds: true             
+timed_door_sounds: true             
 #Gives traditional wood door sounds to silent ones (iron doors)
 silent_door_sounds: true            
 
