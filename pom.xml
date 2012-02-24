@@ -20,6 +20,18 @@
             <id>guardian-repo</id>
             <url>http://guardian.mossycobble.com:8080/repo/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>acampadas-repo</id>
+            <url>http://acampadas21.net:8026/nexus-2.0/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>repobo-snap</id>
+            <url>http://repo.bukkit.org/content/groups/public</url>
+        </repository>
+        <repository>
+            <id>nexis-repo</id>
+            <url>http://repo.nexisonline.net:8080/nexus/content/repositories/public</url>
+        </repository>
     </repositories>
     
     <build>
@@ -40,7 +52,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.1-R2</version>
+            <version>1.1-R5-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>de.bananaco</groupId>
@@ -55,7 +67,7 @@
         <dependency>
             <groupId>net.sacredlabyrinth.phaed</groupId>
             <artifactId>SimpleClans</artifactId>
-            <version>1.0</version>
+            <version>2.1.2</version>
         </dependency>
         <dependency>
             <groupId>org.anjocaido</groupId>
@@ -70,12 +82,12 @@
         <dependency>
             <groupId>ru.tehkode</groupId>
             <artifactId>PermissionsEx</artifactId>
-            <version>1.18</version>
+            <version>1.19</version>
         </dependency>
         <dependency>
             <groupId>net.milkbowl.vault</groupId>
             <artifactId>Vault</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.2.9</version>
         </dependency>
     </dependencies>
 </project>

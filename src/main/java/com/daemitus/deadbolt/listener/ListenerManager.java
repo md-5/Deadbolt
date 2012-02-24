@@ -16,7 +16,7 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.entity.EndermanPickupEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -109,7 +109,7 @@ public final class ListenerManager {
         return allow;
     }
 
-    public static boolean canEndermanPickup(Deadbolted db, EndermanPickupEvent event) {
+    public static boolean canEndermanPickup(Deadbolted db, EntityChangeBlockEvent event) {
         boolean allow = false;
         for (ListenerInterface listener : loaded)
             allow |= listener.canEndermanPickup(db, event);
