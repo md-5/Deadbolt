@@ -7,9 +7,10 @@ import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EndermanPickupEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.entity.Enderman;
 
 public final class EntityListener implements Listener {
 
@@ -28,17 +29,19 @@ public final class EntityListener implements Listener {
         if (db.isProtected() && !ListenerManager.canEntityInteract(db, event))
             event.setCancelled(true);
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH)
-    public void onEndermanPickup(EndermanPickupEvent event) {
-        if (event.isCancelled())
-            return;
-        if (!plugin.config.deny_endermen)
-            return;
-        Block block = event.getBlock();
-        Deadbolted db = Deadbolted.get(block);
-        if (db.isProtected() && !ListenerManager.canEndermanPickup(db, event))
-            event.setCancelled(true);
+    public void onEntityChangeBlock(EntityChangeBlockEvent event){
+    	if (event.isCancelled())
+    		return;
+    	if (!(event.getEntity() instanceof Enderman))
+    		return;
+    	if (!plugin.config.deny_endermen)
+    		return;
+    	Block block = event.getBlock();
+    	Deadbolted db = Deadbolted.get(block);
+    	if (db.isProtected() && !ListenerManager.canEndermanPickup(db, event))
+    		event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
