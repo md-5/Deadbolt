@@ -429,14 +429,22 @@ public final class Deadbolted {
         // Fetch the owner string
         String ownerString = this.getOwner();
         
+        System.out.println("ownerString: "+ownerString);
+        
         // That must be a valid player name
         if ( ! Pattern.matches("^[a-zA-Z0-9_]{2,16}$", ownerString)) {
             return false;
         }
         
         // So when did the player last play? Has it expired yet?
-        OfflinePlayer offlineOwner = Bukkit.getOfflinePlayer(ownerString);
-        long lastPlayed = offlineOwner.getLastPlayed();
+        long lastPlayed = 0;
+        Player player = Bukkit.getPlayerExact(ownerString);
+        if (player != null && player.isOnline()) {
+            lastPlayed = System.currentTimeMillis();
+        } else {
+            OfflinePlayer offlineOwner = Bukkit.getOfflinePlayer(ownerString);
+            lastPlayed = offlineOwner.getLastPlayed();
+        }
         long millisSinceLastPlayed = System.currentTimeMillis() - lastPlayed;
         long daysSinceLastPlayed = (long) Math.floor(millisSinceLastPlayed / (1000 * 60 * 60 * 24));
         long daysTillExpire = Deadbolt.instance.config.auto_expire_days - daysSinceLastPlayed;
