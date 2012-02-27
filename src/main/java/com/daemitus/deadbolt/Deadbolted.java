@@ -2,6 +2,7 @@ package com.daemitus.deadbolt;
 
 import com.daemitus.deadbolt.tasks.ToggleDoorTask;
 import com.daemitus.deadbolt.util.Util;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -441,12 +442,12 @@ public final class Deadbolted {
         boolean expired = (daysTillExpire <= 0);
         
         if (expired) {
-            if (playerToInform != null) {
+            if (playerToInform != null && ! playerToInform.getName().equalsIgnoreCase(ownerString)) {
                 Deadbolt.instance.config.sendMessage(playerToInform, ChatColor.RED, Deadbolt.instance.config.msg_auto_expire_expired);
             }
             return true;
         } else {
-            if (playerToInform != null) {
+            if (playerToInform != null && ! playerToInform.getName().equalsIgnoreCase(ownerString)) {
                 Deadbolt.instance.config.sendMessage(playerToInform, ChatColor.YELLOW, Deadbolt.instance.config.msg_auto_expire_owner_x_days, ownerString, String.valueOf(daysTillExpire));
             }
             return false;
