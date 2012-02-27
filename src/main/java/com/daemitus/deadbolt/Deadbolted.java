@@ -6,8 +6,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -406,5 +411,48 @@ public final class Deadbolted {
             default:
                 return true;
         }
+    }
+    
+    /**
+     * The purpose of this is to let protections auto-expire
+     * if the owner did not play for the last X days. 
+     */
+    public boolean isAutoExpired(Player playerToInform) {
+        // Are we even supposed to use the auto-expire feature?
+        // Is the feature perhaps disabled in the configuration?
+        if (Deadbolt.instance.config.auto_expire_days <= 0) {
+            return false; 
+        }
+        
+        // Fetch the owner string
+        String ownerString = this.getOwner();
+        
+        // That must be a valid player name
+        if ( ! Pattern.matches("^[a-zA-Z0-9_]{2,16}$", ownerString)) {
+            return false;
+        }
+        
+        // So when did the player last play? Has it expired yet?
+        OfflinePlayer offlineOwner = Bukkit.getOfflinePlayer(ownerString);
+        long lastPlayed = offlineOwner.getLastPlayed();
+        long millisSinceLastPlayed = System.currentTimeMillis() - lastPlayed;
+        long daysSinceLastPlayed = (long) Math.floor(millisSinceLastPlayed / (1000 * 60 * 60 * 24));
+        long daysTillExpire = Deadbolt.instance.config.auto_expire_days - daysSinceLastPlayed;
+        boolean expired = (daysTillExpire <= 0);
+        
+        if (expired) {
+            if (playerToInform != null) {
+                Deadbolt.instance.config.sendMessage(playerToInform, ChatColor.RED, Deadbolt.instance.config.msg_auto_expire_expired);
+            }
+            return true;
+        } else {
+            if (playerToInform != null) {
+                Deadbolt.instance.config.sendMessage(playerToInform, ChatColor.YELLOW, Deadbolt.instance.config.msg_auto_expire_owner_x_days, ownerString, String.valueOf(daysTillExpire));
+            }
+            return false;
+        }
+    }
+    public boolean isAutoExpired() {
+        return this.isAutoExpired(null);
     }
 }

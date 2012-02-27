@@ -5,6 +5,7 @@ import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.Perm;
 import com.daemitus.deadbolt.listener.ListenerManager;
 import com.daemitus.deadbolt.util.Util;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -182,56 +183,68 @@ public final class PlayerListener implements Listener {
         Player player = event.getPlayer();
         Block block = event.getClickedBlock();
         Deadbolted db = Deadbolted.get(block);
-        if (!db.isProtected()) {
-            return true;
-        } else if (db.isUser(player) || ListenerManager.canPlayerInteract(db, event)) {
+        
+        if (!db.isProtected()) return true;
+        if (db.isAutoExpired(player)) return true;
+        
+        if (db.isUser(player) || ListenerManager.canPlayerInteract(db, event)) {
             db.toggleDoors(block);
             return true;
-        } else if (plugin.config.hasPermission(player, Perm.admin_bypass)) {
+        }
+        
+        if (plugin.config.hasPermission(player, Perm.admin_bypass)) {
             db.toggleDoors(block);
             plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_admin_bypass, db.getOwner());
             return true;
-        } else {
-            plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_access_door);
-            return false;
         }
+        
+        plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_access_door);
+        return false;
     }
 
     private boolean onPlayerInteractContainer(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Block block = event.getClickedBlock();
         Deadbolted db = Deadbolted.get(block);
-        if (!db.isProtected()) {
+        
+        if (!db.isProtected()) return true;
+        if (db.isAutoExpired(player)) return true;
+        
+        if (db.isUser(player) || ListenerManager.canPlayerInteract(db, event)) {
             return true;
-        } else if (db.isUser(player) || ListenerManager.canPlayerInteract(db, event)) {
-            return true;
-        } else if (plugin.config.hasPermission(player, Perm.admin_container)) {
+        }
+        
+        if (plugin.config.hasPermission(player, Perm.admin_container)) {
             plugin.config.sendBroadcast(Perm.broadcast_admin_container, ChatColor.RED, plugin.config.msg_admin_container, player.getName(), db.getOwner());
             return true;
-        } else {
-            plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_access_container);
-            return false;
         }
+        
+        plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_access_container);
+        return false;
     }
 
     private boolean onPlayerInteractWallSign(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Block block = event.getClickedBlock();
         Deadbolted db = Deadbolted.get(block);
-        if (!db.isProtected()) {
-            return true;
-        } else if (db.isOwner(player)) {
+        
+        if (!db.isProtected()) return true;
+        if (db.isAutoExpired(player)) return true;
+        
+        if (db.isOwner(player)) {
             plugin.config.selectedSign.put(player, block);
             plugin.config.sendMessage(player, ChatColor.GOLD, plugin.config.cmd_sign_selected);
             return false;
-        } else if (plugin.config.hasPermission(player, Perm.admin_commands)) {
+        }
+        
+        if (plugin.config.hasPermission(player, Perm.admin_commands)) {
             plugin.config.selectedSign.put(player, block);
             plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_admin_sign_selection, db.getOwner());
             return false;
-        } else {
-            plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_sign_selection);
-            return false;
         }
+    
+        plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_sign_selection);
+        return false;
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
