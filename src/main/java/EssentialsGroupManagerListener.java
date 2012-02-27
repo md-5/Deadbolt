@@ -37,9 +37,10 @@ public final class EssentialsGroupManagerListener extends DeadboltListener {
         getInherited(group, groupNames, owh);
 
         for (String gName : groupNames) {
-            if (db.getUsers().contains(truncate("[" + gName + "]").toLowerCase()))
+            if (db.getUsers().contains(truncate("[" + gName + "]")))
                 return true;
         }
+        
         return false;
     }
 

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
@@ -29,7 +30,7 @@ public final class Deadbolted {
     private Set<Block> blocks = new HashSet<Block>();
     private Set<Block> traversed = new HashSet<Block>();
     private String owner = null;
-    private Set<String> users = new HashSet<String>();
+    private Set<String> users = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
     private static Deadbolt plugin;
 
     public Deadbolted(final Deadbolt plugin) {
@@ -262,15 +263,15 @@ public final class Deadbolted {
     private boolean parseSign(Sign sign) {
         String ident = Util.getLine(sign, 0);
         if (plugin.config.isPrivate(ident)) {
-            String line1 = Util.getLine(sign, 1).toLowerCase();
+            String line1 = Util.getLine(sign, 1);
             owner = line1.isEmpty() ? owner : line1;
-            users.add(Util.getLine(sign, 2).toLowerCase());
-            users.add(Util.getLine(sign, 3).toLowerCase());
+            users.add(Util.getLine(sign, 2));
+            users.add(Util.getLine(sign, 3));
             return true;
         } else if (plugin.config.isMoreUsers(ident)) {
-            users.add(Util.getLine(sign, 1).toLowerCase());
-            users.add(Util.getLine(sign, 2).toLowerCase());
-            users.add(Util.getLine(sign, 3).toLowerCase());
+            users.add(Util.getLine(sign, 1));
+            users.add(Util.getLine(sign, 2));
+            users.add(Util.getLine(sign, 3));
             return true;
         }
         return false;
@@ -324,8 +325,8 @@ public final class Deadbolted {
         return owner;
     }
 
-    public List<String> getUsers() {
-        return new ArrayList<String>(users);
+    public Set<String> getUsers() {
+        return this.users;
     }
 
     public Set<Block> getBlocks() {
