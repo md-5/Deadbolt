@@ -30,7 +30,7 @@ public final class bPermissionsListener extends DeadboltListener {
         Player player = event.getPlayer();
         List<String> groups = permissions.getPermissionSet(player.getLocation().getWorld()).getGroups(player);
         for (String gName : groups) {
-            if (db.getUsers().contains(truncate("[" + gName + "]").toLowerCase()))
+            if (db.getUsers().contains(truncate("[" + gName + "]")))
                 return true;
         }
         return false;

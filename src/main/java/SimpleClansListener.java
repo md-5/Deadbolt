@@ -32,9 +32,9 @@ public final class SimpleClansListener extends DeadboltListener {
         if (cp != null) {
             Clan clan = cp.getClan();
             if (clan != null) {
-                if (db.getUsers().contains(truncate("[" + clan.getName() + "]").toLowerCase()))
+                if (db.getUsers().contains(truncate("[" + clan.getName() + "]")))
                     return true;
-                if (db.getUsers().contains(truncate("[" + clan.getTag() + "]").toLowerCase()))
+                if (db.getUsers().contains(truncate("[" + clan.getTag() + "]")))
                     return true;
             }
         }

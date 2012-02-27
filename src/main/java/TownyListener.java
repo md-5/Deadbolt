@@ -97,8 +97,10 @@ public final class TownyListener extends DeadboltListener {
                     Resident resident = towny.getResident(player.getName());
 
                     Town town = resident.getTown();
-                    if (db.getUsers().contains(truncate("[" + town.getName().toLowerCase() + "]")))//town check
+                    if (db.getUsers().contains(truncate("[" + town.getName().toLowerCase() + "]"))) { //town check
                         return true;
+                    }
+                    
                     if (db.getUsers().contains(truncate("+" + town.getName().toLowerCase() + "+"))
                             && (town.getMayor().equals(resident) || town.getAssistants().contains(resident)))//town assistant check
                         return true;
