@@ -41,6 +41,9 @@ public final class BlockListener implements Listener {
         if (!db.isProtected()) {
             return;
         }
+        
+        if (db.isAutoExpired(player)) return;
+        
         if (db.isOwner(player)) {
             return;
         }

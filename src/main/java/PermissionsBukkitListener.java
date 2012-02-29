@@ -34,10 +34,12 @@ public final class PermissionsBukkitListener extends DeadboltListener {
             allGroupNames.add(g.getName());
             getInherited(g, allGroupNames);
         }
+        
         for (String group : allGroupNames) {
-            if (db.getUsers().contains(truncate("[" + group + "]").toLowerCase()))
+            if (db.getUsers().contains(truncate("[" + group + "]")))
                 return true;
         }
+        
         return false;
     }
 

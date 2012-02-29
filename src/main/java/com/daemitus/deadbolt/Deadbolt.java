@@ -11,6 +11,7 @@ import com.daemitus.deadbolt.events.SignListener;
 import com.daemitus.deadbolt.listener.ListenerManager;
 import com.daemitus.deadbolt.tasks.ToggleDoorTask;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
@@ -81,7 +82,7 @@ public final class Deadbolt extends JavaPlugin {
      * @param block Block to be checked
      * @return A List<String> containing everything on any [Private] or [More Users] signs associated with <block>
      */
-    public static List<String> getAllNames(Block block) {
+    public static Set<String> getAllNames(Block block) {
         return Deadbolted.get(block).getUsers();
     }
 

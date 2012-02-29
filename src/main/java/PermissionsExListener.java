@@ -37,7 +37,7 @@ public final class PermissionsExListener extends DeadboltListener {
         }
 
         for (String group : allGroupNames) {
-            if (db.getUsers().contains(truncate("[" + group + "]").toLowerCase()))
+            if (db.getUsers().contains(truncate("[" + group + "]")))
                 return true;
         }
         return false;

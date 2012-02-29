@@ -41,6 +41,7 @@ public class Config {
     public List<Integer> redstone_protected_blockids = Arrays.asList(64, 71, 96);
     public Set<Player> reminder = new HashSet<Player>();
     public Map<Player, Block> selectedSign = new HashMap<Player, Block>();
+    public int auto_expire_days = 20;
     public boolean vertical_trapdoors = true;
     public boolean group_furnaces = true;
     public boolean group_dispensers = true;
@@ -102,6 +103,9 @@ public class Config {
     public String msg_deny_sign_quickplace = "You cant protect this block, %1$s already has";
     public String msg_deny_block_perm = "";
     public String msg_reminder_lock_your_chests = "Place a sign headed [Private] next to your block to lock it";
+    public String msg_auto_expire_owner_x_days = "Expires if %1$s is offline %2$s more days";
+    public String msg_auto_expire_expired = "This protection has expired";
+    
     //------------------------------------------------------------------------//
     public String[] default_colors_private = {"", "", "", ""};
     public String[] default_colors_moreusers = {"", "", "", ""};
@@ -114,6 +118,7 @@ public class Config {
         FileConfiguration config = plugin.getConfig();
 
         useOPlist = config.getBoolean("useOPlist", useOPlist);
+        auto_expire_days = config.getInt("auto_expire_days", auto_expire_days);
         vertical_trapdoors = config.getBoolean("vertical_trapdoors", vertical_trapdoors);
         group_furnaces = config.getBoolean("group_furnaces", group_furnaces);
         group_dispensers = config.getBoolean("group_dispensers", group_dispensers);
@@ -222,6 +227,8 @@ public class Config {
         msg_deny_sign_quickplace = config.getString("msg_deny_sign_quickplace", msg_deny_sign_quickplace);
         msg_deny_block_perm = config.getString("msg_deny_block_perm", msg_deny_block_perm);
         msg_reminder_lock_your_chests = config.getString("msg_reminder_lock_your_chests", msg_reminder_lock_your_chests);
+        msg_auto_expire_owner_x_days = config.getString("msg_auto_expire_owner_x_days", msg_auto_expire_owner_x_days);
+        msg_auto_expire_expired = config.getString("msg_auto_expire_expired", msg_auto_expire_expired);
     }
 
     private static boolean checkFile(File file) {

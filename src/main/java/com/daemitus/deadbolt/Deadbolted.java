@@ -2,12 +2,19 @@ package com.daemitus.deadbolt;
 
 import com.daemitus.deadbolt.tasks.ToggleDoorTask;
 import com.daemitus.deadbolt.util.Util;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Pattern;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -23,7 +30,7 @@ public final class Deadbolted {
     private Set<Block> blocks = new HashSet<Block>();
     private Set<Block> traversed = new HashSet<Block>();
     private String owner = null;
-    private Set<String> users = new HashSet<String>();
+    private Set<String> users = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
     private static Deadbolt plugin;
 
     public Deadbolted(final Deadbolt plugin) {
@@ -256,15 +263,15 @@ public final class Deadbolted {
     private boolean parseSign(Sign sign) {
         String ident = Util.getLine(sign, 0);
         if (plugin.config.isPrivate(ident)) {
-            String line1 = Util.getLine(sign, 1).toLowerCase();
+            String line1 = Util.getLine(sign, 1);
             owner = line1.isEmpty() ? owner : line1;
-            users.add(Util.getLine(sign, 2).toLowerCase());
-            users.add(Util.getLine(sign, 3).toLowerCase());
+            users.add(Util.getLine(sign, 2));
+            users.add(Util.getLine(sign, 3));
             return true;
         } else if (plugin.config.isMoreUsers(ident)) {
-            users.add(Util.getLine(sign, 1).toLowerCase());
-            users.add(Util.getLine(sign, 2).toLowerCase());
-            users.add(Util.getLine(sign, 3).toLowerCase());
+            users.add(Util.getLine(sign, 1));
+            users.add(Util.getLine(sign, 2));
+            users.add(Util.getLine(sign, 3));
             return true;
         }
         return false;
@@ -318,8 +325,8 @@ public final class Deadbolted {
         return owner;
     }
 
-    public List<String> getUsers() {
-        return new ArrayList<String>(users);
+    public Set<String> getUsers() {
+        return this.users;
     }
 
     public Set<Block> getBlocks() {
@@ -406,5 +413,56 @@ public final class Deadbolted {
             default:
                 return true;
         }
+    }
+    
+    /**
+     * The purpose of this is to let protections auto-expire
+     * if the owner did not play for the last X days. 
+     */
+    public boolean isAutoExpired(Player playerToInform) {
+        // Are we even supposed to use the auto-expire feature?
+        // Is the feature perhaps disabled in the configuration?
+        if (Deadbolt.instance.config.auto_expire_days <= 0) {
+            return false; 
+        }
+        
+        // Fetch the owner string
+        String ownerString = this.getOwner();
+        
+        System.out.println("ownerString: "+ownerString);
+        
+        // That must be a valid player name
+        if ( ! Pattern.matches("^[a-zA-Z0-9_]{2,16}$", ownerString)) {
+            return false;
+        }
+        
+        // So when did the player last play? Has it expired yet?
+        long lastPlayed = 0;
+        Player player = Bukkit.getPlayerExact(ownerString);
+        if (player != null && player.isOnline()) {
+            lastPlayed = System.currentTimeMillis();
+        } else {
+            OfflinePlayer offlineOwner = Bukkit.getOfflinePlayer(ownerString);
+            lastPlayed = offlineOwner.getLastPlayed();
+        }
+        long millisSinceLastPlayed = System.currentTimeMillis() - lastPlayed;
+        long daysSinceLastPlayed = (long) Math.floor(millisSinceLastPlayed / (1000 * 60 * 60 * 24));
+        long daysTillExpire = Deadbolt.instance.config.auto_expire_days - daysSinceLastPlayed;
+        boolean expired = (daysTillExpire <= 0);
+        
+        if (expired) {
+            if (playerToInform != null && ! playerToInform.getName().equalsIgnoreCase(ownerString)) {
+                Deadbolt.instance.config.sendMessage(playerToInform, ChatColor.RED, Deadbolt.instance.config.msg_auto_expire_expired);
+            }
+            return true;
+        } else {
+            if (playerToInform != null && ! playerToInform.getName().equalsIgnoreCase(ownerString)) {
+                Deadbolt.instance.config.sendMessage(playerToInform, ChatColor.YELLOW, Deadbolt.instance.config.msg_auto_expire_owner_x_days, ownerString, String.valueOf(daysTillExpire));
+            }
+            return false;
+        }
+    }
+    public boolean isAutoExpired() {
+        return this.isAutoExpired(null);
     }
 }
