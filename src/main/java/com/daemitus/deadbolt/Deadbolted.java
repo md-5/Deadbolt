@@ -53,8 +53,9 @@ public final class Deadbolted {
             case WALL_SIGN:
                 BlockState state = block.getState();
                 org.bukkit.block.Sign signState = (Sign) state;
-                if (plugin.config.isValidWallSign(signState))
+                if (plugin.config.isValidWallSign(signState)) {
                     search(Util.getSignAttached(signState));
+                }
                 break;
             case WOODEN_DOOR:
             case IRON_DOOR_BLOCK:
@@ -90,8 +91,9 @@ public final class Deadbolted {
                     Block adjacent = block.getRelative(bf);
                     if (adjacent.getState().getData() instanceof TrapDoor) {
                         Block hinge = adjacent.getRelative(((TrapDoor) adjacent.getState().getData()).getAttachedFace());
-                        if (hinge.equals(block))
+                        if (hinge.equals(block)) {
                             search(adjacent);
+                        }
                     }
                 }
                 Block adjacentUp = block.getRelative(BlockFace.UP);
@@ -106,8 +108,9 @@ public final class Deadbolted {
     }
 
     private void searchDoor(Block block, boolean horizontal, boolean vertical) {
-        if (!add(block))
+        if (!add(block)) {
             return;
+        }
         for (BlockFace bf : plugin.config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getType().equals(block.getType())) {
@@ -135,8 +138,9 @@ public final class Deadbolted {
     }
 
     private void searchFenceGate(Block block, boolean horizontal, boolean vertical) {
-        if (!add(block))
+        if (!add(block)) {
             return;
+        }
         for (BlockFace bf : plugin.config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getType().equals(Material.FENCE_GATE)) {
@@ -147,18 +151,20 @@ public final class Deadbolted {
                 parseNearbySigns(adjacent);
             }
         }
-        if (vertical)
+        if (vertical) {
             for (BlockFace bf : plugin.config.VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getType().equals(Material.FENCE_GATE)) {
                     searchFenceGate(adjacent, horizontal, vertical);
                 }
             }
+        }
     }
 
     private void searchTrapDoor(Block block, boolean horizontal, boolean vertical) {
-        if (!add(block))
+        if (!add(block)) {
             return;
+        }
         Block hinge = block.getRelative(((TrapDoor) block.getState().getData()).getAttachedFace());
         parseNearbySigns(hinge);
         add(hinge);
@@ -170,7 +176,7 @@ public final class Deadbolted {
                 parseSignAttached(adjacent, block);
             }
         }
-        if (vertical)
+        if (vertical) {
             for (BlockFace bf : plugin.config.VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getState().getData() instanceof TrapDoor) {
@@ -179,15 +185,18 @@ public final class Deadbolted {
                     BlockState state = adjacent.getState();
                     org.bukkit.material.Sign signData = (org.bukkit.material.Sign) state.getData();
                     Block attached = adjacent.getRelative(signData.getAttachedFace());
-                    if (parseSign((Sign) state))
+                    if (parseSign((Sign) state)) {
                         add(adjacent, attached);
+                    }
                 }
             }
+        }
     }
 
     private void searchSimpleBlock(Block block, boolean horizontal, boolean vertical) {
-        if (!add(block))
+        if (!add(block)) {
             return;
+        }
         for (BlockFace bf : plugin.config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getType().equals(block.getType())) {
@@ -196,18 +205,20 @@ public final class Deadbolted {
                 parseSignAttached(adjacent, block);
             }
         }
-        if (vertical)
+        if (vertical) {
             for (BlockFace bf : plugin.config.VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getType().equals(block.getType())) {
                     searchSimpleBlock(adjacent, horizontal, vertical);
                 }
             }
+        }
     }
 
     private void searchFurnace(Block block, boolean horizontal, boolean vertical) {
-        if (!add(block))
+        if (!add(block)) {
             return;
+        }
         for (BlockFace bf : plugin.config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getState() instanceof Furnace) {
@@ -216,18 +227,20 @@ public final class Deadbolted {
                 parseSignAttached(adjacent, block);
             }
         }
-        if (vertical)
+        if (vertical) {
             for (BlockFace bf : plugin.config.VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getState() instanceof Furnace) {
                     searchFurnace(adjacent, horizontal, vertical);
                 }
             }
+        }
     }
 
     private void searchChest(Block block, boolean horizontal, boolean vertical) {
-        if (!add(block))
+        if (!add(block)) {
             return;
+        }
         for (BlockFace bf : plugin.config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getState() instanceof Chest) {
@@ -236,28 +249,31 @@ public final class Deadbolted {
                 parseSignAttached(adjacent, block);
             }
         }
-        if (vertical)
+        if (vertical) {
             for (BlockFace bf : plugin.config.VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getState() instanceof Chest) {
                     searchChest(adjacent, horizontal, vertical);
                 }
             }
+        }
     }
 
     private void parseNearbySigns(Block block) {
         for (BlockFace bf : plugin.config.CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
-            if (adjacent.getType().equals(Material.WALL_SIGN))
+            if (adjacent.getType().equals(Material.WALL_SIGN)) {
                 parseSignAttached(adjacent, block);
+            }
         }
     }
 
     private void parseSignAttached(Block signBlock, Block attached) {
-        if (signBlock.getRelative(Util.getFacingFromByte(signBlock.getData()).getOppositeFace()).equals(attached))
+        if (signBlock.getRelative(Util.getFacingFromByte(signBlock.getData()).getOppositeFace()).equals(attached)) {
             if (parseSign((Sign) signBlock.getState())) {
                 add(attached, signBlock);
             }
+        }
     }
 
     private boolean parseSign(Sign sign) {
@@ -290,17 +306,21 @@ public final class Deadbolted {
             return true;
         } else {
             String name = Util.truncateName(player.getName());
-            for (String user : users)
-                if (Util.truncateName(user).equalsIgnoreCase(name))
+            for (String user : users) {
+                if (Util.truncateName(user).equalsIgnoreCase(name)) {
                     return true;
+                }
+            }
         }
         return false;
     }
 
     public boolean isEveryone() {
-        for (String line : users)
-            if (plugin.config.isEveryone(line))
+        for (String line : users) {
+            if (plugin.config.isEveryone(line)) {
                 return true;
+            }
+        }
         return false;
     }
 
@@ -316,8 +336,9 @@ public final class Deadbolted {
 
     private boolean add(Block... block) {
         boolean success = true;
-        for (Block b : block)
+        for (Block b : block) {
             success &= blocks.add(b) && traversed.add(b);
+        }
         return success;
     }
 
@@ -339,35 +360,45 @@ public final class Deadbolted {
             clickedDoor.add(block);
             if (isVerticallyJoined(block)) {
                 Block b = block;
-                while ((b = b.getRelative(BlockFace.UP)).getType().equals(block.getType()))
+                while ((b = b.getRelative(BlockFace.UP)).getType().equals(block.getType())) {
                     clickedDoor.add(b);
+                }
                 b = block;
-                while ((b = b.getRelative(BlockFace.DOWN)).getType().equals(block.getType()))
+                while ((b = b.getRelative(BlockFace.DOWN)).getType().equals(block.getType())) {
                     clickedDoor.add(b);
+                }
             }
         }
 
         List<Block> validToggles = new ArrayList<Block>();
-        for (Block b : blocks)
-            if (b.getType().equals(block.getType()))
+        for (Block b : blocks) {
+            if (b.getType().equals(block.getType())) {
                 validToggles.add(b);
+            }
+        }
         validToggles.removeAll(clickedDoor);
 
-        for (Block b : validToggles)
-            if (b.getType().equals(block.getType()))
+        for (Block b : validToggles) {
+            if (b.getType().equals(block.getType())) {
                 b.setData((byte) (b.getData() ^ 0x4));
+            }
+        }
 
-        if (!isNaturalSound(block) && plugin.config.silent_door_sounds)
+        if (!isNaturalSound(block) && plugin.config.silent_door_sounds) {
             block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 10);
+        }
 
-        if (plugin.config.deny_timed_doors)
+        if (plugin.config.deny_timed_doors) {
             return;
+        }
         int delay = getTimer();
-        if (delay == -1)
-            if (plugin.config.forced_timed_doors)
+        if (delay == -1) {
+            if (plugin.config.forced_timed_doors) {
                 delay = plugin.config.forced_timed_doors_delay;
-            else
+            } else {
                 return;
+            }
+        }
         validToggles.addAll(clickedDoor);
 
         boolean runonce = true;
@@ -414,28 +445,26 @@ public final class Deadbolted {
                 return true;
         }
     }
-    
+
     /**
-     * The purpose of this is to let protections auto-expire
-     * if the owner did not play for the last X days. 
+     * The purpose of this is to let protections auto-expire if the owner did
+     * not play for the last X days.
      */
     public boolean isAutoExpired(Player playerToInform) {
         // Are we even supposed to use the auto-expire feature?
         // Is the feature perhaps disabled in the configuration?
         if (Deadbolt.instance.config.auto_expire_days <= 0) {
-            return false; 
-        }
-        
-        // Fetch the owner string
-        String ownerString = this.getOwner();
-        
-        System.out.println("ownerString: "+ownerString);
-        
-        // That must be a valid player name
-        if ( ! Pattern.matches("^[a-zA-Z0-9_]{2,16}$", ownerString)) {
             return false;
         }
-        
+
+        // Fetch the owner string
+        String ownerString = this.getOwner();
+
+        // That must be a valid player name
+        if (!Pattern.matches("^[a-zA-Z0-9_]{2,16}$", ownerString)) {
+            return false;
+        }
+
         // So when did the player last play? Has it expired yet?
         long lastPlayed = 0;
         Player player = Bukkit.getPlayerExact(ownerString);
@@ -449,19 +478,20 @@ public final class Deadbolted {
         long daysSinceLastPlayed = (long) Math.floor(millisSinceLastPlayed / (1000 * 60 * 60 * 24));
         long daysTillExpire = Deadbolt.instance.config.auto_expire_days - daysSinceLastPlayed;
         boolean expired = (daysTillExpire <= 0);
-        
+
         if (expired) {
-            if (playerToInform != null && ! playerToInform.getName().equalsIgnoreCase(ownerString)) {
+            if (playerToInform != null && !playerToInform.getName().equalsIgnoreCase(ownerString)) {
                 Deadbolt.instance.config.sendMessage(playerToInform, ChatColor.RED, Deadbolt.instance.config.msg_auto_expire_expired);
             }
             return true;
         } else {
-            if (playerToInform != null && ! playerToInform.getName().equalsIgnoreCase(ownerString)) {
+            if (playerToInform != null && !playerToInform.getName().equalsIgnoreCase(ownerString)) {
                 Deadbolt.instance.config.sendMessage(playerToInform, ChatColor.YELLOW, Deadbolt.instance.config.msg_auto_expire_owner_x_days, ownerString, String.valueOf(daysTillExpire));
             }
             return false;
         }
     }
+
     public boolean isAutoExpired() {
         return this.isAutoExpired(null);
     }
