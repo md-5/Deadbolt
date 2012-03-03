@@ -84,7 +84,7 @@ public final class Deadbolted {
                 searchFurnace(block, plugin.config.group_furnaces, plugin.config.group_furnaces);
                 break;
             case CHEST:
-                searchChest(block, true, true);
+                searchChest(block, true, false);
                 break;
             default:
                 for (BlockFace bf : plugin.config.CARDINAL_FACES) {
