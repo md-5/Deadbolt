@@ -4,8 +4,8 @@ import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.Perm;
 import com.daemitus.deadbolt.listener.ListenerManager;
-import com.daemitus.deadbolt.tasks.SignUpdateTask;
 import java.util.logging.Level;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,61 +13,39 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-public final class BlockListener implements Listener {
+public class BlockListener implements Listener {
 
     private final Deadbolt plugin = Deadbolt.instance;
 
     public BlockListener() {
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
-        if (block == null) {
-            return;
-        }
         Player player = event.getPlayer();
         Deadbolted db = Deadbolted.get(block);
-        if (!db.isProtected()) {
-            return;
-        }
 
-        if (db.isAutoExpired(player)) {
-            return;
-        }
-
-        if (db.isOwner(player)) {
-            return;
-        }
-        if (ListenerManager.canBlockBreak(db, event)) {
-            return;
-        }
-        if (plugin.config.hasPermission(player, Perm.admin_break)) {
-            plugin.config.sendBroadcast(Perm.admin_broadcast_break, ChatColor.RED, plugin.config.msg_admin_break, player.getName(), db.getOwner());
-            Deadbolt.logger.log(Level.INFO, String.format("[Deadbolt] " + plugin.config.msg_admin_break, player.getName(), db.getOwner()));
-            return;
-        }
-
-        event.setCancelled(true);
-        plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_block_break);
-        if (block.getType().equals(Material.WALL_SIGN)) {
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new SignUpdateTask(block), 1);
+        if (db.isProtected() && !db.isAutoExpired() && !db.isOwner(player) && !ListenerManager.canBlockBreak(db, event)) {
+            if (plugin.config.hasPermission(player, Perm.admin_break)) {
+                plugin.config.sendBroadcast(Perm.admin_broadcast_break, ChatColor.RED, plugin.config.msg_admin_break, player.getName(), db.getOwner());
+                Deadbolt.logger.log(Level.INFO, String.format(plugin.config.msg_admin_break, player.getName(), db.getOwner()));
+            } else {
+                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_block_break);
+                event.setCancelled(true);
+            }
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
         Block block = event.getBlockPlaced();
-        if (block == null) {
-            return;
-        }
         Player player = event.getPlayer();
         Block against = event.getBlockAgainst();
 

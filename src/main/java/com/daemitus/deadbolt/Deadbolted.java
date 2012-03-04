@@ -1,7 +1,5 @@
 package com.daemitus.deadbolt;
 
-import com.daemitus.deadbolt.tasks.ToggleDoorTask;
-import com.daemitus.deadbolt.util.Util;
 import java.util.*;
 import java.util.regex.Pattern;
 import org.bukkit.*;

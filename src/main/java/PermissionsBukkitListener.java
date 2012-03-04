@@ -2,7 +2,7 @@
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.listener.DeadboltListener;
-import com.daemitus.deadbolt.util.Util;
+import com.daemitus.deadbolt.Util;
 import com.platymuus.bukkit.permissions.Group;
 import com.platymuus.bukkit.permissions.PermissionsPlugin;
 import java.util.Arrays;

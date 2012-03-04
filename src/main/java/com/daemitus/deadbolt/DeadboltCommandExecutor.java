@@ -1,9 +1,8 @@
-package com.daemitus.deadbolt.commands;
+package com.daemitus.deadbolt;
 
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.Perm;
-import com.daemitus.deadbolt.util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

@@ -1,4 +1,4 @@
-package com.daemitus.deadbolt.util;
+package com.daemitus.deadbolt;
 
 import java.util.regex.Pattern;
 import org.bukkit.block.Block;

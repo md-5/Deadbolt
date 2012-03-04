@@ -4,7 +4,7 @@ import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.Perm;
 import com.daemitus.deadbolt.listener.ListenerManager;
-import com.daemitus.deadbolt.util.Util;
+import com.daemitus.deadbolt.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

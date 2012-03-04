@@ -2,7 +2,7 @@
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.listener.DeadboltListener;
-import com.daemitus.deadbolt.util.Util;
+import com.daemitus.deadbolt.Util;
 import java.util.Arrays;
 import java.util.List;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;

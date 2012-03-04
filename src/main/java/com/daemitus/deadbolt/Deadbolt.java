@@ -1,12 +1,9 @@
 package com.daemitus.deadbolt;
 
-import com.daemitus.deadbolt.commands.DeadboltCommandExecutor;
 import com.daemitus.deadbolt.events.*;
 import com.daemitus.deadbolt.listener.ListenerManager;
-import com.daemitus.deadbolt.tasks.ToggleDoorTask;
 import java.util.Set;
 import java.util.logging.Logger;
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,7 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class Deadbolt extends JavaPlugin {
 
     public static Deadbolt instance;
-    public static final Logger logger = Bukkit.getServer().getLogger();
+    public static Logger logger;
     public ListenerManager listenerManager;
     public Config config;
 
@@ -24,6 +21,7 @@ public final class Deadbolt extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        logger = getLogger();
         config = new Config();
         config.load();
         new SignListener();

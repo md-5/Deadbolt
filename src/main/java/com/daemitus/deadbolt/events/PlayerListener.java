@@ -3,8 +3,9 @@ package com.daemitus.deadbolt.events;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.Perm;
+import com.daemitus.deadbolt.Util;
 import com.daemitus.deadbolt.listener.ListenerManager;
-import com.daemitus.deadbolt.util.Util;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,22 +14,26 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
-public final class PlayerListener implements Listener {
+public class PlayerListener implements Listener {
 
     private final Deadbolt plugin = Deadbolt.instance;
 
     public PlayerListener() {
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        plugin.config.selectedSign.remove(event.getPlayer());
+    }
+
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)
                 && !handleLeftClick(event)) {
@@ -256,10 +261,5 @@ public final class PlayerListener implements Listener {
 
         plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_sign_selection);
         return false;
-    }
-
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        plugin.config.selectedSign.remove(event.getPlayer());
     }
 }

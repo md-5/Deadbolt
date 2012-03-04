@@ -1,10 +1,11 @@
-package com.daemitus.deadbolt.tasks;
+package com.daemitus.deadbolt;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import org.bukkit.Effect;
 import org.bukkit.block.Block;
+import org.bukkit.material.Door;
 
 public final class ToggleDoorTask implements Runnable {
 
@@ -20,7 +21,7 @@ public final class ToggleDoorTask implements Runnable {
     @Override
     public void run() {
         if (timedBlocks.remove(block)) {
-            block.setData((byte) (block.getData() ^ 0x4));
+            ((Door) block.getState()).setOpen(false);
             if (sound) {
                 block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 10);
             }
