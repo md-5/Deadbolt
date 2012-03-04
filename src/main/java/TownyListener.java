@@ -1,13 +1,13 @@
 
 import com.daemitus.deadbolt.Deadbolt;
+import com.daemitus.deadbolt.DeadboltPlugin;
 import com.daemitus.deadbolt.Deadbolted;
-import com.daemitus.deadbolt.listener.DeadboltListener;
 import com.daemitus.deadbolt.Util;
+import com.daemitus.deadbolt.listener.DeadboltListener;
 import com.palmergames.bukkit.towny.NotRegisteredException;
 import com.palmergames.bukkit.towny.Towny;
 import com.palmergames.bukkit.towny.object.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
@@ -16,7 +16,6 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
@@ -36,7 +35,7 @@ public final class TownyListener extends DeadboltListener {
     }
 
     @Override
-    public void load(final Deadbolt plugin) {
+    public void load(final DeadboltPlugin plugin) {
         try {
             towny = ((Towny) Bukkit.getServer().getPluginManager().getPlugin("Towny")).getTownyUniverse();
 
@@ -48,12 +47,8 @@ public final class TownyListener extends DeadboltListener {
             wildernessOverride = config.getBoolean("wilderness_override", wildernessOverride);
             mayorOverride = config.getBoolean("mayor_override", mayorOverride);
             assistantOverride = config.getBoolean("assistant_override", assistantOverride);
-        } catch (FileNotFoundException ex) {
-            Deadbolt.logger.log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Deadbolt.logger.log(Level.SEVERE, null, ex);
-        } catch (InvalidConfigurationException ex) {
-            Deadbolt.logger.log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -67,10 +62,10 @@ public final class TownyListener extends DeadboltListener {
                 fw.write("mayor_override:       false  #Allows Mayors to break open locks in their town\n");
                 fw.write("assistant_override:   false  #Allows Assistants to break open locks in their town\n");
                 fw.close();
-                Deadbolt.logger.log(Level.INFO, "[Deadbolt][" + this.getClass().getSimpleName() + "] Retrieved file " + file.getName());
+                Deadbolt.getLogger().log(Level.INFO, "[Deadbolt][" + this.getClass().getSimpleName() + "] Retrieved file " + file.getName());
             }
         } catch (IOException ex) {
-            Deadbolt.logger.log(Level.SEVERE, "[Deadbolt][" + this.getClass().getSimpleName() + "] Error retrieving " + file.getName());
+            Deadbolt.getLogger().log(Level.SEVERE, "[Deadbolt][" + this.getClass().getSimpleName() + "] Error retrieving " + file.getName());
         }
     }
 
@@ -136,7 +131,7 @@ public final class TownyListener extends DeadboltListener {
 
     private boolean askTowny(Player player, Block block) {
         //OP check
-        if (Deadbolt.instance.config.useOPlist && player.isOp()) {
+        if (player.isOp()) {
             return true;
         }
 
@@ -150,7 +145,7 @@ public final class TownyListener extends DeadboltListener {
         //wilderness check
         if (towny.isWilderness(block)) {
             if (denyWilderness) {
-                Deadbolt.instance.config.sendMessage(player, ChatColor.RED, "You can only protect blocks inside of a town");
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, "You can only protect blocks inside of a town");
                 return false;
             } else {
                 return true;

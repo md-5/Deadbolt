@@ -1,17 +1,7 @@
 package com.daemitus.deadbolt;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
@@ -26,10 +16,9 @@ import org.bukkit.entity.Player;
 public class Config {
 
     //------------------------------------------------------------------------//
-    private static final Deadbolt plugin = Deadbolt.instance;
+    private static final DeadboltPlugin plugin = Deadbolt.getPlugin();
     private final String TAG = "Deadbolt: ";
     //------------------------------------------------------------------------//
-    public boolean useOPlist = true;
     public boolean deselectSign = false;
     public boolean deny_entity_interact = true;
     public boolean deny_explosions = true;
@@ -110,12 +99,13 @@ public class Config {
     //------------------------------------------------------------------------//    
 
     public void load() {
-        File configFile = new File(plugin.getDataFolder() + "/config.yml");
-        checkFile(configFile);
+        File configFile = new File(plugin.getDataFolder(), "config.yml");
+        if (!configFile.exists()) {
+            plugin.saveDefaultConfig();
+        }
 
         FileConfiguration config = plugin.getConfig();
 
-        useOPlist = config.getBoolean("useOPlist", useOPlist);
         auto_expire_days = config.getInt("auto_expire_days", auto_expire_days);
         vertical_trapdoors = config.getBoolean("vertical_trapdoors", vertical_trapdoors);
         group_furnaces = config.getBoolean("group_furnaces", group_furnaces);
@@ -147,10 +137,13 @@ public class Config {
 
         String language = config.getString("language", "english.yml");
 
-        File langFile = new File(plugin.getDataFolder() + "/" + language);
-        if (!checkFile(langFile)) {
-            Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + langFile.getName() + " not found, defaulting to english.yml");
-            checkFile(langFile = new File(plugin.getDataFolder() + "/english.yml"));
+        File langFile = new File(plugin.getDataFolder(), language);
+        if (!langFile.exists()) {
+            Deadbolt.getLogger().log(Level.WARNING, "[Deadbolt] " + langFile.getName() + " not found, defaulting to english.yml");
+            langFile = new File(plugin.getDataFolder(), "english.yml");
+            if (!langFile.exists()) {
+                plugin.saveResource("english.yml", true);
+            }
         }
 
         config = YamlConfiguration.loadConfiguration(langFile);
@@ -158,7 +151,7 @@ public class Config {
         String default_private = "private";
         locale_private = config.getString("signtext_private", default_private);
         if (locale_private.length() > 13) {
-            Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_private + " is too long, defaulting to [" + (locale_private = default_private) + "]");
+            Deadbolt.getLogger().log(Level.WARNING, "[Deadbolt] " + locale_private + " is too long, defaulting to [" + (locale_private = default_private) + "]");
         }
         signtext_private = Pattern.compile("\\[(?i)(" + default_private + "|" + locale_private + ")\\]");
         locale_private = "[" + locale_private + "]";
@@ -166,7 +159,7 @@ public class Config {
         String default_moreusers = "more users";
         locale_moreusers = config.getString("signtext_moreusers", default_moreusers);
         if (locale_moreusers.length() > 13) {
-            Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_moreusers + " is too long, defaulting to [" + (locale_private = default_moreusers) + "]");
+            Deadbolt.getLogger().log(Level.WARNING, "[Deadbolt] " + locale_moreusers + " is too long, defaulting to [" + (locale_private = default_moreusers) + "]");
         }
         signtext_moreusers = Pattern.compile("\\[(?i)(" + default_moreusers + "|" + locale_moreusers + ")\\]");
         locale_moreusers = "[" + locale_moreusers + "]";
@@ -174,14 +167,14 @@ public class Config {
         String default_everyone = "everyone";
         String locale_everyone = config.getString("signtext_everyone", default_everyone);
         if (locale_everyone.length() > 13) {
-            Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_everyone + " is too long, defaulting to [" + (locale_private = default_everyone) + "]");
+            Deadbolt.getLogger().log(Level.WARNING, "[Deadbolt] " + locale_everyone + " is too long, defaulting to [" + (locale_private = default_everyone) + "]");
         }
         signtext_everyone = Pattern.compile("\\[(?i)(" + default_everyone + "|" + locale_everyone + ")\\]");
 
         String default_timer = "timer";
         String locale_timer = config.getString("signtext_timer", default_timer);
         if (locale_timer.length() > 13) {
-            Deadbolt.logger.log(Level.WARNING, "[Deadbolt] " + locale_timer + " is too long, defaulting to [" + (locale_private = default_timer) + ":#]");
+            Deadbolt.getLogger().log(Level.WARNING, "[Deadbolt] " + locale_timer + " is too long, defaulting to [" + (locale_private = default_timer) + ":#]");
         }
         signtext_timer = Pattern.compile("\\[(?i)(" + default_timer + "|" + locale_timer + "):\\s*([0-9]+)\\]");
 
@@ -229,49 +222,6 @@ public class Config {
         msg_auto_expire_expired = config.getString("msg_auto_expire_expired", msg_auto_expire_expired);
     }
 
-    private static boolean checkFile(File file) {
-        try {
-            if (file.exists()) {
-                return true;
-            }
-
-            File dir = file.getParentFile();
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-
-            file.createNewFile();
-
-            InputStream in = null;
-            OutputStream out = null;
-
-            try {
-                in = Deadbolt.instance.getResource("files/" + file.getName());
-                out = new FileOutputStream(file);
-
-                int len;
-                byte[] buf = new byte[1024];
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-
-            } finally {
-                if (in != null) {
-                    in.close();
-                }
-                if (out != null) {
-                    out.close();
-                }
-            }
-
-            Deadbolt.logger.log(Level.INFO, "[Deadbolt] Retrieved file " + file.getName());
-            return true;
-        } catch (IOException ex) {
-            Deadbolt.logger.log(Level.SEVERE, null, ex);
-            return false;
-        }
-    }
-
     public boolean isPrivate(String line) {
         return signtext_private.matcher(line).matches();
     }
@@ -302,23 +252,10 @@ public class Config {
     }
 
     public void sendMessage(Player player, ChatColor color, String message, String... args) {
-        if (!message.isEmpty()) {
-            player.sendMessage(color + TAG + String.format(message, (Object[]) args));
-        }
+        player.sendMessage(color + TAG + String.format(message, (Object[]) args));
     }
 
     public void sendBroadcast(String permission, ChatColor color, String message, String... args) {
-        if (!message.isEmpty()) {
-            for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-                if (player.hasPermission(permission)) {
-                    player.sendMessage(color + TAG + String.format(message, (Object[]) args));
-                }
-            }
-        }
-    }
-
-    // TODO why do we need this?
-    public boolean hasPermission(Player player, String permission) {
-        return (useOPlist ? player.isOp() : false) || player.hasPermission(permission);
+        Bukkit.getServer().broadcast(color + TAG + String.format(message, (Object[]) args), permission);
     }
 }

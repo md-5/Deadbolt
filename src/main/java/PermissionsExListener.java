@@ -1,5 +1,5 @@
 
-import com.daemitus.deadbolt.Deadbolt;
+import com.daemitus.deadbolt.DeadboltPlugin;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.listener.DeadboltListener;
 import com.daemitus.deadbolt.Util;
@@ -23,7 +23,7 @@ public final class PermissionsExListener extends DeadboltListener {
     }
 
     @Override
-    public void load(final Deadbolt plugin) {
+    public void load(final DeadboltPlugin plugin) {
         permissions = PermissionsEx.getPermissionManager();
     }
 

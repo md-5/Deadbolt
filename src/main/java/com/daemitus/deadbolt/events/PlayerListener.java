@@ -1,9 +1,6 @@
 package com.daemitus.deadbolt.events;
 
-import com.daemitus.deadbolt.Deadbolt;
-import com.daemitus.deadbolt.Deadbolted;
-import com.daemitus.deadbolt.Perm;
-import com.daemitus.deadbolt.Util;
+import com.daemitus.deadbolt.*;
 import com.daemitus.deadbolt.listener.ListenerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,20 +14,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class PlayerListener implements Listener {
 
-    private final Deadbolt plugin = Deadbolt.instance;
+    private final DeadboltPlugin plugin = Deadbolt.getPlugin();
 
     public PlayerListener() {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
-    }
-
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        plugin.config.selectedSign.remove(event.getPlayer());
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -103,12 +94,12 @@ public class PlayerListener implements Listener {
             case CAULDRON:
 
                 if (!canQuickProtect(player, against)) {
-                    plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_block_perm, against.getType().name());
+                    Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_perm, against.getType().name());
                     return false;
                 }
 
                 BlockFace clickedFace = event.getBlockFace();
-                if (!plugin.config.CARDINAL_FACES.contains(clickedFace)) {
+                if (!Deadbolt.getConfig().CARDINAL_FACES.contains(clickedFace)) {
                     return false;
                 }
 
@@ -117,7 +108,7 @@ public class PlayerListener implements Listener {
                     return false;
                 }
 
-                Deadbolted db = Deadbolted.get(against);
+                Deadbolted db = Deadbolt.get(against);
                 if (!ListenerManager.canSignChangeQuick(db, event)) {
                     return false;
                 }
@@ -126,15 +117,15 @@ public class PlayerListener implements Listener {
                 Sign signState = (Sign) signBlock.getState();
 
                 if (!db.isProtected()) {
-                    signState.setLine(0, Util.formatForSign(plugin.config.default_colors_private[0] + plugin.config.locale_private));
-                    signState.setLine(1, Util.formatForSign(plugin.config.default_colors_private[1] + Util.truncateName(player.getName())));
+                    signState.setLine(0, Util.formatForSign(Deadbolt.getConfig().default_colors_private[0] + Deadbolt.getConfig().locale_private));
+                    signState.setLine(1, Util.formatForSign(Deadbolt.getConfig().default_colors_private[1] + Util.truncateName(player.getName())));
                 } else if (db.isOwner(player)) {
-                    signState.setLine(0, Util.formatForSign(plugin.config.default_colors_moreusers[0] + plugin.config.locale_moreusers));
-                } else if (plugin.config.hasPermission(player, Perm.admin_create)) {
-                    signState.setLine(0, Util.formatForSign(plugin.config.default_colors_moreusers[0] + plugin.config.locale_moreusers));
-                    plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_admin_sign_placed, db.getOwner());
+                    signState.setLine(0, Util.formatForSign(Deadbolt.getConfig().default_colors_moreusers[0] + Deadbolt.getConfig().locale_moreusers));
+                } else if (player.hasPermission(Perm.admin_create)) {
+                    signState.setLine(0, Util.formatForSign(Deadbolt.getConfig().default_colors_moreusers[0] + Deadbolt.getConfig().locale_moreusers));
+                    Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_admin_sign_placed, db.getOwner());
                 } else {
-                    plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_sign_quickplace, db.getOwner());
+                    Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_sign_quickplace, db.getOwner());
                     signBlock.setType(Material.AIR);
                     return false;
                 }
@@ -152,7 +143,7 @@ public class PlayerListener implements Listener {
     }
 
     private boolean canQuickProtect(Player player, Block block) {
-        if (plugin.config.deny_quick_signs) {
+        if (Deadbolt.getConfig().deny_quick_signs) {
             return false;
         }
         switch (block.getType()) {
@@ -186,7 +177,7 @@ public class PlayerListener implements Listener {
     private boolean onPlayerInteractDoor(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Block block = event.getClickedBlock();
-        Deadbolted db = Deadbolted.get(block);
+        Deadbolted db = Deadbolt.get(block);
 
         if (!db.isProtected()) {
             return true;
@@ -200,20 +191,20 @@ public class PlayerListener implements Listener {
             return true;
         }
 
-        if (plugin.config.hasPermission(player, Perm.admin_bypass)) {
+        if (player.hasPermission(Perm.admin_bypass)) {
             db.toggleDoors(block);
-            plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_admin_bypass, db.getOwner());
+            Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_admin_bypass, db.getOwner());
             return true;
         }
 
-        plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_access_door);
+        Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_access_door);
         return false;
     }
 
     private boolean onPlayerInteractContainer(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Block block = event.getClickedBlock();
-        Deadbolted db = Deadbolted.get(block);
+        Deadbolted db = Deadbolt.get(block);
 
         if (!db.isProtected()) {
             return true;
@@ -226,19 +217,19 @@ public class PlayerListener implements Listener {
             return true;
         }
 
-        if (plugin.config.hasPermission(player, Perm.admin_container)) {
-            plugin.config.sendBroadcast(Perm.broadcast_admin_container, ChatColor.RED, plugin.config.msg_admin_container, player.getName(), db.getOwner());
+        if (player.hasPermission(Perm.admin_container)) {
+            Deadbolt.getConfig().sendBroadcast(Perm.broadcast_admin_container, ChatColor.RED, Deadbolt.getConfig().msg_admin_container, player.getName(), db.getOwner());
             return true;
         }
 
-        plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_access_container);
+        Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_access_container);
         return false;
     }
 
     private boolean onPlayerInteractWallSign(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Block block = event.getClickedBlock();
-        Deadbolted db = Deadbolted.get(block);
+        Deadbolted db = Deadbolt.get(block);
 
         if (!db.isProtected()) {
             return true;
@@ -248,18 +239,18 @@ public class PlayerListener implements Listener {
         }
 
         if (db.isOwner(player)) {
-            plugin.config.selectedSign.put(player, block);
-            plugin.config.sendMessage(player, ChatColor.GOLD, plugin.config.cmd_sign_selected);
+            Deadbolt.getConfig().selectedSign.put(player, block);
+            Deadbolt.getConfig().sendMessage(player, ChatColor.GOLD, Deadbolt.getConfig().cmd_sign_selected);
             return false;
         }
 
-        if (plugin.config.hasPermission(player, Perm.admin_commands)) {
-            plugin.config.selectedSign.put(player, block);
-            plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_admin_sign_selection, db.getOwner());
+        if (player.hasPermission(Perm.admin_commands)) {
+            Deadbolt.getConfig().selectedSign.put(player, block);
+            Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_admin_sign_selection, db.getOwner());
             return false;
         }
 
-        plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_sign_selection);
+        Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_sign_selection);
         return false;
     }
 }

@@ -1,47 +1,35 @@
 package com.daemitus.deadbolt;
 
-import com.daemitus.deadbolt.events.*;
-import com.daemitus.deadbolt.listener.ListenerManager;
 import java.util.Set;
 import java.util.logging.Logger;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
-public final class Deadbolt extends JavaPlugin {
+public final class Deadbolt {
 
-    public static Deadbolt instance;
-    public static Logger logger;
-    public ListenerManager listenerManager;
-    public Config config;
+    private static DeadboltPlugin plugin;
+    private static Config config;
 
-    public Deadbolt() {
-        instance = this;
+    public static void setPlugin(DeadboltPlugin plugin) {
+        Deadbolt.plugin = plugin;
+        Deadbolted.plugin = plugin;
     }
 
-    @Override
-    public void onEnable() {
-        logger = getLogger();
-        config = new Config();
+    public static void setConfig(Config config) {
+        Deadbolt.config = config;
         config.load();
-        new SignListener();
-        new BlockListener();
-        new PlayerListener();
-        EntityListener e = (config.deny_entity_interact) ? new EntityListener() : null;
-        PistonListener p = (config.deny_pistons) ? new PistonListener() : null;
-        RedstoneListener r = (config.deny_redstone) ? new RedstoneListener() : null;
-        new Deadbolted(this);
-        listenerManager = new ListenerManager();
-        listenerManager.registerListeners();
-        listenerManager.checkListeners();
-        new ServerListener();
-
-        getCommand("deadbolt").setExecutor(new DeadboltCommandExecutor(this));
     }
 
-    @Override
-    public void onDisable() {
-        ToggleDoorTask.cleanup();
+    public static DeadboltPlugin getPlugin() {
+        return plugin;
+    }
+
+    public static Logger getLogger() {
+        return plugin.getLogger();
+    }
+
+    public static Config getConfig() {
+        return config;
     }
 
     /**
@@ -53,7 +41,7 @@ public final class Deadbolt extends JavaPlugin {
      * @return If <name> is authorized to use <block>
      */
     public static boolean isAuthorized(Player player, Block block) {
-        return Deadbolted.get(block).isUser(player);
+        return new Deadbolted(block).isUser(player);
     }
 
     /**
@@ -64,7 +52,7 @@ public final class Deadbolt extends JavaPlugin {
      * @return If <player> owns <block>
      */
     public static boolean isOwner(Player player, Block block) {
-        return Deadbolted.get(block).isOwner(player);
+        return new Deadbolted(block).isOwner(player);
     }
 
     /**
@@ -75,7 +63,7 @@ public final class Deadbolt extends JavaPlugin {
      * Users] signs associated with <block>
      */
     public static Set<String> getAllNames(Block block) {
-        return Deadbolted.get(block).getUsers();
+        return new Deadbolted(block).getUsers();
     }
 
     /**
@@ -86,7 +74,7 @@ public final class Deadbolt extends JavaPlugin {
      * <block>. null if unprotected
      */
     public static String getOwnerName(Block block) {
-        return Deadbolted.get(block).getOwner();
+        return new Deadbolted(block).getOwner();
     }
 
     /**
@@ -96,6 +84,10 @@ public final class Deadbolt extends JavaPlugin {
      * @return If <block> is owned
      */
     public static boolean isProtected(Block block) {
-        return Deadbolted.get(block).isProtected();
+        return new Deadbolted(block).isProtected();
+    }
+
+    public static Deadbolted get(Block block) {
+        return new Deadbolted(block);
     }
 }

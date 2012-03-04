@@ -1,24 +1,20 @@
 package com.daemitus.deadbolt.events;
 
-import com.daemitus.deadbolt.Deadbolt;
-import com.daemitus.deadbolt.Deadbolted;
-import com.daemitus.deadbolt.Perm;
+import com.daemitus.deadbolt.*;
 import com.daemitus.deadbolt.listener.ListenerManager;
-import com.daemitus.deadbolt.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
 public final class SignListener implements Listener {
 
-    private final Deadbolt plugin = Deadbolt.instance;
+    private final DeadboltPlugin plugin = Deadbolt.getPlugin();
 
     public SignListener() {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -30,12 +26,13 @@ public final class SignListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
+    @SuppressWarnings("fallthrough")
     public void onSignChange(SignChangeEvent event) {
         Player player = event.getPlayer();
         Block block = event.getBlock();
         String[] lines = event.getLines();
 
-        if (plugin.config.hasPermission(player, Perm.user_color)) {
+        if (player.hasPermission(Perm.user_color)) {
             for (int i = 0; i < 4; i++) {
                 lines[i] = Util.createColor(lines[i]);
             }
@@ -45,7 +42,7 @@ public final class SignListener implements Listener {
         if (event.getBlock().getType().equals(Material.WALL_SIGN)) {
             Sign sign = (Sign) event.getBlock().getState();
             String ident = Util.getLine(sign, 0);
-            if (plugin.config.isPrivate(ident) || plugin.config.isMoreUsers(ident)) {
+            if (Deadbolt.getConfig().isPrivate(ident) || Deadbolt.getConfig().isMoreUsers(ident)) {
                 event.setCancelled(true);
                 return;
             }
@@ -53,17 +50,17 @@ public final class SignListener implements Listener {
         //fix end
 
         String ident = Util.removeColor(lines[0]);
-        boolean isPrivate = plugin.config.isPrivate(ident);
-        boolean isMoreUsers = plugin.config.isMoreUsers(ident);
+        boolean isPrivate = Deadbolt.getConfig().isPrivate(ident);
+        boolean isMoreUsers = Deadbolt.getConfig().isMoreUsers(ident);
         if (!isPrivate && !isMoreUsers) {
             return;
         } else if (isPrivate) {
             for (int i = 0; i < 4; i++) {
-                lines[i] = plugin.config.default_colors_private[i] + lines[i];
+                lines[i] = Deadbolt.getConfig().default_colors_private[i] + lines[i];
             }
         } else if (isMoreUsers) {
             for (int i = 0; i < 4; i++) {
-                lines[i] = plugin.config.default_colors_moreusers[i] + lines[i];
+                lines[i] = Deadbolt.getConfig().default_colors_moreusers[i] + lines[i];
             }
         }
 
@@ -71,17 +68,17 @@ public final class SignListener implements Listener {
         Result result = Result.PLACEHOLDER;
         if (block.getType().equals(Material.WALL_SIGN)) {
             Sign sign = (Sign) block.getState();
-            sign.setLine(0, isPrivate ? plugin.config.locale_private : plugin.config.locale_moreusers);
+            sign.setLine(0, isPrivate ? Deadbolt.getConfig().locale_private : Deadbolt.getConfig().locale_moreusers);
             sign.update();
-            db = Deadbolted.get(block);
+            db = Deadbolt.get(block);
             result = validateSignPlacement(db, player, isPrivate);
         } else {
             for (byte b = 0x2; b < 0x6 && !result.equals(Result.SUCCESS) && !result.equals(Result.ADMIN_SIGN_PLACED); b++) {
                 block.setTypeIdAndData(Material.WALL_SIGN.getId(), b, false);
                 Sign sign = (Sign) block.getState();
-                sign.setLine(0, isPrivate ? plugin.config.locale_private : plugin.config.locale_moreusers);
+                sign.setLine(0, isPrivate ? Deadbolt.getConfig().locale_private : Deadbolt.getConfig().locale_moreusers);
                 sign.update();
-                db = Deadbolted.get(block);
+                db = Deadbolt.get(block);
                 Result newresult = validateSignPlacement(db, player, isPrivate);
                 if (!newresult.equals(Result.DENY_SIGN_PRIVATE_NOTHING_NEARBY)) {
                     result = newresult;
@@ -91,18 +88,18 @@ public final class SignListener implements Listener {
 
         switch (result) {
             case ADMIN_SIGN_PLACED:
-                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_admin_sign_placed, db.getOwner());
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_admin_sign_placed, db.getOwner());
             case SUCCESS:
                 if (isPrivate) {
                     String owner = Util.removeColor(lines[1]);
                     if (owner.isEmpty()) {
-                        lines[1] = plugin.config.default_colors_private[1] + Util.truncateName(player.getName());
-                    } else if (plugin.config.hasPermission(player, Perm.admin_create)) {
+                        lines[1] = Deadbolt.getConfig().default_colors_private[1] + Util.truncateName(player.getName());
+                    } else if (player.hasPermission(Perm.admin_create)) {
                         if (plugin.getServer().getPlayerExact(owner) == null) {
-                            plugin.config.sendMessage(player, ChatColor.YELLOW, plugin.config.msg_admin_warning_player_not_found, owner);
+                            Deadbolt.getConfig().sendMessage(player, ChatColor.YELLOW, Deadbolt.getConfig().msg_admin_warning_player_not_found, owner);
                         }
                     } else {
-                        lines[1] = plugin.config.default_colors_private[1] + Util.truncateName(player.getName());
+                        lines[1] = Deadbolt.getConfig().default_colors_private[1] + Util.truncateName(player.getName());
                     }
                 }
 
@@ -116,44 +113,44 @@ public final class SignListener implements Listener {
                 }
                 return;
             case DENY_SIGN_PRIVATE_ALREADY_OWNED:
-                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_sign_private_already_owned);
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_sign_private_already_owned);
                 break;
             case DENY_SIGN_MOREUSERS_ALREADY_OWNED:
-                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_sign_moreusers_already_owned);
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_sign_moreusers_already_owned);
                 break;
             case DENY_SIGN_MOREUSERS_NO_PRIVATE:
-                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_sign_moreusers_no_private);
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_sign_moreusers_no_private);
                 break;
             case DENY_BLOCK_PERM_CHEST:
-                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_block_perm, "chests");
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_perm, "chests");
                 break;
             case DENY_BLOCK_PERM_DISPENSER:
-                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_block_perm, "dispensers");
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_perm, "dispensers");
                 break;
             case DENY_BLOCK_PERM_FURNACE:
-                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_block_perm, "furnaces");
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_perm, "furnaces");
                 break;
             case DENY_BLOCK_PERM_DOOR:
-                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_block_perm, "doors");
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_perm, "doors");
                 break;
             case DENY_BLOCK_PERM_TRAPDOOR:
-                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_block_perm, "trapdoors");
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_perm, "trapdoors");
                 break;
             case DENY_BLOCK_PERM_FENCEGATE:
-                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_block_perm, "fencegates");
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_perm, "fencegates");
                 break;
             case DENY_BLOCK_PERM_BREWERY:
-                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_block_perm, "brewing stands");
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_perm, "brewing stands");
                 break;
             case DENY_BLOCK_PERM_CAULDRON:
-                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_block_perm, "cauldrons");
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_perm, "cauldrons");
                 break;
             case DENY_BLOCK_PERM_ENCHANT:
-                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_block_perm, "enchantment tables");
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_perm, "enchantment tables");
                 break;
             default:
                 //case DENY_SIGN_PRIVATE_NOTHING_NEARBY:
-                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_sign_private_nothing_nearby);
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_sign_private_nothing_nearby);
                 break;
         }
         event.setCancelled(true);
@@ -177,7 +174,7 @@ public final class SignListener implements Listener {
                     //Already has [private], pop the sign
                     return Result.DENY_SIGN_PRIVATE_ALREADY_OWNED;
                 } else {
-                    if (plugin.config.hasPermission(player, Perm.admin_create)) {
+                    if (player.hasPermission(Perm.admin_create)) {
                         //good, overridden
                         return Result.ADMIN_SIGN_PLACED;
                     } else {
@@ -202,49 +199,49 @@ public final class SignListener implements Listener {
                     //not authorized to protect?
                     switch (setBlock.getType()) {
                         case CHEST:
-                            if (!chest && !(chest = plugin.config.hasPermission(player, Perm.user_create_chest))) {
+                            if (!chest && !(chest = player.hasPermission(Perm.user_create_chest))) {
                                 return Result.DENY_BLOCK_PERM_CHEST;
                             }
                             break;
                         case DISPENSER:
-                            if (!dispenser && !(dispenser = plugin.config.hasPermission(player, Perm.user_create_dispenser))) {
+                            if (!dispenser && !(dispenser = player.hasPermission(Perm.user_create_dispenser))) {
                                 return Result.DENY_BLOCK_PERM_DISPENSER;
                             }
                             break;
                         case FURNACE:
                         case BURNING_FURNACE:
-                            if (!furnace && !(furnace = plugin.config.hasPermission(player, Perm.user_create_furnace))) {
+                            if (!furnace && !(furnace = player.hasPermission(Perm.user_create_furnace))) {
                                 return Result.DENY_BLOCK_PERM_FURNACE;
                             }
                             break;
                         case WOODEN_DOOR:
                         case IRON_DOOR_BLOCK:
-                            if (!door && !(door = plugin.config.hasPermission(player, Perm.user_create_door))) {
+                            if (!door && !(door = player.hasPermission(Perm.user_create_door))) {
                                 return Result.DENY_BLOCK_PERM_DOOR;
                             }
                             break;
                         case TRAP_DOOR:
-                            if (!trap && !(trap = plugin.config.hasPermission(player, Perm.user_create_trapdoor))) {
+                            if (!trap && !(trap = player.hasPermission(Perm.user_create_trapdoor))) {
                                 return Result.DENY_BLOCK_PERM_TRAPDOOR;
                             }
                             break;
                         case FENCE_GATE:
-                            if (!gate && !(gate = plugin.config.hasPermission(player, Perm.user_create_fencegate))) {
+                            if (!gate && !(gate = player.hasPermission(Perm.user_create_fencegate))) {
                                 return Result.DENY_BLOCK_PERM_FENCEGATE;
                             }
                             break;
                         case BREWING_STAND:
-                            if (!brewery && !(brewery = plugin.config.hasPermission(player, Perm.user_create_brewery))) {
+                            if (!brewery && !(brewery = player.hasPermission(Perm.user_create_brewery))) {
                                 return Result.DENY_BLOCK_PERM_BREWERY;
                             }
                             break;
                         case CAULDRON:
-                            if (!cauldron && !(cauldron = plugin.config.hasPermission(player, Perm.user_create_cauldron))) {
+                            if (!cauldron && !(cauldron = player.hasPermission(Perm.user_create_cauldron))) {
                                 return Result.DENY_BLOCK_PERM_CAULDRON;
                             }
                             break;
                         case ENCHANTMENT_TABLE:
-                            if (!enchant && !(enchant = plugin.config.hasPermission(player, Perm.user_create_enchant))) {
+                            if (!enchant && !(enchant = player.hasPermission(Perm.user_create_enchant))) {
                                 return Result.DENY_BLOCK_PERM_ENCHANT;
                             }
                             break;

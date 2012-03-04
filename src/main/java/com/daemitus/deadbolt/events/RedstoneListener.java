@@ -1,6 +1,7 @@
 package com.daemitus.deadbolt.events;
 
 import com.daemitus.deadbolt.Deadbolt;
+import com.daemitus.deadbolt.DeadboltPlugin;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.listener.ListenerManager;
 import org.bukkit.Bukkit;
@@ -11,7 +12,7 @@ import org.bukkit.event.block.BlockRedstoneEvent;
 
 public class RedstoneListener implements Listener {
 
-    private final Deadbolt plugin = Deadbolt.instance;
+    private final DeadboltPlugin plugin = Deadbolt.getPlugin();
 
     public RedstoneListener() {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
@@ -20,8 +21,8 @@ public class RedstoneListener implements Listener {
     @EventHandler
     public void onBlockRedstoneChange(BlockRedstoneEvent event) {
         Block block = event.getBlock();
-        if (plugin.config.redstone_protected_blockids.contains(block.getTypeId())) {
-            Deadbolted db = Deadbolted.get(block);
+        if (Deadbolt.getConfig().redstone_protected_blockids.contains(block.getTypeId())) {
+            Deadbolted db = Deadbolt.get(block);
             if (db.isProtected() && !ListenerManager.canRedstoneChange(db, event) && !db.isEveryone()) {
                 event.setNewCurrent(event.getOldCurrent());
             }
