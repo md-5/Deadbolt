@@ -105,7 +105,6 @@ public class Config {
     public String msg_reminder_lock_your_chests = "Place a sign headed [Private] next to your block to lock it";
     public String msg_auto_expire_owner_x_days = "Expires if %1$s is offline %2$s more days";
     public String msg_auto_expire_expired = "This protection has expired";
-    
     //------------------------------------------------------------------------//
     public String[] default_colors_private = {"", "", "", ""};
     public String[] default_colors_moreusers = {"", "", "", ""};

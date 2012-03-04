@@ -4,13 +4,13 @@ import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.listener.ListenerManager;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Enderman;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.entity.Enderman;
 
 public final class EntityListener implements Listener {
 
@@ -20,36 +20,35 @@ public final class EntityListener implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityInteract(EntityInteractEvent event) {
-        if (event.isCancelled())
-            return;
         Block block = event.getBlock();
         Deadbolted db = Deadbolted.get(block);
-        if (db.isProtected() && !ListenerManager.canEntityInteract(db, event))
+        if (db.isProtected() && !ListenerManager.canEntityInteract(db, event)) {
             event.setCancelled(true);
-    }
-    
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onEntityChangeBlock(EntityChangeBlockEvent event){
-    	if (event.isCancelled())
-    		return;
-    	if (!(event.getEntity() instanceof Enderman))
-    		return;
-    	if (!plugin.config.deny_endermen)
-    		return;
-    	Block block = event.getBlock();
-    	Deadbolted db = Deadbolted.get(block);
-    	if (db.isProtected() && !ListenerManager.canEndermanPickup(db, event))
-    		event.setCancelled(true);
+        }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onEntityChangeBlock(EntityChangeBlockEvent event) {
+        if (!(event.getEntity() instanceof Enderman)) {
+            return;
+        }
+        if (!plugin.config.deny_endermen) {
+            return;
+        }
+        Block block = event.getBlock();
+        Deadbolted db = Deadbolted.get(block);
+        if (db.isProtected() && !ListenerManager.canEndermanPickup(db, event)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityExplode(EntityExplodeEvent event) {
-        if (event.isCancelled())
+        if (!plugin.config.deny_explosions) {
             return;
-        if (!plugin.config.deny_explosions)
-            return;
+        }
         for (Block block : event.blockList()) {
             Deadbolted db = Deadbolted.get(block);
             if (db.isProtected() && !ListenerManager.canEntityExplode(db, event)) {

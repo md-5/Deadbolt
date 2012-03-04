@@ -1,17 +1,11 @@
 
-import com.daemitus.deadbolt.listener.DeadboltListener;
-import com.daemitus.deadbolt.Config;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
+import com.daemitus.deadbolt.listener.DeadboltListener;
+import com.daemitus.deadbolt.util.Util;
 import com.palmergames.bukkit.towny.NotRegisteredException;
 import com.palmergames.bukkit.towny.Towny;
-import com.palmergames.bukkit.towny.object.Nation;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.Town;
-import com.palmergames.bukkit.towny.object.TownBlock;
-import com.palmergames.bukkit.towny.object.TownyPermission;
-import com.palmergames.bukkit.towny.object.TownyUniverse;
-import com.palmergames.bukkit.towny.object.TownyWorld;
+import com.palmergames.bukkit.towny.object.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -31,7 +25,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public final class TownyListener extends DeadboltListener {
 
     private TownyUniverse towny;
-    private static final String patternBracketTooLong = "\\[.{14,}\\]";
     private static boolean denyWilderness = false;
     private static boolean wildernessOverride = false;
     private static boolean mayorOverride = false;
@@ -64,12 +57,6 @@ public final class TownyListener extends DeadboltListener {
         }
     }
 
-    private String truncate(String text) {
-        if (text.matches(patternBracketTooLong))
-            return "[" + text.substring(1, 14) + "]";
-        return text;
-    }
-
     private void checkFile(File file) {
         try {
             if (!file.exists()) {
@@ -97,27 +84,36 @@ public final class TownyListener extends DeadboltListener {
                     Resident resident = towny.getResident(player.getName());
 
                     Town town = resident.getTown();
-                    if (db.getUsers().contains(truncate("[" + town.getName().toLowerCase() + "]"))) { //town check
+                    if (db.getUsers().contains(Util.truncate("[" + town.getName().toLowerCase() + "]"))) { //town check
                         return true;
                     }
-                    
-                    if (db.getUsers().contains(truncate("+" + town.getName().toLowerCase() + "+"))
+
+                    if (db.getUsers().contains(Util.truncate("+" + town.getName().toLowerCase() + "+"))
                             && (town.getMayor().equals(resident) || town.getAssistants().contains(resident)))//town assistant check
+                    {
                         return true;
+                    }
 
                     Nation nation = town.getNation();
-                    if (db.getUsers().contains(truncate("[" + nation.getName() + "]").toLowerCase()))//nation check
+                    if (db.getUsers().contains(Util.truncate("[" + nation.getName() + "]").toLowerCase()))//nation check
+                    {
                         return true;
-                    if (db.getUsers().contains(truncate("+" + nation.getName().toLowerCase() + "+"))
+                    }
+                    if (db.getUsers().contains(Util.truncate("+" + nation.getName().toLowerCase() + "+"))
                             && (nation.getCapital().getMayor().equals(resident) || nation.getAssistants().contains(resident)))//nation assistant check
+                    {
                         return true;
+                    }
 
-                    if (wildernessOverride && towny.isWilderness(block))
+                    if (wildernessOverride && towny.isWilderness(block)) {
                         return true;
-                    if (mayorOverride)
+                    }
+                    if (mayorOverride) {
                         return towny.getTownBlock(block.getLocation()).getTown().getMayor().equals(resident);
-                    if (assistantOverride)
+                    }
+                    if (assistantOverride) {
                         return towny.getTownBlock(block.getLocation()).getTown().getAssistants().contains(resident);
+                    }
                     break;
                 }
             }
@@ -140,13 +136,16 @@ public final class TownyListener extends DeadboltListener {
 
     private boolean askTowny(Player player, Block block) {
         //OP check
-        if (Deadbolt.instance.config.useOPlist && player.isOp())
+        if (Deadbolt.instance.config.useOPlist && player.isOp()) {
             return true;
+        }
 
         //is this world using towny?
-        for (TownyWorld townyWorld : towny.getWorlds())
-            if (townyWorld.getName().equalsIgnoreCase(block.getWorld().getName()) && !townyWorld.isUsingTowny())
+        for (TownyWorld townyWorld : towny.getWorlds()) {
+            if (townyWorld.getName().equalsIgnoreCase(block.getWorld().getName()) && !townyWorld.isUsingTowny()) {
                 return true;
+            }
+        }
 
         //wilderness check
         if (towny.isWilderness(block)) {
@@ -163,53 +162,63 @@ public final class TownyListener extends DeadboltListener {
             TownBlock townBlock = towny.getTownBlock(block.getLocation());
 
             //Owner
-            if (resident.hasTownBlock(townBlock))
+            if (resident.hasTownBlock(townBlock)) {
                 return true;
+            }
 
             //Assistant
-            if (townBlock.hasTown() && townBlock.getTown().getAssistants().contains(resident))
+            if (townBlock.hasTown() && townBlock.getTown().getAssistants().contains(resident)) {
                 return true;
+            }
 
             //Mayor
-            if (townBlock.hasTown() && townBlock.getTown().getMayor().equals(resident))
+            if (townBlock.hasTown() && townBlock.getTown().getMayor().equals(resident)) {
                 return true;
+            }
 
             //King
-            if (townBlock.hasTown() && townBlock.getTown().hasNation() && townBlock.getTown().getNation().isKing(resident))
+            if (townBlock.hasTown() && townBlock.getTown().hasNation() && townBlock.getTown().getNation().isKing(resident)) {
                 return true;
+            }
 
             if (townBlock.hasResident()) {
                 TownyPermission plotPerms = townBlock.getPermissions();
 
                 //Owner friend
-                if (plotPerms.residentBuild && isFriend(resident, townBlock))
+                if (plotPerms.residentBuild && isFriend(resident, townBlock)) {
                     return true;
+                }
 
                 //Ally
                 boolean isAlly = isAlly(resident, townBlock);
-                if (plotPerms.allyBuild && isAlly)
+                if (plotPerms.allyBuild && isAlly) {
                     return true;
+                }
 
                 //Outsider
-                if (plotPerms.outsiderBuild && !isAlly)
+                if (plotPerms.outsiderBuild && !isAlly) {
                     return true;
+                }
 
             } else {
                 TownyPermission townPerms = townBlock.getTown().getPermissions();
 
                 //Member
                 boolean isResident = isResident(resident, townBlock);
-                if (townPerms.residentBuild && isResident)
+                if (townPerms.residentBuild && isResident) {
                     return true;
+                }
 
                 //Ally
                 boolean isAlly = isAlly(resident, townBlock);
-                if (townPerms.allyBuild && isAlly)
+                if (townPerms.allyBuild && isAlly) {
                     return true;
+                }
 
                 //Outsider
-                if (townPerms.outsiderBuild && !isResident && !isAlly)
+                if (townPerms.outsiderBuild && !isResident && !isAlly) {
                     return true;
+                }
             }
 
         } catch (NotRegisteredException ex) {
@@ -219,8 +228,9 @@ public final class TownyListener extends DeadboltListener {
 
     private boolean isResident(Resident resident, TownBlock townBlock) {
         try {
-            if (townBlock.getTown().hasResident(resident))
+            if (townBlock.getTown().hasResident(resident)) {
                 return true;
+            }
         } catch (NotRegisteredException ex) {
         }
         return false;
@@ -228,8 +238,9 @@ public final class TownyListener extends DeadboltListener {
 
     private boolean isFriend(Resident resident, TownBlock townBlock) {
         try {
-            if (townBlock.getResident().hasFriend(resident))
+            if (townBlock.getResident().hasFriend(resident)) {
                 return true;
+            }
         } catch (NotRegisteredException ex) {
         }
 
@@ -239,22 +250,25 @@ public final class TownyListener extends DeadboltListener {
     private boolean isAlly(Resident resident, TownBlock townBlock) {
         try {
             //Ally by town resident
-            if (townBlock.getTown().hasResident(resident))
+            if (townBlock.getTown().hasResident(resident)) {
                 return true;
+            }
         } catch (NotRegisteredException ex) {
         }
 
         try {
             //Ally by direct Nation membership
-            if (townBlock.getTown().getNation().hasTown(resident.getTown()))
+            if (townBlock.getTown().getNation().hasTown(resident.getTown())) {
                 return true;
+            }
         } catch (NotRegisteredException ex) {
         }
 
         try {
             //Ally by Nation alliance
-            if (townBlock.getTown().getNation().hasAlly(resident.getTown().getNation()))
+            if (townBlock.getTown().getNation().hasAlly(resident.getTown().getNation())) {
                 return true;
+            }
         } catch (NotRegisteredException ex) {
         }
 

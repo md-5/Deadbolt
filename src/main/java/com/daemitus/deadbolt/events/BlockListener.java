@@ -1,8 +1,8 @@
 package com.daemitus.deadbolt.events;
 
-import com.daemitus.deadbolt.Perm;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
+import com.daemitus.deadbolt.Perm;
 import com.daemitus.deadbolt.listener.ListenerManager;
 import com.daemitus.deadbolt.tasks.SignUpdateTask;
 import java.util.logging.Level;
@@ -27,11 +27,8 @@ public final class BlockListener implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         Block block = event.getBlock();
         if (block == null) {
             return;
@@ -41,9 +38,11 @@ public final class BlockListener implements Listener {
         if (!db.isProtected()) {
             return;
         }
-        
-        if (db.isAutoExpired(player)) return;
-        
+
+        if (db.isAutoExpired(player)) {
+            return;
+        }
+
         if (db.isOwner(player)) {
             return;
         }
@@ -63,11 +62,8 @@ public final class BlockListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         Block block = event.getBlockPlaced();
         if (block == null) {
             return;
@@ -129,15 +125,11 @@ public final class BlockListener implements Listener {
                     plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_fencegate_expansion);
                     event.setCancelled(true);
                 }
-                return;
         }
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true)
     public void onBlockBurn(BlockBurnEvent event) {
-        if (event.isCancelled()) {
-            return;
-        }
         Block block = event.getBlock();
         Deadbolted db = Deadbolted.get(block);
         if (db.isProtected() && !ListenerManager.canBlockBurn(db, event)) {

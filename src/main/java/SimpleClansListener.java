@@ -1,7 +1,8 @@
 
-import com.daemitus.deadbolt.listener.DeadboltListener;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
+import com.daemitus.deadbolt.listener.DeadboltListener;
+import com.daemitus.deadbolt.util.Util;
 import java.util.Arrays;
 import java.util.List;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
@@ -12,7 +13,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public final class SimpleClansListener extends DeadboltListener {
 
-    private static final String patternBracketTooLong = "\\[.{14,}\\]";
     private SimpleClans sc;
 
     @Override
@@ -32,18 +32,14 @@ public final class SimpleClansListener extends DeadboltListener {
         if (cp != null) {
             Clan clan = cp.getClan();
             if (clan != null) {
-                if (db.getUsers().contains(truncate("[" + clan.getName() + "]")))
+                if (db.getUsers().contains(Util.truncate("[" + clan.getName() + "]"))) {
                     return true;
-                if (db.getUsers().contains(truncate("[" + clan.getTag() + "]")))
+                }
+                if (db.getUsers().contains(Util.truncate("[" + clan.getTag() + "]"))) {
                     return true;
+                }
             }
         }
         return false;
-    }
-
-    private String truncate(String text) {
-        if (text.matches(patternBracketTooLong))
-            return "[" + text.substring(1, 14) + "]";
-        return text;
     }
 }

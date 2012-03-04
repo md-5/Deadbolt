@@ -1,6 +1,6 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.daemitus</groupId>
@@ -14,40 +14,14 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    
+
     <repositories>
         <repository>
-            <id>guardian-repo</id>
-            <url>http://guardian.mossycobble.com:8080/repo/content/groups/public/</url>
-        </repository>
-        <repository>
-            <id>acampadas-repo</id>
-            <url>http://acampadas21.net:8026/nexus-2.0/content/groups/public/</url>
-        </repository>
-        <repository>
-            <id>repobo-snap</id>
-            <url>http://repo.bukkit.org/content/groups/public</url>
-        </repository>
-        <repository>
-            <id>nexis-repo</id>
-            <url>http://repo.nexisonline.net:8080/nexus/content/repositories/public</url>
+            <id>essentials-repo</id>
+            <url>http://ess.ementalo.com/nexus/content/groups/public/</url>
         </repository>
     </repositories>
-    
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>
@@ -57,7 +31,7 @@
         <dependency>
             <groupId>de.bananaco</groupId>
             <artifactId>bPermissions</artifactId>
-            <version>1337-SNAPSHOT</version>
+            <version>1.7.3</version>
         </dependency>
         <dependency>
             <groupId>com.palmergames.bukkit</groupId>
@@ -82,7 +56,7 @@
         <dependency>
             <groupId>ru.tehkode</groupId>
             <artifactId>PermissionsEx</artifactId>
-            <version>1.19</version>
+            <version>1.18</version>
         </dependency>
         <dependency>
             <groupId>net.milkbowl.vault</groupId>

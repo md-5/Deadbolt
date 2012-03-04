@@ -1,7 +1,8 @@
 
-import com.daemitus.deadbolt.listener.DeadboltListener;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
+import com.daemitus.deadbolt.listener.DeadboltListener;
+import com.daemitus.deadbolt.util.Util;
 import de.bananaco.permissions.Permissions;
 import de.bananaco.permissions.worlds.WorldPermissionsManager;
 import java.util.Arrays;
@@ -12,7 +13,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public final class bPermissionsListener extends DeadboltListener {
 
     private WorldPermissionsManager permissions;
-    protected static final String patternBracketTooLong = "\\[.{14,}\\]";
 
     @Override
     public List<String> getDependencies() {
@@ -26,19 +26,13 @@ public final class bPermissionsListener extends DeadboltListener {
 
     @Override
     public boolean canPlayerInteract(Deadbolted db, PlayerInteractEvent event) {
-        //DEFAULT return false;
         Player player = event.getPlayer();
         List<String> groups = permissions.getPermissionSet(player.getLocation().getWorld()).getGroups(player);
         for (String gName : groups) {
-            if (db.getUsers().contains(truncate("[" + gName + "]")))
+            if (db.getUsers().contains(Util.truncate("[" + gName + "]"))) {
                 return true;
+            }
         }
         return false;
-    }
-
-    private String truncate(String text) {
-        if (text.matches(patternBracketTooLong))
-            return "[" + text.substring(1, 14) + "]";
-        return text;
     }
 }

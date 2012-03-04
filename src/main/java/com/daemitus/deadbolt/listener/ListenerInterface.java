@@ -33,7 +33,7 @@ public interface ListenerInterface {
     public boolean canPistonRetract(Deadbolted db, BlockPistonRetractEvent event);
 
     public boolean canBlockBreak(Deadbolted db, BlockBreakEvent event);
-    
+
     public boolean canBlockBurn(Deadbolted db, BlockBurnEvent event);
 
     public boolean canPlayerInteract(Deadbolted db, PlayerInteractEvent event);

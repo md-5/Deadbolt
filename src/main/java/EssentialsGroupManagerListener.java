@@ -2,6 +2,7 @@
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.listener.DeadboltListener;
+import com.daemitus.deadbolt.util.Util;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -14,7 +15,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public final class EssentialsGroupManagerListener extends DeadboltListener {
 
-    private static final String patternBracketTooLong = "\\[.{14,}\\]";
     private GroupManager gm;
 
     @Override
@@ -37,10 +37,11 @@ public final class EssentialsGroupManagerListener extends DeadboltListener {
         getInherited(group, groupNames, owh);
 
         for (String gName : groupNames) {
-            if (db.getUsers().contains(truncate("[" + gName + "]")))
+            if (db.getUsers().contains(Util.truncate("[" + gName + "]"))) {
                 return true;
+            }
         }
-        
+
         return false;
     }
 
@@ -50,11 +51,5 @@ public final class EssentialsGroupManagerListener extends DeadboltListener {
                 getInherited(owh.getGroup(gs), groupNames, owh);
             }
         }
-    }
-
-    private String truncate(String text) {
-        if (text.matches(patternBracketTooLong))
-            return "[" + text.substring(1, 14) + "]";
-        return text;
     }
 }

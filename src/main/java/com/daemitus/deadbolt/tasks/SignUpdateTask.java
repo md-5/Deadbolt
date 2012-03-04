@@ -13,6 +13,8 @@ public class SignUpdateTask implements Runnable {
     }
 
     public void run() {
-       if (block.getType() == Material.WALL_SIGN) ((Sign) block.getState()).update(true);
+        if (block.getType() == Material.WALL_SIGN) {
+            ((Sign) block.getState()).update(true);
+        }
     }
 }

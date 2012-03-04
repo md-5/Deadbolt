@@ -7,10 +7,11 @@ import org.bukkit.block.Sign;
 
 public final class Util {
 
-    private static final Pattern DETECT_COLORS = Pattern.compile("§([0-9a-f])");
-    private static final Pattern TWO_COLORS = Pattern.compile("(§[0-9a-f])(\\s*)(§[0-9a-f])");
+    protected static final String patternBracketTooLong = "\\[.{14,}\\]";
+    private static final Pattern DETECT_COLORS = Pattern.compile("\u00A7([0-9a-f])");
+    private static final Pattern TWO_COLORS = Pattern.compile("(\u00A7[0-9a-f])(\\s*)(§[0-9a-f])");
     private static final Pattern PSEUDO_COLOR = Pattern.compile("\\&([0-9a-f])");
-    private static final Pattern UNNEEDED_COLOR = Pattern.compile("^§0");
+    private static final Pattern UNNEEDED_COLOR = Pattern.compile("^\u00A70");
     private static final Pattern FORMAT_LENGTH = Pattern.compile("(^.{0,15}).*");
 
     public static BlockFace getFacingFromByte(byte b) {
@@ -68,10 +69,17 @@ public final class Util {
     }
 
     public static String createColor(String text) {
-        return text == null ? null : PSEUDO_COLOR.matcher(text).replaceAll("�$1");
+        return text == null ? null : PSEUDO_COLOR.matcher(text).replaceAll("\u00A7$1");
     }
 
     public static String getLine(Sign signBlock, int line) {
         return DETECT_COLORS.matcher(signBlock.getLine(line)).replaceAll("");
+    }
+
+    public static String truncate(String text) {
+        if (text.matches(patternBracketTooLong)) {
+            return "[" + text.substring(1, 14) + "]";
+        }
+        return text;
     }
 }

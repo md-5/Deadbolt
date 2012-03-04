@@ -1,7 +1,8 @@
 
-import com.daemitus.deadbolt.listener.DeadboltListener;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
+import com.daemitus.deadbolt.listener.DeadboltListener;
+import com.daemitus.deadbolt.util.Util;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +16,6 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 public final class PermissionsExListener extends DeadboltListener {
 
     private PermissionManager permissions;
-    private static final String patternBracketTooLong = "\\[.{14,}\\]";
 
     @Override
     public List<String> getDependencies() {
@@ -37,8 +37,9 @@ public final class PermissionsExListener extends DeadboltListener {
         }
 
         for (String group : allGroupNames) {
-            if (db.getUsers().contains(truncate("[" + group + "]")))
+            if (db.getUsers().contains(Util.truncate("[" + group + "]"))) {
                 return true;
+            }
         }
         return false;
     }
@@ -49,11 +50,5 @@ public final class PermissionsExListener extends DeadboltListener {
                 getInherited(g, groupNames);
             }
         }
-    }
-
-    private String truncate(String text) {
-        if (text.matches(patternBracketTooLong))
-            return "[" + text.substring(1, 14) + "]";
-        return text;
     }
 }

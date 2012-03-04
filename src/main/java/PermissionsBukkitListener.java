@@ -1,7 +1,8 @@
 
-import com.daemitus.deadbolt.listener.DeadboltListener;
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
+import com.daemitus.deadbolt.listener.DeadboltListener;
+import com.daemitus.deadbolt.util.Util;
 import com.platymuus.bukkit.permissions.Group;
 import com.platymuus.bukkit.permissions.PermissionsPlugin;
 import java.util.Arrays;
@@ -13,7 +14,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public final class PermissionsBukkitListener extends DeadboltListener {
 
-    private static final String patternBracketTooLong = "\\[.{14,}\\]";
     private PermissionsPlugin permissions;
 
     @Override
@@ -34,12 +34,13 @@ public final class PermissionsBukkitListener extends DeadboltListener {
             allGroupNames.add(g.getName());
             getInherited(g, allGroupNames);
         }
-        
+
         for (String group : allGroupNames) {
-            if (db.getUsers().contains(truncate("[" + group + "]")))
+            if (db.getUsers().contains(Util.truncate("[" + group + "]"))) {
                 return true;
+            }
         }
-        
+
         return false;
     }
 
@@ -49,11 +50,5 @@ public final class PermissionsBukkitListener extends DeadboltListener {
                 getInherited(g, groupNames);
             }
         }
-    }
-
-    private String truncate(String text) {
-        if (text.matches(patternBracketTooLong))
-            return "[" + text.substring(1, 14) + "]";
-        return text;
     }
 }

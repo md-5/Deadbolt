@@ -20,21 +20,18 @@ public final class PistonListener implements Listener {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
-        if (event.isCancelled())
-            return;
         for (Block block : event.getBlocks()) {
             Deadbolted db = Deadbolted.get(block);
-            if (Deadbolted.get(block).isProtected() && !ListenerManager.canPistonExtend(db, event))
+            if (Deadbolted.get(block).isProtected() && !ListenerManager.canPistonExtend(db, event)) {
                 event.setCancelled(true);
+            }
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockPistonRetract(BlockPistonRetractEvent event) {
-        if (event.isCancelled())
-            return;
         Block piston = event.getBlock();
         Block extension = piston.getRelative(event.getDirection());
         Block block = extension.getRelative(event.getDirection());
