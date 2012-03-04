@@ -5,7 +5,6 @@ import com.daemitus.deadbolt.DeadboltPlugin;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.Perm;
 import com.daemitus.deadbolt.listener.ListenerManager;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -36,7 +35,6 @@ public class BlockListener implements Listener {
         if (db.isProtected() && !db.isAutoExpired() && !db.isOwner(player) && !ListenerManager.canBlockBreak(db, event)) {
             if (player.hasPermission(Perm.admin_break)) {
                 Deadbolt.getConfig().sendBroadcast(Perm.admin_broadcast_break, ChatColor.RED, Deadbolt.getConfig().msg_admin_break, player.getName(), db.getOwner());
-                Deadbolt.getLogger().log(Level.INFO, String.format(Deadbolt.getConfig().msg_admin_break, player.getName(), db.getOwner()));
             } else {
                 Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_break);
                 event.setCancelled(true);

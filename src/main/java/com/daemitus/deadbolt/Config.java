@@ -1,6 +1,6 @@
 package com.daemitus.deadbolt;
 
-import java.io.*;
+import java.io.File;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
@@ -99,8 +99,10 @@ public class Config {
     //------------------------------------------------------------------------//    
 
     public void load() {
-        File configFile = new File(plugin.getDataFolder() + "/config.yml");
-        checkFile(configFile);
+        File configFile = new File(plugin.getDataFolder(), "config.yml");
+        if (!configFile.exists()) {
+            plugin.saveDefaultConfig();
+        }
 
         FileConfiguration config = plugin.getConfig();
 
@@ -135,10 +137,13 @@ public class Config {
 
         String language = config.getString("language", "english.yml");
 
-        File langFile = new File(plugin.getDataFolder() + "/" + language);
-        if (!checkFile(langFile)) {
+        File langFile = new File(plugin.getDataFolder(), language);
+        if (!langFile.exists()) {
             Deadbolt.getLogger().log(Level.WARNING, "[Deadbolt] " + langFile.getName() + " not found, defaulting to english.yml");
-            checkFile(langFile = new File(plugin.getDataFolder() + "/english.yml"));
+            langFile = new File(plugin.getDataFolder(), "english.yml");
+            if (!langFile.exists()) {
+                plugin.saveResource("english.yml", true);
+            }
         }
 
         config = YamlConfiguration.loadConfiguration(langFile);
@@ -217,49 +222,6 @@ public class Config {
         msg_auto_expire_expired = config.getString("msg_auto_expire_expired", msg_auto_expire_expired);
     }
 
-    private static boolean checkFile(File file) {
-        try {
-            if (file.exists()) {
-                return true;
-            }
-
-            File dir = file.getParentFile();
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-
-            file.createNewFile();
-
-            InputStream in = null;
-            OutputStream out = null;
-
-            try {
-                in = plugin.getResource("files/" + file.getName());
-                out = new FileOutputStream(file);
-
-                int len;
-                byte[] buf = new byte[1024];
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-
-            } finally {
-                if (in != null) {
-                    in.close();
-                }
-                if (out != null) {
-                    out.close();
-                }
-            }
-
-            Deadbolt.getLogger().log(Level.INFO, "[Deadbolt] Retrieved file " + file.getName());
-            return true;
-        } catch (IOException ex) {
-            Deadbolt.getLogger().log(Level.SEVERE, null, ex);
-            return false;
-        }
-    }
-
     public boolean isPrivate(String line) {
         return signtext_private.matcher(line).matches();
     }
@@ -290,18 +252,10 @@ public class Config {
     }
 
     public void sendMessage(Player player, ChatColor color, String message, String... args) {
-        if (!message.isEmpty()) {
-            player.sendMessage(color + TAG + String.format(message, (Object[]) args));
-        }
+        player.sendMessage(color + TAG + String.format(message, (Object[]) args));
     }
 
     public void sendBroadcast(String permission, ChatColor color, String message, String... args) {
-        if (!message.isEmpty()) {
-            for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-                if (player.hasPermission(permission)) {
-                    player.sendMessage(color + TAG + String.format(message, (Object[]) args));
-                }
-            }
-        }
+        Bukkit.getServer().broadcast(color + TAG + String.format(message, (Object[]) args), permission);
     }
 }
