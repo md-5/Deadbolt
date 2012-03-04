@@ -1,57 +1,57 @@
-#File to load for messages
-language: english.yml               
+# File to load for messages
+language: english.yml
 
-#Protections will auto-expire if the player is offline for X days. 0 means never expire.
+# Protections will auto-expire if the player is offline for X days. 0 means never expire.
 auto_expire_days: 20
 
-#Allows trapdoors to link with each other vertically
-vertical_trapdoors: true            
-#Allows furnaces to act like chests, one sign for all connected blocks
-group_furnaces: true                
-#Allows dispensers to act like chests, one sign for all connected blocks
+# Allows trapdoors to link with each other vertically
+vertical_trapdoors: true
+# Allows furnaces to act like chests, one sign for all connected blocks
+group_furnaces: true
+# Allows dispensers to act like chests, one sign for all connected blocks
 group_dispensers: true
-#Allows cauldrons to act like chests, one sign for all connected blocks
+# Allows cauldrons to act like chests, one sign for all connected blocks
 group_cauldrons: true
-#Allows enchantment tables to act like chests, one sign for all connected blocks
+# Allows enchantment tables to act like chests, one sign for all connected blocks
 group_enchantment_tables: true
-#Allows brewing stands to act like chests, one sign for all connected blocks
+# Allows brewing stands to act like chests, one sign for all connected blocks
 group_brewing_stands: true
 
-#Allows right click placement of signs automatically on the target
-deny_quick_signs: false             
-#Clear sign selection after using /deadbolt <line> <text>
-clear_sign_selection: false         
+# Allows right click placement of signs automatically on the target
+deny_quick_signs: false
+# Clear sign selection after using /deadbolt <line> <text>
+clear_sign_selection: false
 
-#Denies things such as snowmen opening doors
-deny_entity_interact: true          
-#Denies explosions from breaking protected blocks
-deny_explosions: true               
-#Denies endermen from breaking protected blocks
-deny_endermen: true                 
-#Denies pistons from breaking protected blocks
-deny_pistons: true                  
-#Denies redstone from toggling protected blocks
-deny_redstone: true                 
-#List of blockIDs protected by redstone unless overrode by [everyone]
-deny_redstone_specific_ids: [64, 71, 96] 
-#Denies function of the [timer: x] tag on signs
-deny_timed_doors: false             
-#Forces timed doors on every protected (trap)door
-forced_timed_doors: false           
-#Default delay used with forced timed doors
-forced_timed_doors_delay: 3         
-#Enables sound effects on timed doors
-timed_door_sounds: true             
-#Gives traditional wood door sounds to silent ones (iron doors)
-silent_door_sounds: true            
+# Denies things such as snowmen opening doors
+deny_entity_interact: true
+# Denies explosions from breaking protected blocks
+deny_explosions: true
+# Denies endermen from breaking protected blocks
+deny_endermen: true
+# Denies pistons from breaking protected blocks
+deny_pistons: true
+# Denies redstone from toggling protected blocks
+deny_redstone: true
+# List of blockIDs protected by redstone unless overrode by [everyone]
+deny_redstone_specific_ids: [64, 71, 96]
+# Denies function of the [timer: x] tag on signs
+deny_timed_doors: false
+# Forces timed doors on every protected (trap)door
+forced_timed_doors: false
+# Default delay used with forced timed doors
+forced_timed_doors_delay: 3
+# Enables sound effects on timed doors
+timed_door_sounds: true
+# Gives traditional wood door sounds to silent ones (iron doors)
+silent_door_sounds: true
 
-#Standard multiplayer color scheme
-#0 Black          6 Gold           c Red            
-#1 Dark Blue      7 Gray           d Pink           
-#2 Dark Green     8 Dark Gray      e Yellow         
-#3 Teal           9 Blue           f White          
-#4 Dark Red       a Bright Green   
-#5 Purple         b Aqua           
+# Standard multiplayer color scheme
+# 0 Black          6 Gold           c Red
+# 1 Dark Blue      7 Gray           d Pink
+# 2 Dark Green     8 Dark Gray      e Yellow
+# 3 Teal           9 Blue           f White
+# 4 Dark Red       a Bright Green   
+# 5 Purple         b Aqua           
 default_colors_private_line_1: "0"
 default_colors_private_line_2: "0"
 default_colors_private_line_3: "0"
