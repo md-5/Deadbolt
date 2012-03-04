@@ -1,6 +1,7 @@
 package com.daemitus.deadbolt.listener;
 
 import com.daemitus.deadbolt.Deadbolt;
+import com.daemitus.deadbolt.DeadboltPlugin;
 import com.daemitus.deadbolt.Deadbolted;
 import java.io.File;
 import java.net.MalformedURLException;
@@ -19,7 +20,7 @@ import org.bukkit.plugin.Plugin;
 
 public final class ListenerManager {
 
-    private final Deadbolt plugin = Deadbolt.instance;
+    private final DeadboltPlugin plugin = Deadbolt.getPlugin();
     private static List<ListenerInterface> loaded = new ArrayList<ListenerInterface>();
     private static List<ListenerInterface> unloaded = new ArrayList<ListenerInterface>();
 
@@ -42,19 +43,13 @@ public final class ListenerManager {
                 if (object instanceof ListenerInterface) {
                     ListenerInterface listener = (ListenerInterface) object;
                     unloaded.add(listener);
-                    Deadbolt.logger.log(Level.INFO, "[Deadbolt] Registered " + listener.getClass().getSimpleName());
+                    Deadbolt.getLogger().log(Level.INFO, "[Deadbolt] Registered " + listener.getClass().getSimpleName());
                 } else {
-                    Deadbolt.logger.log(Level.WARNING, String.format("[Deadbolt] " + clazz.getSimpleName() + " does not extend " + DeadboltListener.class.getSimpleName() + " properly"));
+                    Deadbolt.getLogger().log(Level.WARNING, String.format("[Deadbolt] " + clazz.getSimpleName() + " does not extend " + DeadboltListener.class.getSimpleName() + " properly"));
                 }
             }
-        } catch (InstantiationException ex) {
-            Deadbolt.logger.log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Deadbolt.logger.log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Deadbolt.logger.log(Level.SEVERE, null, ex);
-        } catch (MalformedURLException ex) {
-            Deadbolt.logger.log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -80,12 +75,12 @@ public final class ListenerManager {
                     if (!loaded.contains(listener)) {
                         loaded.add(listener);
                         listener.load(plugin);
-                        Deadbolt.logger.log(Level.INFO, "[Deadbolt] " + listener.getClass().getSimpleName() + " is now enabled");
+                        Deadbolt.getLogger().log(Level.INFO, "[Deadbolt] " + listener.getClass().getSimpleName() + " is now enabled");
                     }
                 } else {
                     if (loaded.contains(listener)) {
                         loaded.remove(listener);
-                        Deadbolt.logger.log(Level.INFO, "[Deadbolt] " + listener.getClass().getSimpleName() + " disabled due to one or more dependencies");
+                        Deadbolt.getLogger().log(Level.INFO, "[Deadbolt] " + listener.getClass().getSimpleName() + " disabled due to one or more dependencies");
                     }
                 }
             }

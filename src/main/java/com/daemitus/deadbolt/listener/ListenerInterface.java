@@ -1,6 +1,6 @@
 package com.daemitus.deadbolt.listener;
 
-import com.daemitus.deadbolt.Deadbolt;
+import com.daemitus.deadbolt.DeadboltPlugin;
 import com.daemitus.deadbolt.Deadbolted;
 import java.util.List;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -16,7 +16,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public interface ListenerInterface {
 
-    public void load(final Deadbolt plugin);
+    public void load(final DeadboltPlugin plugin);
 
     public List<String> getDependencies();
 

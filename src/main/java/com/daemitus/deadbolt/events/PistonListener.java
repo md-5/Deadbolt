@@ -13,18 +13,17 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 
 public class PistonListener implements Listener {
 
-    private final Deadbolt plugin = Deadbolt.instance;
-
     public PistonListener() {
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
+        Bukkit.getServer().getPluginManager().registerEvents(this, Deadbolt.getPlugin());
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
         for (Block block : event.getBlocks()) {
-            Deadbolted db = Deadbolted.get(block);
+            Deadbolted db = Deadbolt.get(block);
             if (db.isProtected() && !ListenerManager.canPistonExtend(db, event)) {
                 event.setCancelled(true);
+                return;
             }
         }
     }
@@ -34,7 +33,7 @@ public class PistonListener implements Listener {
         Block piston = event.getBlock();
         Block extension = piston.getRelative(event.getDirection());
         Block block = extension.getRelative(event.getDirection());
-        Deadbolted db = Deadbolted.get(block);
+        Deadbolted db = Deadbolt.get(block);
         if (db.isProtected() && !ListenerManager.canPistonRetract(db, event)) {
             // TODO why cant we just cancel
             event.setCancelled(true);

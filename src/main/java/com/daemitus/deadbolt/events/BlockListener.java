@@ -1,6 +1,7 @@
 package com.daemitus.deadbolt.events;
 
 import com.daemitus.deadbolt.Deadbolt;
+import com.daemitus.deadbolt.DeadboltPlugin;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.Perm;
 import com.daemitus.deadbolt.listener.ListenerManager;
@@ -20,7 +21,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 public class BlockListener implements Listener {
 
-    private final Deadbolt plugin = Deadbolt.instance;
+    private final DeadboltPlugin plugin = Deadbolt.getPlugin();
 
     public BlockListener() {
         Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
@@ -30,14 +31,14 @@ public class BlockListener implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
         Player player = event.getPlayer();
-        Deadbolted db = Deadbolted.get(block);
+        Deadbolted db = Deadbolt.get(block);
 
         if (db.isProtected() && !db.isAutoExpired() && !db.isOwner(player) && !ListenerManager.canBlockBreak(db, event)) {
-            if (plugin.config.hasPermission(player, Perm.admin_break)) {
-                plugin.config.sendBroadcast(Perm.admin_broadcast_break, ChatColor.RED, plugin.config.msg_admin_break, player.getName(), db.getOwner());
-                Deadbolt.logger.log(Level.INFO, String.format(plugin.config.msg_admin_break, player.getName(), db.getOwner()));
+            if (player.hasPermission(Perm.admin_break)) {
+                Deadbolt.getConfig().sendBroadcast(Perm.admin_broadcast_break, ChatColor.RED, Deadbolt.getConfig().msg_admin_break, player.getName(), db.getOwner());
+                Deadbolt.getLogger().log(Level.INFO, String.format(Deadbolt.getConfig().msg_admin_break, player.getName(), db.getOwner()));
             } else {
-                plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_block_break);
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_break);
                 event.setCancelled(true);
             }
         }
@@ -49,12 +50,12 @@ public class BlockListener implements Listener {
         Player player = event.getPlayer();
         Block against = event.getBlockAgainst();
 
-        if (against.getType().equals(Material.WALL_SIGN) && plugin.config.isValidWallSign((Sign) against.getState())) {
+        if (against.getType().equals(Material.WALL_SIGN) && Deadbolt.getConfig().isValidWallSign((Sign) against.getState())) {
             event.setCancelled(true);
             return;
         }
 
-        Deadbolted db = Deadbolted.get(block);
+        Deadbolted db = Deadbolt.get(block);
         switch (block.getType()) {
             case CHEST:
             case FURNACE:
@@ -63,21 +64,21 @@ public class BlockListener implements Listener {
             case BREWING_STAND:
             case BURNING_FURNACE:
             case ENCHANTMENT_TABLE:
-                if (plugin.config.hasPermission(player, getPermission(block.getType())) && plugin.config.reminder.add(player)) {
-                    plugin.config.sendMessage(player, ChatColor.GOLD, plugin.config.msg_reminder_lock_your_chests);
+                if (player.hasPermission(getPermission(block.getType())) && Deadbolt.getConfig().reminder.add(player)) {
+                    Deadbolt.getConfig().sendMessage(player, ChatColor.GOLD, Deadbolt.getConfig().msg_reminder_lock_your_chests);
                 }
                 if (db.isProtected() && !db.isOwner(player)) {
                     event.setCancelled(true);
-                    plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_container_expansion);
+                    Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_container_expansion);
                 }
                 return;
             case IRON_DOOR_BLOCK:
             case WOODEN_DOOR:
-                if (plugin.config.hasPermission(player, getPermission(block.getType())) && plugin.config.reminder.add(player)) {
-                    plugin.config.sendMessage(player, ChatColor.GOLD, plugin.config.msg_reminder_lock_your_chests);
+                if (player.hasPermission(getPermission(block.getType())) && Deadbolt.getConfig().reminder.add(player)) {
+                    Deadbolt.getConfig().sendMessage(player, ChatColor.GOLD, Deadbolt.getConfig().msg_reminder_lock_your_chests);
                 }
                 if (db.isProtected() && !db.isOwner(player)) {
-                    plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_door_expansion);
+                    Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_door_expansion);
                     Block upBlock = block.getRelative(BlockFace.UP);
                     block.setType(Material.STONE);
                     block.setType(Material.AIR);
@@ -87,20 +88,20 @@ public class BlockListener implements Listener {
                 }
                 return;
             case TRAP_DOOR:
-                if (plugin.config.hasPermission(player, getPermission(block.getType())) && plugin.config.reminder.add(player)) {
-                    plugin.config.sendMessage(player, ChatColor.GOLD, plugin.config.msg_reminder_lock_your_chests);
+                if (player.hasPermission(getPermission(block.getType())) && Deadbolt.getConfig().reminder.add(player)) {
+                    Deadbolt.getConfig().sendMessage(player, ChatColor.GOLD, Deadbolt.getConfig().msg_reminder_lock_your_chests);
                 }
                 if (db.isProtected() && !db.isOwner(player)) {
-                    plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_trapdoor_expansion);
+                    Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_trapdoor_expansion);
                     event.setCancelled(true);
                 }
                 return;
             case FENCE_GATE:
-                if (plugin.config.hasPermission(player, getPermission(block.getType())) && plugin.config.reminder.add(player)) {
-                    plugin.config.sendMessage(player, ChatColor.GOLD, plugin.config.msg_reminder_lock_your_chests);
+                if (player.hasPermission(getPermission(block.getType())) && Deadbolt.getConfig().reminder.add(player)) {
+                    Deadbolt.getConfig().sendMessage(player, ChatColor.GOLD, Deadbolt.getConfig().msg_reminder_lock_your_chests);
                 }
                 if (db.isProtected() && !db.isOwner(player)) {
-                    plugin.config.sendMessage(player, ChatColor.RED, plugin.config.msg_deny_fencegate_expansion);
+                    Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_fencegate_expansion);
                     event.setCancelled(true);
                 }
         }
@@ -109,7 +110,7 @@ public class BlockListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onBlockBurn(BlockBurnEvent event) {
         Block block = event.getBlock();
-        Deadbolted db = Deadbolted.get(block);
+        Deadbolted db = Deadbolt.get(block);
         if (db.isProtected() && !ListenerManager.canBlockBurn(db, event)) {
             event.setCancelled(true);
         }

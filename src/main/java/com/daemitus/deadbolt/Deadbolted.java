@@ -14,17 +14,9 @@ public final class Deadbolted {
     private Set<Block> traversed = new HashSet<Block>();
     private String owner = null;
     private Set<String> users = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
-    private static Deadbolt plugin;
+    public static DeadboltPlugin plugin;
 
-    public Deadbolted(final Deadbolt plugin) {
-        Deadbolted.plugin = plugin;
-    }
-
-    public static Deadbolted get(Block block) {
-        return new Deadbolted(block);
-    }
-
-    private Deadbolted(Block block) {
+    public Deadbolted(Block block) {
         search(block);
     }
 
@@ -36,7 +28,7 @@ public final class Deadbolted {
             case WALL_SIGN:
                 BlockState state = block.getState();
                 org.bukkit.block.Sign signState = (Sign) state;
-                if (plugin.config.isValidWallSign(signState)) {
+                if (Deadbolt.getConfig().isValidWallSign(signState)) {
                     search(Util.getSignAttached(signState));
                 }
                 break;
@@ -48,29 +40,29 @@ public final class Deadbolted {
                 searchFenceGate(block, true, true);
                 break;
             case TRAP_DOOR:
-                searchTrapDoor(block, true, plugin.config.vertical_trapdoors);
+                searchTrapDoor(block, true, Deadbolt.getConfig().vertical_trapdoors);
                 break;
             case DISPENSER:
-                searchSimpleBlock(block, plugin.config.group_dispensers, plugin.config.group_dispensers);
+                searchSimpleBlock(block, Deadbolt.getConfig().group_dispensers, Deadbolt.getConfig().group_dispensers);
                 break;
             case BREWING_STAND:
-                searchSimpleBlock(block, plugin.config.group_brewing_stands, plugin.config.group_brewing_stands);
+                searchSimpleBlock(block, Deadbolt.getConfig().group_brewing_stands, Deadbolt.getConfig().group_brewing_stands);
                 break;
             case ENCHANTMENT_TABLE:
-                searchSimpleBlock(block, plugin.config.group_enchantment_tables, plugin.config.group_enchantment_tables);
+                searchSimpleBlock(block, Deadbolt.getConfig().group_enchantment_tables, Deadbolt.getConfig().group_enchantment_tables);
                 break;
             case CAULDRON:
-                searchSimpleBlock(block, plugin.config.group_cauldrons, plugin.config.group_cauldrons);
+                searchSimpleBlock(block, Deadbolt.getConfig().group_cauldrons, Deadbolt.getConfig().group_cauldrons);
                 break;
             case FURNACE:
             case BURNING_FURNACE:
-                searchFurnace(block, plugin.config.group_furnaces, plugin.config.group_furnaces);
+                searchFurnace(block, Deadbolt.getConfig().group_furnaces, Deadbolt.getConfig().group_furnaces);
                 break;
             case CHEST:
                 searchChest(block, true, false);
                 break;
             default:
-                for (BlockFace bf : plugin.config.CARDINAL_FACES) {
+                for (BlockFace bf : Deadbolt.getConfig().CARDINAL_FACES) {
                     Block adjacent = block.getRelative(bf);
                     if (adjacent.getState().getData() instanceof TrapDoor) {
                         Block hinge = adjacent.getRelative(((TrapDoor) adjacent.getState().getData()).getAttachedFace());
@@ -94,7 +86,7 @@ public final class Deadbolted {
         if (!add(block)) {
             return;
         }
-        for (BlockFace bf : plugin.config.CARDINAL_FACES) {
+        for (BlockFace bf : Deadbolt.getConfig().CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getType().equals(block.getType())) {
                 searchDoor(adjacent, horizontal, vertical);
@@ -124,7 +116,7 @@ public final class Deadbolted {
         if (!add(block)) {
             return;
         }
-        for (BlockFace bf : plugin.config.CARDINAL_FACES) {
+        for (BlockFace bf : Deadbolt.getConfig().CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getType().equals(Material.FENCE_GATE)) {
                 searchFenceGate(adjacent, horizontal, vertical);
@@ -135,7 +127,7 @@ public final class Deadbolted {
             }
         }
         if (vertical) {
-            for (BlockFace bf : plugin.config.VERTICAL_FACES) {
+            for (BlockFace bf : Deadbolt.getConfig().VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getType().equals(Material.FENCE_GATE)) {
                     searchFenceGate(adjacent, horizontal, vertical);
@@ -151,7 +143,7 @@ public final class Deadbolted {
         Block hinge = block.getRelative(((TrapDoor) block.getState().getData()).getAttachedFace());
         parseNearbySigns(hinge);
         add(hinge);
-        for (BlockFace bf : plugin.config.CARDINAL_FACES) {
+        for (BlockFace bf : Deadbolt.getConfig().CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getState().getData() instanceof TrapDoor) {
                 searchTrapDoor(adjacent, horizontal, vertical);
@@ -160,7 +152,7 @@ public final class Deadbolted {
             }
         }
         if (vertical) {
-            for (BlockFace bf : plugin.config.VERTICAL_FACES) {
+            for (BlockFace bf : Deadbolt.getConfig().VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getState().getData() instanceof TrapDoor) {
                     searchTrapDoor(adjacent, horizontal, vertical);
@@ -180,7 +172,7 @@ public final class Deadbolted {
         if (!add(block)) {
             return;
         }
-        for (BlockFace bf : plugin.config.CARDINAL_FACES) {
+        for (BlockFace bf : Deadbolt.getConfig().CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getType().equals(block.getType())) {
                 searchSimpleBlock(adjacent, horizontal, vertical);
@@ -189,7 +181,7 @@ public final class Deadbolted {
             }
         }
         if (vertical) {
-            for (BlockFace bf : plugin.config.VERTICAL_FACES) {
+            for (BlockFace bf : Deadbolt.getConfig().VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getType().equals(block.getType())) {
                     searchSimpleBlock(adjacent, horizontal, vertical);
@@ -202,7 +194,7 @@ public final class Deadbolted {
         if (!add(block)) {
             return;
         }
-        for (BlockFace bf : plugin.config.CARDINAL_FACES) {
+        for (BlockFace bf : Deadbolt.getConfig().CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getState() instanceof Furnace) {
                 searchFurnace(adjacent, horizontal, vertical);
@@ -211,7 +203,7 @@ public final class Deadbolted {
             }
         }
         if (vertical) {
-            for (BlockFace bf : plugin.config.VERTICAL_FACES) {
+            for (BlockFace bf : Deadbolt.getConfig().VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getState() instanceof Furnace) {
                     searchFurnace(adjacent, horizontal, vertical);
@@ -224,7 +216,7 @@ public final class Deadbolted {
         if (!add(block)) {
             return;
         }
-        for (BlockFace bf : plugin.config.CARDINAL_FACES) {
+        for (BlockFace bf : Deadbolt.getConfig().CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (horizontal && adjacent.getState() instanceof Chest) {
                 searchChest(adjacent, horizontal, vertical);
@@ -233,7 +225,7 @@ public final class Deadbolted {
             }
         }
         if (vertical) {
-            for (BlockFace bf : plugin.config.VERTICAL_FACES) {
+            for (BlockFace bf : Deadbolt.getConfig().VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 if (adjacent.getState() instanceof Chest) {
                     searchChest(adjacent, horizontal, vertical);
@@ -243,7 +235,7 @@ public final class Deadbolted {
     }
 
     private void parseNearbySigns(Block block) {
-        for (BlockFace bf : plugin.config.CARDINAL_FACES) {
+        for (BlockFace bf : Deadbolt.getConfig().CARDINAL_FACES) {
             Block adjacent = block.getRelative(bf);
             if (adjacent.getType().equals(Material.WALL_SIGN)) {
                 parseSignAttached(adjacent, block);
@@ -261,13 +253,13 @@ public final class Deadbolted {
 
     private boolean parseSign(Sign sign) {
         String ident = Util.getLine(sign, 0);
-        if (plugin.config.isPrivate(ident)) {
+        if (Deadbolt.getConfig().isPrivate(ident)) {
             String line1 = Util.getLine(sign, 1);
             owner = line1.isEmpty() ? owner : line1;
             users.add(Util.getLine(sign, 2));
             users.add(Util.getLine(sign, 3));
             return true;
-        } else if (plugin.config.isMoreUsers(ident)) {
+        } else if (Deadbolt.getConfig().isMoreUsers(ident)) {
             users.add(Util.getLine(sign, 1));
             users.add(Util.getLine(sign, 2));
             users.add(Util.getLine(sign, 3));
@@ -300,7 +292,7 @@ public final class Deadbolted {
 
     public boolean isEveryone() {
         for (String line : users) {
-            if (plugin.config.isEveryone(line)) {
+            if (Deadbolt.getConfig().isEveryone(line)) {
                 return true;
             }
         }
@@ -309,7 +301,7 @@ public final class Deadbolted {
 
     public int getTimer() {
         for (String line : users) {
-            int timer = plugin.config.getTimer(line);
+            int timer = Deadbolt.getConfig().getTimer(line);
             if (timer != -1) {
                 return timer;
             }
@@ -367,17 +359,17 @@ public final class Deadbolted {
             }
         }
 
-        if (!isNaturalSound(block) && plugin.config.silent_door_sounds) {
+        if (!isNaturalSound(block) && Deadbolt.getConfig().silent_door_sounds) {
             block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 10);
         }
 
-        if (plugin.config.deny_timed_doors) {
+        if (Deadbolt.getConfig().deny_timed_doors) {
             return;
         }
         int delay = getTimer();
         if (delay == -1) {
-            if (plugin.config.forced_timed_doors) {
-                delay = plugin.config.forced_timed_doors_delay;
+            if (Deadbolt.getConfig().forced_timed_doors) {
+                delay = Deadbolt.getConfig().forced_timed_doors_delay;
             } else {
                 return;
             }
@@ -388,7 +380,7 @@ public final class Deadbolted {
         for (Block bl : validToggles) {
             if (ToggleDoorTask.timedBlocks.add(bl)) {
                 plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new ToggleDoorTask(bl,
-                        (runonce && plugin.config.timed_door_sounds && (isNaturalSound(bl) ? true : plugin.config.silent_door_sounds))),
+                        (runonce && Deadbolt.getConfig().timed_door_sounds && (isNaturalSound(bl) ? true : Deadbolt.getConfig().silent_door_sounds))),
                         delay * 20);
                 runonce = false;
             } else {
@@ -413,7 +405,7 @@ public final class Deadbolted {
             case IRON_DOOR_BLOCK:
                 return true;
             case TRAP_DOOR:
-                return plugin.config.vertical_trapdoors;
+                return Deadbolt.getConfig().vertical_trapdoors;
             default:
                 return false;
 
@@ -432,11 +424,13 @@ public final class Deadbolted {
     /**
      * The purpose of this is to let protections auto-expire if the owner did
      * not play for the last X days.
+     * @param playerToInform
+     * @return
      */
     public boolean isAutoExpired(Player playerToInform) {
         // Are we even supposed to use the auto-expire feature?
         // Is the feature perhaps disabled in the configuration?
-        if (Deadbolt.instance.config.auto_expire_days <= 0) {
+        if (Deadbolt.getConfig().auto_expire_days <= 0) {
             return false;
         }
 
@@ -459,17 +453,17 @@ public final class Deadbolted {
         }
         long millisSinceLastPlayed = System.currentTimeMillis() - lastPlayed;
         long daysSinceLastPlayed = (long) Math.floor(millisSinceLastPlayed / (1000 * 60 * 60 * 24));
-        long daysTillExpire = Deadbolt.instance.config.auto_expire_days - daysSinceLastPlayed;
+        long daysTillExpire = Deadbolt.getConfig().auto_expire_days - daysSinceLastPlayed;
         boolean expired = (daysTillExpire <= 0);
 
         if (expired) {
             if (playerToInform != null && !playerToInform.getName().equalsIgnoreCase(ownerString)) {
-                Deadbolt.instance.config.sendMessage(playerToInform, ChatColor.RED, Deadbolt.instance.config.msg_auto_expire_expired);
+                Deadbolt.getConfig().sendMessage(playerToInform, ChatColor.RED, Deadbolt.getConfig().msg_auto_expire_expired);
             }
             return true;
         } else {
             if (playerToInform != null && !playerToInform.getName().equalsIgnoreCase(ownerString)) {
-                Deadbolt.instance.config.sendMessage(playerToInform, ChatColor.YELLOW, Deadbolt.instance.config.msg_auto_expire_owner_x_days, ownerString, String.valueOf(daysTillExpire));
+                Deadbolt.getConfig().sendMessage(playerToInform, ChatColor.YELLOW, Deadbolt.getConfig().msg_auto_expire_owner_x_days, ownerString, String.valueOf(daysTillExpire));
             }
             return false;
         }
