@@ -44,8 +44,7 @@ public final class Util {
     }
 
     public static String truncateName(String name) {
-        return name;
-        //return name.substring(0, name.length() > 13 ? 13 : name.length());
+        return name.substring(0, name.length() > 13 ? 13 : name.length());
     }
 
     public static Block getSignAttached(Sign signState) {
@@ -59,8 +58,8 @@ public final class Util {
         while (TWO_COLORS.matcher(line).find()) {
             line = TWO_COLORS.matcher(line).replaceAll("$2$3");
         }
-        //line = FORMAT_LENGTH.matcher(line).replaceAll("$1");
-        //line = line.substring(0, line.length() > 15 ? 15 : line.length());
+        line = FORMAT_LENGTH.matcher(line).replaceAll("$1");
+        line = line.substring(0, line.length() > 15 ? 15 : line.length());
         return line;
     }
 
@@ -69,7 +68,7 @@ public final class Util {
     }
 
     public static String createColor(String text) {
-        return text == null ? null : PSEUDO_COLOR.matcher(text).replaceAll("ยง$1");
+        return text == null ? null : PSEUDO_COLOR.matcher(text).replaceAll("ง$1");
     }
 
     public static String getLine(Sign signBlock, int line) {
