@@ -4,7 +4,6 @@ import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.DeadboltPlugin;
 import com.daemitus.deadbolt.Deadbolted;
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.Plugin;
 
-public final class ListenerManager {
+public class ListenerManager {
 
     private final DeadboltPlugin plugin = Deadbolt.getPlugin();
     private static List<ListenerInterface> loaded = new ArrayList<ListenerInterface>();
@@ -75,12 +74,12 @@ public final class ListenerManager {
                     if (!loaded.contains(listener)) {
                         loaded.add(listener);
                         listener.load(plugin);
-                        Deadbolt.getLogger().log(Level.INFO, "[Deadbolt] " + listener.getClass().getSimpleName() + " is now enabled");
+                        Deadbolt.getLogger().info(listener.getClass().getSimpleName() + " is now enabled");
                     }
                 } else {
                     if (loaded.contains(listener)) {
                         loaded.remove(listener);
-                        Deadbolt.getLogger().log(Level.INFO, "[Deadbolt] " + listener.getClass().getSimpleName() + " disabled due to one or more dependencies");
+                        Deadbolt.getLogger().info(listener.getClass().getSimpleName() + " disabled due to one or more dependencies");
                     }
                 }
             }
