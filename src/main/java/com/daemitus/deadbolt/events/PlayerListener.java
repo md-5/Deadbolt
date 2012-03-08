@@ -117,12 +117,12 @@ public class PlayerListener implements Listener {
                 Sign signState = (Sign) signBlock.getState();
 
                 if (!db.isProtected()) {
-                    signState.setLine(0, Util.formatForSign(Deadbolt.getConfig().default_colors_private[0] + Deadbolt.getConfig().locale_private));
-                    signState.setLine(1, Util.formatForSign(Deadbolt.getConfig().default_colors_private[1] + Util.truncateName(player.getName())));
+                    signState.setLine(0, Util.formatForSign(Deadbolt.getConfig().locale_private));
+                    signState.setLine(1, Util.formatForSign(player.getName()));
                 } else if (db.isOwner(player)) {
-                    signState.setLine(0, Util.formatForSign(Deadbolt.getConfig().default_colors_moreusers[0] + Deadbolt.getConfig().locale_moreusers));
+                    signState.setLine(0, Util.formatForSign(Deadbolt.getConfig().locale_moreusers));
                 } else if (player.hasPermission(Perm.admin_create)) {
-                    signState.setLine(0, Util.formatForSign(Deadbolt.getConfig().default_colors_moreusers[0] + Deadbolt.getConfig().locale_moreusers));
+                    signState.setLine(0, Util.formatForSign(Deadbolt.getConfig().locale_moreusers));
                     Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_admin_sign_placed, db.getOwner());
                 } else {
                     Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_sign_quickplace, db.getOwner());

@@ -32,12 +32,6 @@ public final class SignListener implements Listener {
         Block block = event.getBlock();
         String[] lines = event.getLines();
 
-        if (player.hasPermission(Perm.user_color)) {
-            for (int i = 0; i < 4; i++) {
-                lines[i] = Util.createColor(lines[i]);
-            }
-        }
-
         //fix for clientside sign edit hack
         if (event.getBlock().getType().equals(Material.WALL_SIGN)) {
             Sign sign = (Sign) event.getBlock().getState();
@@ -54,14 +48,6 @@ public final class SignListener implements Listener {
         boolean isMoreUsers = Deadbolt.getConfig().isMoreUsers(ident);
         if (!isPrivate && !isMoreUsers) {
             return;
-        } else if (isPrivate) {
-            for (int i = 0; i < 4; i++) {
-                lines[i] = Deadbolt.getConfig().default_colors_private[i] + lines[i];
-            }
-        } else if (isMoreUsers) {
-            for (int i = 0; i < 4; i++) {
-                lines[i] = Deadbolt.getConfig().default_colors_moreusers[i] + lines[i];
-            }
         }
 
         Deadbolted db = null;
@@ -91,15 +77,15 @@ public final class SignListener implements Listener {
                 Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_admin_sign_placed, db.getOwner());
             case SUCCESS:
                 if (isPrivate) {
-                    String owner = Util.removeColor(lines[1]);
+                    String owner = Util.formatForSign(lines[1]);
                     if (owner.isEmpty()) {
-                        lines[1] = Deadbolt.getConfig().default_colors_private[1] + Util.truncateName(player.getName());
+                        lines[1] = Util.formatForSign(player.getName());
                     } else if (player.hasPermission(Perm.admin_create)) {
                         if (plugin.getServer().getPlayerExact(owner) == null) {
                             Deadbolt.getConfig().sendMessage(player, ChatColor.YELLOW, Deadbolt.getConfig().msg_admin_warning_player_not_found, owner);
                         }
                     } else {
-                        lines[1] = Deadbolt.getConfig().default_colors_private[1] + Util.truncateName(player.getName());
+                        lines[1] = Util.formatForSign(player.getName());
                     }
                 }
 

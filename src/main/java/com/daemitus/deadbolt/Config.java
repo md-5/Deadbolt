@@ -94,9 +94,6 @@ public class Config {
     public String msg_auto_expire_owner_x_days = "Expires if %1$s is offline %2$s more days";
     public String msg_auto_expire_expired = "This protection has expired";
     //------------------------------------------------------------------------//
-    public String[] default_colors_private = {"", "", "", ""};
-    public String[] default_colors_moreusers = {"", "", "", ""};
-    //------------------------------------------------------------------------//    
 
     public void load() {
         File configFile = new File(plugin.getDataFolder(), "config.yml");
@@ -125,15 +122,6 @@ public class Config {
         timed_door_sounds = config.getBoolean("timed_door_sounds", timed_door_sounds);
         forced_timed_doors = config.getBoolean("forced_timed_doors", forced_timed_doors);
         forced_timed_doors_delay = config.getInt("forced_timed_doors_delay", forced_timed_doors_delay);
-
-        default_colors_private[0] = "§" + config.getString("default_colors_private_line_1", "0");
-        default_colors_private[1] = "§" + config.getString("default_colors_private_line_2", "0");
-        default_colors_private[2] = "§" + config.getString("default_colors_private_line_3", "0");
-        default_colors_private[3] = "§" + config.getString("default_colors_private_line_4", "0");
-        default_colors_moreusers[0] = "§" + config.getString("default_colors_moreusers_line_1", "0");
-        default_colors_moreusers[1] = "§" + config.getString("default_colors_moreusers_line_2", "0");
-        default_colors_moreusers[2] = "§" + config.getString("default_colors_moreusers_line_3", "0");
-        default_colors_moreusers[3] = "§" + config.getString("default_colors_moreusers_line_4", "0");
 
         String language = config.getString("language", "english.yml");
 
@@ -251,10 +239,12 @@ public class Config {
         return isPrivate(line) || isMoreUsers(line);
     }
 
+    // TODO: This has nothing to do with configuration. Should be placed somewhere else 
     public void sendMessage(Player player, ChatColor color, String message, String... args) {
         player.sendMessage(color + TAG + String.format(message, (Object[]) args));
     }
 
+ // TODO: This has nothing to do with configuration. Should be placed somewhere else
     public void sendBroadcast(String permission, ChatColor color, String message, String... args) {
         Bukkit.getServer().broadcast(color + TAG + String.format(message, (Object[]) args), permission);
     }
