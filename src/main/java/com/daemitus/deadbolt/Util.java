@@ -1,6 +1,8 @@
 package com.daemitus.deadbolt;
 
 import java.util.regex.Pattern;
+
+import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -8,11 +10,7 @@ import org.bukkit.block.Sign;
 public final class Util {
 
     protected static final String patternBracketTooLong = "\\[.{14,}\\]";
-    private static final Pattern DETECT_COLORS = Pattern.compile("\u00A7([0-9a-f])");
-    private static final Pattern TWO_COLORS = Pattern.compile("(\u00A7[0-9a-f])(\\s*)(§[0-9a-f])");
     private static final Pattern PSEUDO_COLOR = Pattern.compile("\\&([0-9a-f])");
-    private static final Pattern UNNEEDED_COLOR = Pattern.compile("^\u00A70");
-    private static final Pattern FORMAT_LENGTH = Pattern.compile("(^.{0,15}).*");
 
     public static BlockFace getFacingFromByte(byte b) {
         switch (b) {
@@ -43,29 +41,34 @@ public final class Util {
                 return 0x0;
         }
     }
-
-    public static String truncateName(String name) {
-        return name.substring(0, name.length() > 13 ? 13 : name.length());
+    
+    public static String formatForSign(String line, int maxlen) {
+    	line = removeColor(line);
+    	line = line.substring(0, line.length() > maxlen ? maxlen : line.length());
+        return line;
+    }
+    
+    public static String formatForSign(String line) {
+    	return formatForSign(line, 15);
+    }
+    
+    public static boolean signNameEqualsPlayerName(String signName, String playerName) {
+    	String playerName15 = formatForSign(playerName);
+    	
+    	if (signName.equalsIgnoreCase(playerName15)) {
+    		return true;
+    	}
+    	
+    	return false;
     }
 
     public static Block getSignAttached(Sign signState) {
         return signState.getBlock().getRelative(((org.bukkit.material.Sign) signState.getData()).getAttachedFace());
     }
 
-    public static String formatForSign(String line) {
-        while (UNNEEDED_COLOR.matcher(line).find()) {
-            line = UNNEEDED_COLOR.matcher(line).replaceAll("");
-        }
-        while (TWO_COLORS.matcher(line).find()) {
-            line = TWO_COLORS.matcher(line).replaceAll("$2$3");
-        }
-        line = FORMAT_LENGTH.matcher(line).replaceAll("$1");
-        line = line.substring(0, line.length() > 15 ? 15 : line.length());
-        return line;
-    }
-
     public static String removeColor(String text) {
-        return text == null ? null : DETECT_COLORS.matcher(text).replaceAll("");
+    	if (text == null) return null;
+    	return ChatColor.stripColor(text);
     }
 
     public static String createColor(String text) {
@@ -73,7 +76,7 @@ public final class Util {
     }
 
     public static String getLine(Sign signBlock, int line) {
-        return DETECT_COLORS.matcher(signBlock.getLine(line)).replaceAll("");
+        return removeColor(signBlock.getLine(line));
     }
 
     public static String truncate(String text) {

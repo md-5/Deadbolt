@@ -18,6 +18,8 @@ public class DeadboltPlugin extends JavaPlugin implements Listener {
         Deadbolt.setPlugin(this);
         Deadbolt.setConfig(new Config());
 
+        new PlayerNameUtil(this);
+        
         new BlockListener();
         new PlayerListener();
         new SignListener();
