@@ -7,7 +7,7 @@ import org.bukkit.Effect;
 import org.bukkit.block.Block;
 import org.bukkit.material.Door;
 
-public final class ToggleDoorTask implements Runnable {
+public class ToggleDoorTask implements Runnable {
 
     public static Set<Block> timedBlocks = new HashSet<Block>();
     private final Block block;
@@ -21,7 +21,7 @@ public final class ToggleDoorTask implements Runnable {
     @Override
     public void run() {
         if (timedBlocks.remove(block)) {
-            ((Door) block.getState()).setOpen(false);
+            block.setData((byte) (block.getData() ^ 0x4));
             if (sound) {
                 block.getWorld().playEffect(block.getLocation(), Effect.DOOR_TOGGLE, 10);
             }

@@ -2,7 +2,7 @@
 language: english.yml
 
 # Protections will auto-expire if the player is offline for X days. 0 means never expire.
-auto_expire_days: 20
+auto_expire_days: 0
 
 # Allows trapdoors to link with each other vertically
 vertical_trapdoors: true

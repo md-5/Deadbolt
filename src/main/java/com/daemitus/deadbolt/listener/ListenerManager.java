@@ -62,14 +62,12 @@ public class ListenerManager {
 
     public void checkListener(Plugin pl) {
         String name = pl.getDescription().getName();
-
         for (ListenerInterface listener : unloaded) {
             if (listener.getDependencies().contains(name)) {
                 boolean enableListener = true;
                 for (String depends : listener.getDependencies()) {
                     enableListener &= Bukkit.getServer().getPluginManager().getPlugin(depends).isEnabled();
                 }
-
                 if (enableListener) {
                     if (!loaded.contains(listener)) {
                         loaded.add(listener);

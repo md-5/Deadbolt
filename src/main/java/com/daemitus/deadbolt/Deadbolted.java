@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.material.Door;
 import org.bukkit.material.TrapDoor;
 
-public final class Deadbolted {
+public class Deadbolted {
 
     private Set<Block> blocks = new HashSet<Block>();
     private Set<Block> traversed = new HashSet<Block>();
@@ -424,6 +424,7 @@ public final class Deadbolted {
     /**
      * The purpose of this is to let protections auto-expire if the owner did
      * not play for the last X days.
+     *
      * @param playerToInform
      * @return
      */

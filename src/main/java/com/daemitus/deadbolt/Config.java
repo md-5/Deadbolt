@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -251,8 +252,8 @@ public class Config {
         return isPrivate(line) || isMoreUsers(line);
     }
 
-    public void sendMessage(Player player, ChatColor color, String message, String... args) {
-        player.sendMessage(color + TAG + String.format(message, (Object[]) args));
+    public void sendMessage(CommandSender sender, ChatColor color, String message, String... args) {
+        sender.sendMessage(color + TAG + String.format(message, (Object[]) args));
     }
 
     public void sendBroadcast(String permission, ChatColor color, String message, String... args) {
