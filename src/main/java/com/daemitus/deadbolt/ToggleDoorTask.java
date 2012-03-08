@@ -18,7 +18,6 @@ public final class ToggleDoorTask implements Runnable {
         this.sound = sound;
     }
 
-    @Override
     public void run() {
         if (timedBlocks.remove(block)) {
             ((Door) block.getState()).setOpen(false);
