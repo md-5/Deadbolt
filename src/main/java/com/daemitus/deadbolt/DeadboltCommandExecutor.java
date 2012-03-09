@@ -87,9 +87,7 @@ public class DeadboltCommandExecutor implements CommandExecutor {
         for (int i = 1; i < args.length; i++) {
             text += args[i] + (i + 1 < args.length ? " " : "");
         }
-        if (player.hasPermission(Perm.user_color)) {
-            text = Util.createColor(text);
-        }
+
         text = Util.formatForSign(text);
         if (lineNum == 0) {
             if (Util.removeColor(lines[0]).equalsIgnoreCase(Util.removeColor(text))) {
@@ -116,11 +114,11 @@ public class DeadboltCommandExecutor implements CommandExecutor {
         boolean isMoreUsers = Deadbolt.getConfig().isMoreUsers(Util.removeColor(lines[0]));
         if (isPrivate) {
             for (int i = 0; i < 4; i++) {
-                lines[i] = Util.formatForSign(Deadbolt.getConfig().default_colors_private[i] + lines[i]);
+                lines[i] = Util.formatForSign(lines[i]);
             }
         } else if (isMoreUsers) {
             for (int i = 0; i < 4; i++) {
-                lines[i] = Util.formatForSign(Deadbolt.getConfig().default_colors_moreusers[i] + lines[i]);
+                lines[i] = Util.formatForSign(lines[i]);
             }
         }
         sign.update(true);

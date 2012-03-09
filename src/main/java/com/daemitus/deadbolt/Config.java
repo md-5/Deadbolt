@@ -252,10 +252,12 @@ public class Config {
         return isPrivate(line) || isMoreUsers(line);
     }
 
+    // TODO: This has nothing to do with configuration. Should be placed somewhere else 
     public void sendMessage(CommandSender sender, ChatColor color, String message, String... args) {
         sender.sendMessage(color + TAG + String.format(message, (Object[]) args));
     }
 
+    // TODO: This has nothing to do with configuration. Should be placed somewhere else
     public void sendBroadcast(String permission, ChatColor color, String message, String... args) {
         Bukkit.getServer().broadcast(color + TAG + String.format(message, (Object[]) args), permission);
     }
