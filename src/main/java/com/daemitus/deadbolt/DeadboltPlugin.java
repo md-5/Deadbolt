@@ -24,10 +24,10 @@ public class DeadboltPlugin extends JavaPlugin implements Listener {
         new PlayerListener();
         new SignListener();
         if (Deadbolt.getConfig().deny_endermen) {
-            new ExplosionListener();
+            new EndermanListener();
         }
         if (Deadbolt.getConfig().deny_explosions) {
-            new EntityListener();
+            new ExplosionListener();
         }
         if (Deadbolt.getConfig().deny_entity_interact) {
             new EntityInteractListener();

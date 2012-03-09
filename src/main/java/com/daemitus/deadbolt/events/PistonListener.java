@@ -23,7 +23,7 @@ public class PistonListener implements Listener {
             Deadbolted db = Deadbolt.get(block);
             if (db.isProtected() && !ListenerManager.canPistonExtend(db, event)) {
                 event.setCancelled(true);
-                return;
+                break;
             }
         }
     }

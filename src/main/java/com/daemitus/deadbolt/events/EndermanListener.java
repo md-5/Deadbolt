@@ -5,24 +5,24 @@ import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.listener.ListenerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Enderman;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 
-public class ExplosionListener implements Listener {
+public class EndermanListener implements Listener {
 
-    public ExplosionListener() {
+    public EndermanListener() {
         Bukkit.getServer().getPluginManager().registerEvents(this, Deadbolt.getPlugin());
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onEntityExplode(EntityExplodeEvent event) {
-        for (Block block : event.blockList()) {
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityChangeBlock(EntityChangeBlockEvent event) {
+        if (event.getEntity() instanceof Enderman) {
+            Block block = event.getBlock();
             Deadbolted db = Deadbolt.get(block);
-            if (db.isProtected() && !ListenerManager.canEntityExplode(db, event)) {
+            if (db.isProtected() && !ListenerManager.canEndermanPickup(db, event)) {
                 event.setCancelled(true);
-                break;
             }
         }
     }
