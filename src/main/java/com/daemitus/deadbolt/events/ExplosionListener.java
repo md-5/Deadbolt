@@ -5,7 +5,6 @@
 package com.daemitus.deadbolt.events;
 
 import com.daemitus.deadbolt.Deadbolt;
-import com.daemitus.deadbolt.DeadboltPlugin;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.listener.ListenerManager;
 import org.bukkit.Bukkit;

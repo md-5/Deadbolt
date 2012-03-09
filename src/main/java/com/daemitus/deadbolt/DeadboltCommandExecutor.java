@@ -16,8 +16,7 @@ public class DeadboltCommandExecutor implements CommandExecutor {
     public DeadboltCommandExecutor(final DeadboltPlugin plugin) {
         this.plugin = plugin;
     }
-
-    @Override
+    
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             return onPlayerCommand((Player) sender, command, label, args);
@@ -215,4 +214,5 @@ public class DeadboltCommandExecutor implements CommandExecutor {
         Deadbolt.getConfig().load();
         return true;
     }
+    
 }
