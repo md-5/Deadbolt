@@ -1,8 +1,6 @@
 package com.daemitus.deadbolt;
 
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.bukkit.*;
 import org.bukkit.block.*;
@@ -30,7 +28,7 @@ public class Deadbolted {
             case WALL_SIGN:
                 BlockState state = block.getState();
                 org.bukkit.block.Sign signState = (Sign) state;
-                if (Deadbolt.getConfig().isValidWallSign(signState)) {
+                if (Deadbolt.getLanguage().isValidWallSign(signState)) {
                     search(Util.getSignAttached(signState));
                 }
                 break;
@@ -255,13 +253,13 @@ public class Deadbolted {
 
     private boolean parseSign(Sign sign) {
         String ident = Util.getLine(sign, 0);
-        if (Deadbolt.getConfig().isPrivate(ident)) {
+        if (Deadbolt.getLanguage().isPrivate(ident)) {
             String line1 = Util.getLine(sign, 1);
             owner = line1.isEmpty() ? owner : line1;
             users.add(Util.getLine(sign, 2));
             users.add(Util.getLine(sign, 3));
             return true;
-        } else if (Deadbolt.getConfig().isMoreUsers(ident)) {
+        } else if (Deadbolt.getLanguage().isMoreUsers(ident)) {
             users.add(Util.getLine(sign, 1));
             users.add(Util.getLine(sign, 2));
             users.add(Util.getLine(sign, 3));
@@ -271,11 +269,11 @@ public class Deadbolted {
     }
 
     public boolean isProtected() {
-        return owner != null && ! owner.isEmpty();
+        return owner != null && !owner.isEmpty();
     }
 
     public boolean isOwner(Player player) {
-    	return Util.signNameEqualsPlayerName(owner, player.getName());
+        return Util.signNameEqualsPlayerName(owner, player.getName());
     }
 
     public boolean isUser(Player player) {
@@ -293,7 +291,7 @@ public class Deadbolted {
 
     public boolean isEveryone() {
         for (String line : users) {
-            if (Deadbolt.getConfig().isEveryone(line)) {
+            if (Deadbolt.getLanguage().isEveryone(line)) {
                 return true;
             }
         }
@@ -302,7 +300,7 @@ public class Deadbolted {
 
     public int getTimer() {
         for (String line : users) {
-            int timer = Deadbolt.getConfig().getTimer(line);
+            int timer = Deadbolt.getLanguage().getTimer(line);
             if (timer != -1) {
                 return timer;
             }
@@ -430,17 +428,17 @@ public class Deadbolted {
      * @return
      */
     public boolean isAutoExpired(Player playerToInform) {
-    	// Are we even supposed to use the auto-expire feature?
+        // Are we even supposed to use the auto-expire feature?
         // Is the feature perhaps disabled in the configuration?
         if (Deadbolt.getConfig().auto_expire_days <= 0) {
             return false;
         }
-        
+
         log("Entered isAutoExpired whith playerToInform = ", playerToInform);
 
         // Fetch the owner string
         String signPlayerName = this.getOwner();
-        log("signPlayerName is" ,signPlayerName);
+        log("signPlayerName is", signPlayerName);
 
         // That must be a valid player name
         if (!Pattern.matches("^[a-zA-Z0-9_]{2,16}$", signPlayerName)) {
@@ -449,19 +447,19 @@ public class Deadbolted {
 
         // What time is it?
         long now = System.currentTimeMillis();
-        
+
         // This is an unwanted necessity due to sign lines being one char to short.
         // More than one player name could cover for the auto expire.
         // Find all those valid owners.
         Set<String> allValidOwnerNames = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
         if (signPlayerName.length() >= 15) {
-        	log("signPlayerName was longer than maxLen");
-        	allValidOwnerNames.addAll(PlayerNameUtil.getAllPlayerNamesCaseinsensitivelyStartingWith(signPlayerName));
+            log("signPlayerName was longer than maxLen");
+            allValidOwnerNames.addAll(PlayerNameUtil.getAllPlayerNamesCaseinsensitivelyStartingWith(signPlayerName));
         } else {
-        	String fixedSignPlayerName = PlayerNameUtil.fixPlayerNameCase(signPlayerName);
-        	if (fixedSignPlayerName != null) {
-        		allValidOwnerNames.add(fixedSignPlayerName);
-        	}
+            String fixedSignPlayerName = PlayerNameUtil.fixPlayerNameCase(signPlayerName);
+            if (fixedSignPlayerName != null) {
+                allValidOwnerNames.add(fixedSignPlayerName);
+            }
         }
         log("allValidOwnerNames are", allValidOwnerNames);
         // At least one of them needs to have been online recently
@@ -469,40 +467,40 @@ public class Deadbolted {
         long daysTillExpire = 0;
         String nameThatCovered = null;
         for (String validOwnerName : allValidOwnerNames) {
-        	OfflinePlayer offlineOwner = Bukkit.getOfflinePlayer(validOwnerName);
+            OfflinePlayer offlineOwner = Bukkit.getOfflinePlayer(validOwnerName);
             long lastPlayed = offlineOwner.getLastPlayed();
             long millisSinceLastPlayed = now - lastPlayed;
             long daysSinceLastPlayed = (long) Math.floor(millisSinceLastPlayed / (1000 * 60 * 60 * 24));
             daysTillExpire = Deadbolt.getConfig().auto_expire_days - daysSinceLastPlayed;
             if (daysTillExpire > 0) {
-            	nameThatCovered = validOwnerName;
-            	log("This name covered for it!", nameThatCovered);
-            	hasExpired = false;
-            	break;
+                nameThatCovered = validOwnerName;
+                log("This name covered for it!", nameThatCovered);
+                hasExpired = false;
+                break;
             }
         }
-        
+
         log("hasExpired is", hasExpired);
 
         if (hasExpired) {
             if (playerToInform != null && !playerToInform.getName().equalsIgnoreCase(nameThatCovered)) {
-                Deadbolt.getConfig().sendMessage(playerToInform, ChatColor.RED, Deadbolt.getConfig().msg_auto_expire_expired);
+                Deadbolt.getConfig().sendMessage(playerToInform, ChatColor.RED, Deadbolt.getLanguage().msg_auto_expire_expired);
             }
         } else {
             if (playerToInform != null && !playerToInform.getName().equalsIgnoreCase(nameThatCovered)) {
-                Deadbolt.getConfig().sendMessage(playerToInform, ChatColor.YELLOW, Deadbolt.getConfig().msg_auto_expire_owner_x_days, nameThatCovered, String.valueOf(daysTillExpire));
+                Deadbolt.getConfig().sendMessage(playerToInform, ChatColor.YELLOW, Deadbolt.getLanguage().msg_auto_expire_owner_x_days, nameThatCovered, String.valueOf(daysTillExpire));
             }
         }
-        
+
         return hasExpired;
     }
-    
+
     public void log(Object... things) {
-    	List<String> strings = new ArrayList<String>();
-    	for (Object thing : things) {
-    		strings.add(thing == null ? "NULL" : thing.toString());
-    	}
-    	Logger.getLogger("Minecraft").log(Level.INFO, strings.toString());
+        List<String> strings = new ArrayList<String>();
+        for (Object thing : things) {
+            strings.add(thing == null ? "NULL" : thing.toString());
+        }
+        Deadbolt.getLogger().info(things.toString());
     }
 
     public boolean isAutoExpired() {

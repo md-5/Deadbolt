@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.Set;
 import org.bukkit.Effect;
 import org.bukkit.block.Block;
-import org.bukkit.material.Door;
 
 public class ToggleDoorTask implements Runnable {
 

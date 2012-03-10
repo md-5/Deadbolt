@@ -8,16 +8,10 @@ import org.bukkit.entity.Player;
 public final class Deadbolt {
 
     private static DeadboltPlugin plugin;
-    private static Config config;
 
     public static void setPlugin(DeadboltPlugin plugin) {
         Deadbolt.plugin = plugin;
         Deadbolted.plugin = plugin;
-    }
-
-    public static void setConfig(Config config) {
-        Deadbolt.config = config;
-        config.load();
     }
 
     public static DeadboltPlugin getPlugin() {
@@ -29,7 +23,11 @@ public final class Deadbolt {
     }
 
     public static Config getConfig() {
-        return config;
+        return plugin.c;
+    }
+
+    public static Language getLanguage() {
+        return plugin.l;
     }
 
     /**

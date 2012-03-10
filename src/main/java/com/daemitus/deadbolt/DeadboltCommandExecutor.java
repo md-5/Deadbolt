@@ -16,7 +16,7 @@ public class DeadboltCommandExecutor implements CommandExecutor {
     public DeadboltCommandExecutor(final DeadboltPlugin plugin) {
         this.plugin = plugin;
     }
-    
+
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             return onPlayerCommand((Player) sender, command, label, args);
@@ -30,11 +30,11 @@ public class DeadboltCommandExecutor implements CommandExecutor {
 
         if (arg == 0) {
             player.sendMessage(ChatColor.RED + "Deadbolt v" + plugin.getDescription().getVersion());
-            player.sendMessage(ChatColor.RED + Deadbolt.getConfig().cmd_help_editsign);
-            player.sendMessage(ChatColor.RED + Deadbolt.getConfig().cmd_help_fix);
-            player.sendMessage(ChatColor.RED + Deadbolt.getConfig().cmd_help_fixAll);
+            player.sendMessage(ChatColor.RED + Deadbolt.getLanguage().cmd_help_editsign);
+            player.sendMessage(ChatColor.RED + Deadbolt.getLanguage().cmd_help_fix);
+            player.sendMessage(ChatColor.RED + Deadbolt.getLanguage().cmd_help_fixAll);
             if (player.hasPermission(Perm.command_reload)) {
-                player.sendMessage(ChatColor.RED + Deadbolt.getConfig().cmd_help_reload);
+                player.sendMessage(ChatColor.RED + Deadbolt.getLanguage().cmd_help_reload);
             }
             return true;
         }
@@ -53,28 +53,28 @@ public class DeadboltCommandExecutor implements CommandExecutor {
         } catch (NumberFormatException ex) {
         }
 
-        Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().cmd_command_not_found);
+        Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().cmd_command_not_found);
         return true;
     }
 
     private boolean reload(Player player) {
-        Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().cmd_reload);
-        Deadbolt.getConfig().load();
+        Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().cmd_reload);
+        Deadbolt.getPlugin().bootStrap();
         return true;
     }
 
     private boolean lineChange(Player player, int lineNum, String[] args) {
         if (lineNum < 1 || lineNum > 4) {
-            Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().cmd_line_num_out_of_range);
+            Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().cmd_line_num_out_of_range);
             return true;
         }
         Block block = Deadbolt.getConfig().selectedSign.get(player);
         if (block == null) {
-            Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().cmd_sign_not_selected);
+            Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().cmd_sign_not_selected);
             return true;
         }
         if (!block.getType().equals(Material.WALL_SIGN)) {
-            Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().cmd_sign_selected_error);
+            Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().cmd_sign_selected_error);
             Deadbolt.getConfig().selectedSign.remove(player);
             return true;
         }
@@ -93,25 +93,25 @@ public class DeadboltCommandExecutor implements CommandExecutor {
             if (Util.removeColor(lines[0]).equalsIgnoreCase(Util.removeColor(text))) {
                 lines[0] = text;
             } else {
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().cmd_identifier_not_changeable);
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().cmd_identifier_not_changeable);
                 return true;
             }
-        } else if (lineNum == 1 && Deadbolt.getConfig().isPrivate(Util.removeColor(lines[0]))) {
+        } else if (lineNum == 1 && Deadbolt.getLanguage().isPrivate(Util.removeColor(lines[0]))) {
             if (Util.removeColor(lines[1]).equalsIgnoreCase(Util.removeColor(text))) {
                 lines[1] = text;
             } else {
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().cmd_owner_not_changeable);
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().cmd_owner_not_changeable);
                 return true;
             }
         } else {
             lines[lineNum] = text;
         }
-        if (Deadbolt.getConfig().deselectSign) {
+        if (Deadbolt.getConfig().clear_sign_selection) {
             Deadbolt.getConfig().selectedSign.remove(player);
         }
 
-        boolean isPrivate = Deadbolt.getConfig().isPrivate(Util.removeColor(lines[0]));
-        boolean isMoreUsers = Deadbolt.getConfig().isMoreUsers(Util.removeColor(lines[0]));
+        boolean isPrivate = Deadbolt.getLanguage().isPrivate(Util.removeColor(lines[0]));
+        boolean isMoreUsers = Deadbolt.getLanguage().isMoreUsers(Util.removeColor(lines[0]));
         if (isPrivate) {
             for (int i = 0; i < 4; i++) {
                 lines[i] = Util.formatForSign(lines[i]);
@@ -122,7 +122,7 @@ public class DeadboltCommandExecutor implements CommandExecutor {
             }
         }
         sign.update(true);
-        Deadbolt.getConfig().sendMessage(player, ChatColor.GOLD, Deadbolt.getConfig().cmd_sign_updated);
+        Deadbolt.getConfig().sendMessage(player, ChatColor.GOLD, Deadbolt.getLanguage().cmd_sign_updated);
         return true;
     }
 
@@ -135,9 +135,9 @@ public class DeadboltCommandExecutor implements CommandExecutor {
                 fixHelper(player, block);
             } else if (player.hasPermission(Perm.admin_commands)) {
                 fixHelper(player, block);
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_admin_block_fixed, db.getOwner());
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_admin_block_fixed, db.getOwner());
             } else {
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().cmd_fix_notowned);
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().cmd_fix_notowned);
             }
         }
         return true;
@@ -154,7 +154,7 @@ public class DeadboltCommandExecutor implements CommandExecutor {
                 block.setData((byte) (block.getData() ^ 0x4));
                 break;
             default:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().cmd_fix_bad_type);
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().cmd_fix_bad_type);
         }
     }
 
@@ -166,10 +166,10 @@ public class DeadboltCommandExecutor implements CommandExecutor {
             if (db.isOwner(player)) {
                 fixAllHelper(player, block, db);
             } else if (player.hasPermission(Perm.admin_commands)) {
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_admin_block_fixed, db.getOwner());
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_admin_block_fixed, db.getOwner());
                 fixAllHelper(player, block, db);
             } else {
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().cmd_fix_notowned);
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().cmd_fix_notowned);
             }
         }
         return true;
@@ -188,7 +188,7 @@ public class DeadboltCommandExecutor implements CommandExecutor {
                 }
                 break;
             default:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().cmd_fix_bad_type);
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().cmd_fix_bad_type);
         }
     }
 
@@ -203,14 +203,13 @@ public class DeadboltCommandExecutor implements CommandExecutor {
             return creload(sender);
         }
 
-        sender.sendMessage("[Deadbolt] " + Deadbolt.getConfig().cmd_console_command_not_found);
+        sender.sendMessage("[Deadbolt] " + Deadbolt.getLanguage().cmd_console_command_not_found);
         return true;
     }
 
     private boolean creload(CommandSender sender) {
-        sender.sendMessage("[Deadbolt] " + Deadbolt.getConfig().cmd_console_reload);
-        Deadbolt.getConfig().load();
+        sender.sendMessage("[Deadbolt] " + Deadbolt.getLanguage().cmd_console_reload);
+        Deadbolt.getPlugin().bootStrap();
         return true;
     }
-    
 }

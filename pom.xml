@@ -21,7 +21,30 @@
             <url>http://ess.ementalo.com/nexus/content/groups/public/</url>
         </repository>
     </repositories>
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>com.md_5:AnnotatedConfig</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>
@@ -62,6 +85,16 @@
             <groupId>net.milkbowl</groupId>
             <artifactId>Vault</artifactId>
             <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.md_5</groupId>
+            <artifactId>AnnotatedConfig</artifactId>
+            <version>0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>0.10.8</version>
         </dependency>
     </dependencies>
 </project>

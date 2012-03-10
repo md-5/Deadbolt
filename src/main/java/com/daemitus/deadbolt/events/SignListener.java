@@ -12,7 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
-public final class SignListener implements Listener {
+public class SignListener implements Listener {
 
     private final DeadboltPlugin plugin = Deadbolt.getPlugin();
 
@@ -36,7 +36,7 @@ public final class SignListener implements Listener {
         if (event.getBlock().getType().equals(Material.WALL_SIGN)) {
             Sign sign = (Sign) event.getBlock().getState();
             String ident = Util.getLine(sign, 0);
-            if (Deadbolt.getConfig().isPrivate(ident) || Deadbolt.getConfig().isMoreUsers(ident)) {
+            if (Deadbolt.getLanguage().isPrivate(ident) || Deadbolt.getLanguage().isMoreUsers(ident)) {
                 event.setCancelled(true);
                 return;
             }
@@ -44,8 +44,8 @@ public final class SignListener implements Listener {
         //fix end
 
         String ident = Util.removeColor(lines[0]);
-        boolean isPrivate = Deadbolt.getConfig().isPrivate(ident);
-        boolean isMoreUsers = Deadbolt.getConfig().isMoreUsers(ident);
+        boolean isPrivate = Deadbolt.getLanguage().isPrivate(ident);
+        boolean isMoreUsers = Deadbolt.getLanguage().isMoreUsers(ident);
         if (!isPrivate && !isMoreUsers) {
             return;
         }
@@ -54,7 +54,7 @@ public final class SignListener implements Listener {
         Result result = Result.PLACEHOLDER;
         if (block.getType().equals(Material.WALL_SIGN)) {
             Sign sign = (Sign) block.getState();
-            sign.setLine(0, isPrivate ? Deadbolt.getConfig().locale_private : Deadbolt.getConfig().locale_moreusers);
+            sign.setLine(0, isPrivate ? Deadbolt.getLanguage().signtext_private : Deadbolt.getLanguage().signtext_moreusers);
             sign.update();
             db = Deadbolt.get(block);
             result = validateSignPlacement(db, player, isPrivate);
@@ -62,7 +62,7 @@ public final class SignListener implements Listener {
             for (byte b = 0x2; b < 0x6 && !result.equals(Result.SUCCESS) && !result.equals(Result.ADMIN_SIGN_PLACED); b++) {
                 block.setTypeIdAndData(Material.WALL_SIGN.getId(), b, false);
                 Sign sign = (Sign) block.getState();
-                sign.setLine(0, isPrivate ? Deadbolt.getConfig().locale_private : Deadbolt.getConfig().locale_moreusers);
+                sign.setLine(0, isPrivate ? Deadbolt.getLanguage().signtext_private : Deadbolt.getLanguage().signtext_moreusers);
                 sign.update();
                 db = Deadbolt.get(block);
                 Result newresult = validateSignPlacement(db, player, isPrivate);
@@ -74,7 +74,7 @@ public final class SignListener implements Listener {
 
         switch (result) {
             case ADMIN_SIGN_PLACED:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_admin_sign_placed, db.getOwner());
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_admin_sign_placed, db.getOwner());
             case SUCCESS:
                 if (isPrivate) {
                     String owner = Util.formatForSign(lines[1]);
@@ -82,7 +82,7 @@ public final class SignListener implements Listener {
                         lines[1] = Util.formatForSign(player.getName());
                     } else if (player.hasPermission(Perm.admin_create)) {
                         if (plugin.getServer().getPlayerExact(owner) == null) {
-                            Deadbolt.getConfig().sendMessage(player, ChatColor.YELLOW, Deadbolt.getConfig().msg_admin_warning_player_not_found, owner);
+                            Deadbolt.getConfig().sendMessage(player, ChatColor.YELLOW, Deadbolt.getLanguage().msg_admin_warning_player_not_found, owner);
                         }
                     } else {
                         lines[1] = Util.formatForSign(player.getName());
@@ -99,44 +99,44 @@ public final class SignListener implements Listener {
                 }
                 return;
             case DENY_SIGN_PRIVATE_ALREADY_OWNED:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_sign_private_already_owned);
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_sign_private_already_owned);
                 break;
             case DENY_SIGN_MOREUSERS_ALREADY_OWNED:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_sign_moreusers_already_owned);
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_sign_moreusers_already_owned);
                 break;
             case DENY_SIGN_MOREUSERS_NO_PRIVATE:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_sign_moreusers_no_private);
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_sign_moreusers_no_private);
                 break;
             case DENY_BLOCK_PERM_CHEST:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_perm, "chests");
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm, "chests");
                 break;
             case DENY_BLOCK_PERM_DISPENSER:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_perm, "dispensers");
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm, "dispensers");
                 break;
             case DENY_BLOCK_PERM_FURNACE:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_perm, "furnaces");
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm, "furnaces");
                 break;
             case DENY_BLOCK_PERM_DOOR:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_perm, "doors");
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm, "doors");
                 break;
             case DENY_BLOCK_PERM_TRAPDOOR:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_perm, "trapdoors");
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm, "trapdoors");
                 break;
             case DENY_BLOCK_PERM_FENCEGATE:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_perm, "fencegates");
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm, "fencegates");
                 break;
             case DENY_BLOCK_PERM_BREWERY:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_perm, "brewing stands");
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm, "brewing stands");
                 break;
             case DENY_BLOCK_PERM_CAULDRON:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_perm, "cauldrons");
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm, "cauldrons");
                 break;
             case DENY_BLOCK_PERM_ENCHANT:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_block_perm, "enchantment tables");
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm, "enchantment tables");
                 break;
             default:
                 //case DENY_SIGN_PRIVATE_NOTHING_NEARBY:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getConfig().msg_deny_sign_private_nothing_nearby);
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_sign_private_nothing_nearby);
                 break;
         }
         event.setCancelled(true);
