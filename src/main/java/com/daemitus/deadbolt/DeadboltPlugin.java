@@ -5,7 +5,6 @@ import com.daemitus.deadbolt.listener.ListenerManager;
 import com.md_5.config.FileYamlStorage;
 import java.io.File;
 import java.util.regex.Pattern;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;

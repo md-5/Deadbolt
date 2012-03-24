@@ -434,11 +434,11 @@ public class Deadbolted {
             return false;
         }
 
-        log("Entered isAutoExpired whith playerToInform = ", playerToInform);
+        //log("Entered isAutoExpired whith playerToInform = ", playerToInform);
 
         // Fetch the owner string
         String signPlayerName = this.getOwner();
-        log("signPlayerName is", signPlayerName);
+        //log("signPlayerName is", signPlayerName);
 
         // That must be a valid player name
         if (!Pattern.matches("^[a-zA-Z0-9_]{2,16}$", signPlayerName)) {
@@ -453,7 +453,7 @@ public class Deadbolted {
         // Find all those valid owners.
         Set<String> allValidOwnerNames = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
         if (signPlayerName.length() >= 15) {
-            log("signPlayerName was longer than maxLen");
+            //log("signPlayerName was longer than maxLen");
             allValidOwnerNames.addAll(PlayerNameUtil.getAllPlayerNamesCaseinsensitivelyStartingWith(signPlayerName));
         } else {
             String fixedSignPlayerName = PlayerNameUtil.fixPlayerNameCase(signPlayerName);
@@ -461,7 +461,7 @@ public class Deadbolted {
                 allValidOwnerNames.add(fixedSignPlayerName);
             }
         }
-        log("allValidOwnerNames are", allValidOwnerNames);
+        //log("allValidOwnerNames are", allValidOwnerNames);
         // At least one of them needs to have been online recently
         boolean hasExpired = true;
         long daysTillExpire = 0;
@@ -474,13 +474,13 @@ public class Deadbolted {
             daysTillExpire = Deadbolt.getConfig().auto_expire_days - daysSinceLastPlayed;
             if (daysTillExpire > 0) {
                 nameThatCovered = validOwnerName;
-                log("This name covered for it!", nameThatCovered);
+                //log("This name covered for it!", nameThatCovered);
                 hasExpired = false;
                 break;
             }
         }
 
-        log("hasExpired is", hasExpired);
+        //log("hasExpired is", hasExpired);
 
         if (hasExpired) {
             if (playerToInform != null && !playerToInform.getName().equalsIgnoreCase(nameThatCovered)) {
@@ -495,13 +495,13 @@ public class Deadbolted {
         return hasExpired;
     }
 
-    public void log(Object... things) {
+    /*public void log(Object... things) {
         List<String> strings = new ArrayList<String>();
         for (Object thing : things) {
             strings.add(thing == null ? "NULL" : thing.toString());
         }
         Deadbolt.getLogger().info(things.toString());
-    }
+    }*/
 
     public boolean isAutoExpired() {
         return this.isAutoExpired(null);
