@@ -60,7 +60,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.2.3-R0.2-SNAPSHOT</version>
+            <version>1.2.5-R1.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>de.bananaco</groupId>
@@ -70,7 +70,7 @@
         <dependency>
             <groupId>com.palmergames.bukkit</groupId>
             <artifactId>Towny</artifactId>
-            <version>1.0</version>
+            <version>2.0</version>
         </dependency>
         <dependency>
             <groupId>net.sacredlabyrinth.phaed</groupId>

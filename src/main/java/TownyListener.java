@@ -4,8 +4,7 @@ import com.daemitus.deadbolt.DeadboltPlugin;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.Util;
 import com.daemitus.deadbolt.listener.DeadboltListener;
-import com.palmergames.bukkit.towny.NotRegisteredException;
-import com.palmergames.bukkit.towny.Towny;
+import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.*;
 import java.io.File;
 import java.io.FileWriter;
@@ -13,7 +12,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -23,7 +21,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public final class TownyListener extends DeadboltListener {
 
-    private TownyUniverse towny;
     private static boolean denyWilderness = false;
     private static boolean wildernessOverride = false;
     private static boolean mayorOverride = false;
@@ -37,8 +34,6 @@ public final class TownyListener extends DeadboltListener {
     @Override
     public void load(final DeadboltPlugin plugin) {
         try {
-            towny = ((Towny) Bukkit.getServer().getPluginManager().getPlugin("Towny")).getTownyUniverse();
-
             File configFile = new File(plugin.getDataFolder() + "/listeners/TownyListener.yml");
             checkFile(configFile);
             YamlConfiguration config = new YamlConfiguration();
@@ -74,9 +69,9 @@ public final class TownyListener extends DeadboltListener {
         Player player = event.getPlayer();
         Block block = event.getClickedBlock();
         try {
-            for (TownyWorld tw : towny.getWorlds()) {
+            for (TownyWorld tw : TownyUniverse.getDataSource().getWorlds()) {
                 if (tw.getName().equalsIgnoreCase(player.getWorld().getName()) && tw.isUsingTowny()) {
-                    Resident resident = towny.getResident(player.getName());
+                    Resident resident = TownyUniverse.getDataSource().getResident(player.getName());
 
                     Town town = resident.getTown();
                     if (db.getUsers().contains(Util.truncate("[" + town.getName().toLowerCase() + "]"))) { //town check
@@ -100,14 +95,14 @@ public final class TownyListener extends DeadboltListener {
                         return true;
                     }
 
-                    if (wildernessOverride && towny.isWilderness(block)) {
+                    if (wildernessOverride && TownyUniverse.isWilderness(block)) {
                         return true;
                     }
                     if (mayorOverride) {
-                        return towny.getTownBlock(block.getLocation()).getTown().getMayor().equals(resident);
+                        return TownyUniverse.getTownBlock(block.getLocation()).getTown().getMayor().equals(resident);
                     }
                     if (assistantOverride) {
-                        return towny.getTownBlock(block.getLocation()).getTown().getAssistants().contains(resident);
+                        return TownyUniverse.getTownBlock(block.getLocation()).getTown().getAssistants().contains(resident);
                     }
                     break;
                 }
@@ -136,14 +131,14 @@ public final class TownyListener extends DeadboltListener {
         }
 
         //is this world using towny?
-        for (TownyWorld townyWorld : towny.getWorlds()) {
+        for (TownyWorld townyWorld : TownyUniverse.getDataSource().getWorlds()) {
             if (townyWorld.getName().equalsIgnoreCase(block.getWorld().getName()) && !townyWorld.isUsingTowny()) {
                 return true;
             }
         }
 
         //wilderness check
-        if (towny.isWilderness(block)) {
+        if (TownyUniverse.isWilderness(block)) {
             if (denyWilderness) {
                 Deadbolt.getConfig().sendMessage(player, ChatColor.RED, "You can only protect blocks inside of a town");
                 return false;
@@ -153,8 +148,8 @@ public final class TownyListener extends DeadboltListener {
         }
 
         try {
-            Resident resident = towny.getResident(player.getName());
-            TownBlock townBlock = towny.getTownBlock(block.getLocation());
+            Resident resident = TownyUniverse.getDataSource().getResident(player.getName());
+            TownBlock townBlock = TownyUniverse.getTownBlock(block.getLocation());
 
             //Owner
             if (resident.hasTownBlock(townBlock)) {
@@ -242,31 +237,19 @@ public final class TownyListener extends DeadboltListener {
         return false;
     }
 
-    private boolean isAlly(Resident resident, TownBlock townBlock) {
-        try {
-            //Ally by town resident
-            if (townBlock.getTown().hasResident(resident)) {
-                return true;
-            }
-        } catch (NotRegisteredException ex) {
+    private boolean isAlly(Resident resident, TownBlock townBlock) throws NotRegisteredException {
+        //Ally by town resident
+        if (townBlock.getTown().hasResident(resident)) {
+            return true;
         }
-
-        try {
-            //Ally by direct Nation membership
-            if (townBlock.getTown().getNation().hasTown(resident.getTown())) {
-                return true;
-            }
-        } catch (NotRegisteredException ex) {
+        //Ally by direct Nation membership
+        if (townBlock.getTown().getNation().hasTown(resident.getTown())) {
+            return true;
         }
-
-        try {
-            //Ally by Nation alliance
-            if (townBlock.getTown().getNation().hasAlly(resident.getTown().getNation())) {
-                return true;
-            }
-        } catch (NotRegisteredException ex) {
+        //Ally by Nation alliance
+        if (townBlock.getTown().getNation().hasAlly(resident.getTown().getNation())) {
+            return true;
         }
-
         return false;
     }
 }
