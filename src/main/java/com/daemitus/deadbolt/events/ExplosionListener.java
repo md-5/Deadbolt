@@ -1,5 +1,7 @@
 package com.daemitus.deadbolt.events;
 
+import java.util.Iterator;
+
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.listener.ListenerManager;
@@ -18,11 +20,12 @@ public class ExplosionListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityExplode(EntityExplodeEvent event) {
-        for (Block block : event.blockList()) {
+        Iterator<Block> iter = event.blockList().iterator();
+        while (iter.hasNext()) {
+            Block block = iter.next();
             Deadbolted db = Deadbolt.get(block);
             if (db.isProtected() && !ListenerManager.canEntityExplode(db, event)) {
-                event.setCancelled(true);
-                break;
+                iter.remove();
             }
         }
     }
