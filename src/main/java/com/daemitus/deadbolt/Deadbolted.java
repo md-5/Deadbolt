@@ -1,7 +1,6 @@
 package com.daemitus.deadbolt;
 
 import java.util.*;
-import java.util.regex.Pattern;
 import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.entity.Player;

@@ -7,12 +7,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
+import org.bukkit.craftbukkit.block.CraftBlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -110,6 +113,14 @@ public class PlayerListener implements Listener {
 
                 Deadbolted db = Deadbolt.get(against);
                 if (!ListenerManager.canSignChangeQuick(db, event)) {
+                    return false;
+                }
+                
+                // Trigger an on block place event so other plugins can cancel this.
+                BlockState replacedBlockState = new CraftBlockState(signBlock);
+                BlockPlaceEvent triggeredEvent = new BlockPlaceEvent(signBlock, replacedBlockState, against, event.getItem(), player, true);
+                Bukkit.getPluginManager().callEvent(triggeredEvent);
+                if (triggeredEvent.isCancelled()) {
                     return false;
                 }
 
