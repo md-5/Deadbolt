@@ -441,7 +441,7 @@ public class Deadbolted {
         //log("signPlayerName is", signPlayerName);
 
         // That must be a valid player name
-        if (!Pattern.matches("^[a-zA-Z0-9_]{2,16}$", signPlayerName)) {
+        if ( ! PlayerNameUtil.isValidPlayerName(signPlayerName)) {
             return false;
         }
 
@@ -451,16 +451,8 @@ public class Deadbolted {
         // This is an unwanted necessity due to sign lines being one char to short.
         // More than one player name could cover for the auto expire.
         // Find all those valid owners.
-        Set<String> allValidOwnerNames = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
-        if (signPlayerName.length() >= 15) {
-            //log("signPlayerName was longer than maxLen");
-            allValidOwnerNames.addAll(PlayerNameUtil.getAllPlayerNamesCaseinsensitivelyStartingWith(signPlayerName));
-        } else {
-            String fixedSignPlayerName = PlayerNameUtil.fixPlayerNameCase(signPlayerName);
-            if (fixedSignPlayerName != null) {
-                allValidOwnerNames.add(fixedSignPlayerName);
-            }
-        }
+        Set<String> allValidOwnerNames = PlayerNameUtil.interpretPlayerNameFromSign(signPlayerName);
+        
         //log("allValidOwnerNames are", allValidOwnerNames);
         // At least one of them needs to have been online recently
         boolean hasExpired = true;

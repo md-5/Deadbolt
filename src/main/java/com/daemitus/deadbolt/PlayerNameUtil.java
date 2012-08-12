@@ -3,6 +3,7 @@ package com.daemitus.deadbolt;
 import java.io.File;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -77,6 +78,14 @@ public class PlayerNameUtil implements Listener {
 	// -------------------------------------------- //
 	
 	/**
+	 * This method simply checks if the playerName is a valid one.
+	 * Mojangs rules for Minecraft character registration is used.
+	 */
+	public static boolean isValidPlayerName(final String playerName) {
+		return Pattern.matches("^[a-zA-Z0-9_]{2,16}$", playerName);
+	}
+	
+	/**
 	 * This method takes a player name and returns the same name but with correct case.
 	 * Null is returned if the correct case can not be determined.
 	 */
@@ -115,6 +124,32 @@ public class PlayerNameUtil implements Listener {
 		lowerCaseStartOfNameToCorrectNames.put(lowercaseStartOfName, shallowCopyForCache);
 		
 		return ret;
+	}
+	
+	/**
+	 * In Minecraft a playername can be 16 characters long. One sign line is however only 15 characters long.
+	 * If we find a 15 character long playername on a sign it could thus refer to more than one player.
+	 * This method finds all possible matching player names.
+	 */
+	public static Set<String> interpretPlayerNameFromSign(String playerNameFromSign) {
+		Set<String> ret = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+		
+		if (playerNameFromSign.length() > 15) {
+			// This case will in reality not happen.
+			ret.add(playerNameFromSign);
+			return ret;
+		}
+		
+        if (playerNameFromSign.length() == 15) {
+            ret.addAll(PlayerNameUtil.getAllPlayerNamesCaseinsensitivelyStartingWith(playerNameFromSign));
+        } else {
+            String fixedPlayerName = PlayerNameUtil.fixPlayerNameCase(playerNameFromSign);
+            if (fixedPlayerName != null) {
+                ret.add(fixedPlayerName);
+            }
+        }
+        
+        return ret;
 	}
 	
 	// -------------------------------------------- //

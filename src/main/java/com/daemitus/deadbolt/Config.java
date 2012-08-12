@@ -20,7 +20,7 @@ public class Config extends AnnotatedConfig {
     @ConfigComment("File to load for messages")
     public String language = "english.yml";
     @ConfigComment("Protections will auto-expire if the player is offline for X days. 0 means never expire.")
-    public int auto_expire_days;
+    public int auto_expire_days = 0;
     @ConfigComment("Allows trapdoors to link with each other vertically")
     public boolean vertical_trapdoors = true;
     @ConfigComment("Allows furnaces to act like chests, one sign for all connected blocks")
