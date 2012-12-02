@@ -68,41 +68,6 @@
             <version>1.4.5-R0.2</version>
         </dependency>
         <dependency>
-            <groupId>de.bananaco</groupId>
-            <artifactId>bPermissions</artifactId>
-            <version>1.7.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.palmergames.bukkit</groupId>
-            <artifactId>Towny</artifactId>
-            <version>2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sacredlabyrinth.phaed</groupId>
-            <artifactId>SimpleClans</artifactId>
-            <version>2.1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.anjocaido</groupId>
-            <artifactId>GroupManager</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.platymuus.bukkit</groupId>
-            <artifactId>BukkitPermissions</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>ru.tehkode</groupId>
-            <artifactId>PermissionsEx</artifactId>
-            <version>1.18</version>
-        </dependency>
-        <dependency>
-            <groupId>net.milkbowl</groupId>
-            <artifactId>Vault</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <dependency>
             <groupId>com.md_5</groupId>
             <artifactId>AnnotatedConfig</artifactId>
             <version>0.1</version>
