@@ -1,7 +1,6 @@
 package com.daemitus.deadbolt.events;
 
 import com.daemitus.deadbolt.*;
-import com.daemitus.deadbolt.listener.ListenerManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -21,6 +20,7 @@ public class SignListener implements Listener {
     }
 
     private enum Result {
+
         DENY_SIGN_PRIVATE_ALREADY_OWNED, ADMIN_SIGN_PLACED, DENY_SIGN_MOREUSERS_ALREADY_OWNED, DENY_SIGN_PRIVATE_NOTHING_NEARBY, DENY_SIGN_MOREUSERS_NO_PRIVATE, SUCCESS, PLACEHOLDER, DENY_BLOCK_PERM_CHEST, DENY_BLOCK_PERM_FURNACE, DENY_BLOCK_PERM_DISPENSER, DENY_BLOCK_PERM_FENCEGATE, DENY_BLOCK_PERM_DOOR, DENY_BLOCK_PERM_TRAPDOOR, DENY_BLOCK_PERM_BREWERY, DENY_BLOCK_PERM_CAULDRON, DENY_BLOCK_PERM_ENCHANT;
     }
 
@@ -93,9 +93,6 @@ public class SignListener implements Listener {
                     sign.setLine(i, Util.formatForSign(lines[i]));
                 }
                 sign.update();
-                if (!ListenerManager.canSignChange(db, event)) {
-                    break;
-                }
                 return;
             case DENY_SIGN_PRIVATE_ALREADY_OWNED:
                 Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_sign_private_already_owned);

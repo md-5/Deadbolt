@@ -1,7 +1,6 @@
 package com.daemitus.deadbolt.events;
 
 import com.daemitus.deadbolt.*;
-import com.daemitus.deadbolt.listener.ListenerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -112,10 +111,7 @@ public class PlayerListener implements Listener {
                 }
 
                 Deadbolted db = Deadbolt.get(against);
-                if (!ListenerManager.canSignChangeQuick(db, event)) {
-                    return false;
-                }
-                
+
                 // Trigger an on block place event so other plugins can cancel this.
                 BlockState replacedBlockState = new CraftBlockState(signBlock);
                 BlockPlaceEvent triggeredEvent = new BlockPlaceEvent(signBlock, replacedBlockState, against, event.getItem(), player, true);
@@ -198,7 +194,7 @@ public class PlayerListener implements Listener {
             return true;
         }
 
-        if (db.isUser(player) || ListenerManager.canPlayerInteract(db, event)) {
+        if (db.isUser(player)) {
             db.toggleDoors(block);
             return true;
         }
@@ -225,7 +221,7 @@ public class PlayerListener implements Listener {
             return true;
         }
 
-        if (db.isUser(player) || ListenerManager.canPlayerInteract(db, event)) {
+        if (db.isUser(player)) {
             return true;
         }
 

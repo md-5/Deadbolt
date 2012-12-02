@@ -2,7 +2,6 @@ package com.daemitus.deadbolt.events;
 
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
-import com.daemitus.deadbolt.listener.ListenerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -21,7 +20,7 @@ public class PistonListener implements Listener {
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
         for (Block block : event.getBlocks()) {
             Deadbolted db = Deadbolt.get(block);
-            if (db.isProtected() && !ListenerManager.canPistonExtend(db, event)) {
+            if (db.isProtected()) {
                 event.setCancelled(true);
                 break;
             }
@@ -34,7 +33,7 @@ public class PistonListener implements Listener {
         Block extension = piston.getRelative(event.getDirection());
         Block block = extension.getRelative(event.getDirection());
         Deadbolted db = Deadbolt.get(block);
-        if (db.isProtected() && !ListenerManager.canPistonRetract(db, event)) {
+        if (db.isProtected()) {
             // TODO why cant we just cancel
             event.setCancelled(true);
             piston.setData((byte) (piston.getData() ^ 0x8));

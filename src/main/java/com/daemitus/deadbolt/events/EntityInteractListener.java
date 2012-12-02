@@ -2,7 +2,6 @@ package com.daemitus.deadbolt.events;
 
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
-import com.daemitus.deadbolt.listener.ListenerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -19,7 +18,7 @@ public class EntityInteractListener implements Listener {
     public void onEntityInteract(EntityInteractEvent event) {
         Block block = event.getBlock();
         Deadbolted db = Deadbolt.get(block);
-        if (db.isProtected() && !ListenerManager.canEntityInteract(db, event)) {
+        if (db.isProtected()) {
             event.setCancelled(true);
         }
     }

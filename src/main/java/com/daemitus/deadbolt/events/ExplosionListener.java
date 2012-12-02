@@ -4,7 +4,6 @@ import java.util.Iterator;
 
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
-import com.daemitus.deadbolt.listener.ListenerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -24,7 +23,7 @@ public class ExplosionListener implements Listener {
         while (iter.hasNext()) {
             Block block = iter.next();
             Deadbolted db = Deadbolt.get(block);
-            if (db.isProtected() && !ListenerManager.canEntityExplode(db, event)) {
+            if (db.isProtected()) {
                 iter.remove();
             }
         }

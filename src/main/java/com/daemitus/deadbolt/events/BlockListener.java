@@ -4,7 +4,6 @@ import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.DeadboltPlugin;
 import com.daemitus.deadbolt.Deadbolted;
 import com.daemitus.deadbolt.Perm;
-import com.daemitus.deadbolt.listener.ListenerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -32,7 +31,7 @@ public class BlockListener implements Listener {
         Player player = event.getPlayer();
         Deadbolted db = Deadbolt.get(block);
 
-        if (db.isProtected() && !db.isAutoExpired() && !db.isOwner(player) && !ListenerManager.canBlockBreak(db, event)) {
+        if (db.isProtected() && !db.isAutoExpired() && !db.isOwner(player)) {
             if (player.hasPermission(Perm.admin_break)) {
                 Deadbolt.getConfig().sendBroadcast(Perm.admin_broadcast_break, ChatColor.RED, Deadbolt.getLanguage().msg_admin_break, player.getName(), db.getOwner());
             } else {
@@ -109,7 +108,7 @@ public class BlockListener implements Listener {
     public void onBlockBurn(BlockBurnEvent event) {
         Block block = event.getBlock();
         Deadbolted db = Deadbolt.get(block);
-        if (db.isProtected() && !ListenerManager.canBlockBurn(db, event)) {
+        if (db.isProtected()) {
             event.setCancelled(true);
         }
     }
