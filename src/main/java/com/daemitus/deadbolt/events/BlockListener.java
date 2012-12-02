@@ -61,6 +61,9 @@ public class BlockListener implements Listener {
             case BREWING_STAND:
             case BURNING_FURNACE:
             case ENCHANTMENT_TABLE:
+            case ANVIL:
+            case ENDER_CHEST:
+            case BEACON:
                 if (player.hasPermission(getPermission(block.getType())) && Deadbolt.getConfig().reminder.add(player)) {
                     Deadbolt.getConfig().sendMessage(player, ChatColor.GOLD, Deadbolt.getLanguage().msg_reminder_lock_your_chests);
                 }
@@ -135,6 +138,10 @@ public class BlockListener implements Listener {
                 return Perm.user_create_trapdoor;
             case FENCE_GATE:
                 return Perm.user_create_fencegate;
+            case ANVIL:
+                return Perm.user_create_anvil;
+            case ENDER_CHEST:
+                return Perm.user_create_ender;
             default:
                 return null;
         }

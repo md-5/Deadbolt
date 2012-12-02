@@ -21,7 +21,7 @@ public class SignListener implements Listener {
 
     private enum Result {
 
-        DENY_SIGN_PRIVATE_ALREADY_OWNED, ADMIN_SIGN_PLACED, DENY_SIGN_MOREUSERS_ALREADY_OWNED, DENY_SIGN_PRIVATE_NOTHING_NEARBY, DENY_SIGN_MOREUSERS_NO_PRIVATE, SUCCESS, PLACEHOLDER, DENY_BLOCK_PERM_CHEST, DENY_BLOCK_PERM_FURNACE, DENY_BLOCK_PERM_DISPENSER, DENY_BLOCK_PERM_FENCEGATE, DENY_BLOCK_PERM_DOOR, DENY_BLOCK_PERM_TRAPDOOR, DENY_BLOCK_PERM_BREWERY, DENY_BLOCK_PERM_CAULDRON, DENY_BLOCK_PERM_ENCHANT;
+        DENY_SIGN_PRIVATE_ALREADY_OWNED, ADMIN_SIGN_PLACED, DENY_SIGN_MOREUSERS_ALREADY_OWNED, DENY_SIGN_PRIVATE_NOTHING_NEARBY, DENY_SIGN_MOREUSERS_NO_PRIVATE, SUCCESS, PLACEHOLDER, DENY_BLOCK_PERM;
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -103,32 +103,8 @@ public class SignListener implements Listener {
             case DENY_SIGN_MOREUSERS_NO_PRIVATE:
                 Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_sign_moreusers_no_private);
                 break;
-            case DENY_BLOCK_PERM_CHEST:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm, "chests");
-                break;
-            case DENY_BLOCK_PERM_DISPENSER:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm, "dispensers");
-                break;
-            case DENY_BLOCK_PERM_FURNACE:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm, "furnaces");
-                break;
-            case DENY_BLOCK_PERM_DOOR:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm, "doors");
-                break;
-            case DENY_BLOCK_PERM_TRAPDOOR:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm, "trapdoors");
-                break;
-            case DENY_BLOCK_PERM_FENCEGATE:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm, "fencegates");
-                break;
-            case DENY_BLOCK_PERM_BREWERY:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm, "brewing stands");
-                break;
-            case DENY_BLOCK_PERM_CAULDRON:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm, "cauldrons");
-                break;
-            case DENY_BLOCK_PERM_ENCHANT:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm, "enchantment tables");
+            case DENY_BLOCK_PERM:
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm);
                 break;
             default:
                 //case DENY_SIGN_PRIVATE_NOTHING_NEARBY:
@@ -177,54 +153,72 @@ public class SignListener implements Listener {
                 boolean brewery = false;
                 boolean cauldron = false;
                 boolean enchant = false;
+                boolean beacon = false;
+                boolean ender = false;
+                boolean anvil = false;
                 for (Block setBlock : db.getBlocks()) {
                     //not authorized to protect?
                     switch (setBlock.getType()) {
                         case CHEST:
                             if (!chest && !(chest = player.hasPermission(Perm.user_create_chest))) {
-                                return Result.DENY_BLOCK_PERM_CHEST;
+                                return Result.DENY_BLOCK_PERM;
                             }
                             break;
                         case DISPENSER:
                             if (!dispenser && !(dispenser = player.hasPermission(Perm.user_create_dispenser))) {
-                                return Result.DENY_BLOCK_PERM_DISPENSER;
+                                return Result.DENY_BLOCK_PERM;
                             }
                             break;
                         case FURNACE:
                         case BURNING_FURNACE:
                             if (!furnace && !(furnace = player.hasPermission(Perm.user_create_furnace))) {
-                                return Result.DENY_BLOCK_PERM_FURNACE;
+                                return Result.DENY_BLOCK_PERM;
                             }
                             break;
                         case WOODEN_DOOR:
                         case IRON_DOOR_BLOCK:
                             if (!door && !(door = player.hasPermission(Perm.user_create_door))) {
-                                return Result.DENY_BLOCK_PERM_DOOR;
+                                return Result.DENY_BLOCK_PERM;
                             }
                             break;
                         case TRAP_DOOR:
                             if (!trap && !(trap = player.hasPermission(Perm.user_create_trapdoor))) {
-                                return Result.DENY_BLOCK_PERM_TRAPDOOR;
+                                return Result.DENY_BLOCK_PERM;
                             }
                             break;
                         case FENCE_GATE:
                             if (!gate && !(gate = player.hasPermission(Perm.user_create_fencegate))) {
-                                return Result.DENY_BLOCK_PERM_FENCEGATE;
+                                return Result.DENY_BLOCK_PERM;
                             }
                             break;
                         case BREWING_STAND:
                             if (!brewery && !(brewery = player.hasPermission(Perm.user_create_brewery))) {
-                                return Result.DENY_BLOCK_PERM_BREWERY;
+                                return Result.DENY_BLOCK_PERM;
                             }
                             break;
                         case CAULDRON:
                             if (!cauldron && !(cauldron = player.hasPermission(Perm.user_create_cauldron))) {
-                                return Result.DENY_BLOCK_PERM_CAULDRON;
+                                return Result.DENY_BLOCK_PERM;
                             }
                             break;
                         case ENCHANTMENT_TABLE:
                             if (!enchant && !(enchant = player.hasPermission(Perm.user_create_enchant))) {
-                                return Result.DENY_BLOCK_PERM_ENCHANT;
+                                return Result.DENY_BLOCK_PERM;
+                            }
+                            break;
+                        case ENDER_CHEST:
+                            if (!ender && !(ender = player.hasPermission(Perm.user_create_ender))) {
+                                return Result.DENY_BLOCK_PERM;
+                            }
+                            break;
+                        case ANVIL:
+                            if (!anvil && !(anvil = player.hasPermission(Perm.user_create_anvil))) {
+                                return Result.DENY_BLOCK_PERM;
+                            }
+                            break;
+                        case BEACON:
+                            if (!beacon && !(enchant = player.hasPermission(Perm.user_create_beacon))) {
+                                return Result.DENY_BLOCK_PERM;
                             }
                             break;
                     }

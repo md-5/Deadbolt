@@ -62,7 +62,7 @@ public class Language extends AnnotatedConfig {
     public String msg_deny_sign_moreusers_already_owned = "You don't own this block";
     public String msg_deny_sign_moreusers_no_private = "No sign with [Private] nearby";
     public String msg_deny_sign_quickplace = "You cant protect this block, %1$s already has";
-    public String msg_deny_block_perm = "";
+    public String msg_deny_block_perm = "You do not have permission to protect this type of block";
     public String msg_reminder_lock_your_chests = "Place a sign headed [Private] next to your block to lock it";
     public String msg_auto_expire_owner_x_days = "Expires if %1$s is offline %2$s more days";
     public String msg_auto_expire_expired = "This protection has expired";
