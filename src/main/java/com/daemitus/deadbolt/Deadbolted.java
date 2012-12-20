@@ -4,7 +4,9 @@ import java.util.*;
 import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.entity.Player;
+import org.bukkit.material.Attachable;
 import org.bukkit.material.Door;
+import org.bukkit.material.MaterialData;
 import org.bukkit.material.TrapDoor;
 
 public class Deadbolted {
@@ -243,8 +245,11 @@ public class Deadbolted {
     }
 
     private void parseSignAttached(Block signBlock, Block attached) {
-        if (signBlock.getRelative(Util.getFacingFromByte(signBlock.getData()).getOppositeFace()).equals(attached)) {
-            if (parseSign((Sign) signBlock.getState())) {
+        Sign sign = (Sign) signBlock.getState();
+        Attachable direction = (Attachable) sign.getData();
+        // TODO: Check this, is it attached face, or other?
+        if (signBlock.getRelative(direction.getAttachedFace().getOppositeFace()).equals(attached)) {
+            if (parseSign(sign)) {
                 add(attached, signBlock);
             }
         }
@@ -440,7 +445,7 @@ public class Deadbolted {
         //log("signPlayerName is", signPlayerName);
 
         // That must be a valid player name
-        if ( ! PlayerNameUtil.isValidPlayerName(signPlayerName)) {
+        if (!PlayerNameUtil.isValidPlayerName(signPlayerName)) {
             return false;
         }
 
@@ -452,7 +457,7 @@ public class Deadbolted {
         // Find all those valid owners.
         Set<String> allValidOwnerNames = PlayerNameUtil.interpretPlayerNameFromSign(signPlayerName);
         //log("allValidOwnerNames are", allValidOwnerNames);
-        
+
         // At least one of them needs to have been online recently
         boolean hasExpired = true;
         long daysTillExpire = 0;
@@ -487,14 +492,13 @@ public class Deadbolted {
     }
 
     /*public void log(Object... things) {
-        StringBuilder ret = new StringBuilder();
-        for (Object thing : things) {
-            ret.append(thing == null ? "NULL" : thing.toString());
-            ret.append(" ");
-        }
-        Deadbolt.getLogger().info(ret.toString());
-    }*/
-
+     StringBuilder ret = new StringBuilder();
+     for (Object thing : things) {
+     ret.append(thing == null ? "NULL" : thing.toString());
+     ret.append(" ");
+     }
+     Deadbolt.getLogger().info(ret.toString());
+     }*/
     public boolean isAutoExpired() {
         return this.isAutoExpired(null);
     }

@@ -8,7 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
-import org.bukkit.craftbukkit.block.CraftBlockState;
+import org.bukkit.craftbukkit.v1_4_5.block.CraftBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -114,14 +114,14 @@ public class PlayerListener implements Listener {
                 Deadbolted db = Deadbolt.get(against);
 
                 // Trigger an on block place event so other plugins can cancel this.
-                BlockState replacedBlockState = new CraftBlockState(signBlock);
+                BlockState replacedBlockState = signBlock.getState();
                 BlockPlaceEvent triggeredEvent = new BlockPlaceEvent(signBlock, replacedBlockState, against, event.getItem(), player, true);
                 Bukkit.getPluginManager().callEvent(triggeredEvent);
                 if (triggeredEvent.isCancelled()) {
                     return false;
                 }
 
-                signBlock.setTypeIdAndData(Material.WALL_SIGN.getId(), Util.getByteFromFacing(clickedFace), false);
+                signBlock.setTypeIdAndData(Material.WALL_SIGN.getId(), (byte) CraftBlock.blockFaceToNotch(clickedFace), false);
                 Sign signState = (Sign) signBlock.getState();
 
                 if (!db.isProtected()) {

@@ -4,22 +4,12 @@ import java.util.regex.Pattern;
 
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
-import org.bukkit.craftbukkit.block.CraftBlock;
 
 public final class Util {
 
     protected static final String patternBracketTooLong = "\\[.{14,}\\]";
     private static final Pattern PSEUDO_COLOR = Pattern.compile("\\&([0-9a-f])");
-
-    public static BlockFace getFacingFromByte(byte b) {
-        return CraftBlock.notchToBlockFace(b);
-    }
-
-    public static byte getByteFromFacing(BlockFace bf) {
-        return (byte) CraftBlock.blockFaceToNotch(bf);
-    }
 
     public static String formatForSign(String line, int maxlen) {
         line = removeColor(line);
