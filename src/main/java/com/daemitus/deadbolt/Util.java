@@ -4,12 +4,32 @@ import java.util.regex.Pattern;
 
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 
 public final class Util {
 
     protected static final String patternBracketTooLong = "\\[.{14,}\\]";
     private static final Pattern PSEUDO_COLOR = Pattern.compile("\\&([0-9a-f])");
+
+    public static int blockFaceToNotch(BlockFace face) {
+        switch (face) {
+            case DOWN:
+                return 0;
+            case UP:
+                return 1;
+            case NORTH:
+                return 2;
+            case SOUTH:
+                return 3;
+            case WEST:
+                return 4;
+            case EAST:
+                return 5;
+            default:
+                return 7; // Good as anything here, but technically invalid
+        }
+    }
 
     public static String formatForSign(String line, int maxlen) {
         line = removeColor(line);

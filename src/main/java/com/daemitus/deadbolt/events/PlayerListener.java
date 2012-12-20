@@ -8,7 +8,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
-import org.bukkit.craftbukkit.v1_4_5.block.CraftBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -121,7 +120,7 @@ public class PlayerListener implements Listener {
                     return false;
                 }
 
-                signBlock.setTypeIdAndData(Material.WALL_SIGN.getId(), (byte) CraftBlock.blockFaceToNotch(clickedFace), false);
+                signBlock.setTypeIdAndData(Material.WALL_SIGN.getId(), (byte) Util.blockFaceToNotch(clickedFace), false);
                 Sign signState = (Sign) signBlock.getState();
 
                 if (!db.isProtected()) {
