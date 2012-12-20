@@ -248,7 +248,7 @@ public class Deadbolted {
         Sign sign = (Sign) signBlock.getState();
         Attachable direction = (Attachable) sign.getData();
         // TODO: Check this, is it attached face, or other?
-        if (signBlock.getRelative(direction.getAttachedFace().getOppositeFace()).equals(attached)) {
+        if (signBlock.getRelative(direction.getAttachedFace()).equals(attached)) {
             if (parseSign(sign)) {
                 add(attached, signBlock);
             }
