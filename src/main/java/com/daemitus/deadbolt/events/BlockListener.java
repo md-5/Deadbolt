@@ -142,6 +142,8 @@ public class BlockListener implements Listener {
                 return Perm.user_create_anvil;
             case ENDER_CHEST:
                 return Perm.user_create_ender;
+            case BEACON:
+                return Perm.user_create_beacon;
             default:
                 return null;
         }
