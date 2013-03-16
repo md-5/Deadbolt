@@ -277,7 +277,7 @@ public class Deadbolted {
     }
 
     public boolean isOwner(Player player) {
-        return Util.signNameEqualsPlayerName(owner, player.getName());
+        return isProtected() && Util.signNameEqualsPlayerName(owner, player.getName());
     }
 
     public boolean isUser(Player player) {

@@ -104,6 +104,13 @@ public class BlockListener implements Listener {
                     Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_fencegate_expansion);
                     event.setCancelled(true);
                 }
+                return;
+            case HOPPER:
+                if (!Deadbolt.get(event.getBlock().getRelative(BlockFace.UP)).isOwner(player)) {
+                    Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_hopper);
+                    event.setCancelled(true);
+                }
+                return;
         }
     }
 

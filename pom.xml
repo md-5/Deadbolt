@@ -20,6 +20,10 @@
             <id>essentials-repo</id>
             <url>http://ess.ementalo.com/nexus/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>repobo-snap</id>
+            <url>http://repo.bukkit.org/content/groups/public</url>
+        </repository>
     </repositories>
 
     <build>
@@ -60,7 +64,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.4.6-R0.1-SNAPSHOT</version>
+            <version>1.5-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.md_5</groupId>
