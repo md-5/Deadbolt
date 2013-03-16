@@ -14,6 +14,9 @@ public final class Perm {
     public static final String user_create_anvil = "deadbolt.user.create.anvil";
     public static final String user_create_ender = "deadbolt.user.create.ender";
     public static final String user_create_beacon = "deadbolt.user.create.beacon";
+    public static final String user_create_hopper = "deadbolt.user.create.hopper";
+    public static final String user_create_dropper = "deadbolt.user.create.dropper";
+    public static final String user_create_trapped_chest = "deadbolt.user.create.trappedchest";
     public static final String admin_create = "deadbolt.admin.create";
     public static final String admin_break = "deadbolt.admin.break";
     public static final String admin_bypass = "deadbolt.admin.bypass";

@@ -7,6 +7,7 @@ import com.daemitus.deadbolt.Perm;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import static org.bukkit.Material.HOPPER;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -51,7 +52,13 @@ public class BlockListener implements Listener {
             event.setCancelled(true);
             return;
         }
-
+        if (event.getBlock().getType() == Material.HOPPER) {
+            if (!Deadbolt.get(event.getBlock().getRelative(BlockFace.UP)).isOwner(player)) {
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_hopper);
+                event.setCancelled(true);
+            }
+            return;
+        }
         Deadbolted db = Deadbolt.get(block);
         switch (block.getType()) {
             case CHEST:
@@ -64,6 +71,9 @@ public class BlockListener implements Listener {
             case ANVIL:
             case ENDER_CHEST:
             case BEACON:
+            case DROPPER:
+            case TRAPPED_CHEST:
+            case HOPPER:
                 if (player.hasPermission(getPermission(block.getType())) && Deadbolt.getConfig().reminder.add(player)) {
                     Deadbolt.getConfig().sendMessage(player, ChatColor.GOLD, Deadbolt.getLanguage().msg_reminder_lock_your_chests);
                 }
@@ -102,12 +112,6 @@ public class BlockListener implements Listener {
                 }
                 if (db.isProtected() && !db.isOwner(player)) {
                     Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_fencegate_expansion);
-                    event.setCancelled(true);
-                }
-                return;
-            case HOPPER:
-                if (!Deadbolt.get(event.getBlock().getRelative(BlockFace.UP)).isOwner(player)) {
-                    Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_hopper);
                     event.setCancelled(true);
                 }
                 return;
@@ -151,6 +155,12 @@ public class BlockListener implements Listener {
                 return Perm.user_create_ender;
             case BEACON:
                 return Perm.user_create_beacon;
+            case HOPPER:
+                return Perm.user_create_hopper;
+            case DROPPER:
+                return Perm.user_create_dropper;
+            case TRAPPED_CHEST:
+                return Perm.user_create_trapped_chest;
             default:
                 return null;
         }

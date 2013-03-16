@@ -156,6 +156,9 @@ public class SignListener implements Listener {
                 boolean beacon = false;
                 boolean ender = false;
                 boolean anvil = false;
+                boolean hopper = false;
+                boolean dropper = false;
+                boolean trappedChest = false;
                 for (Block setBlock : db.getBlocks()) {
                     //not authorized to protect?
                     switch (setBlock.getType()) {
@@ -221,9 +224,25 @@ public class SignListener implements Listener {
                                 return Result.DENY_BLOCK_PERM;
                             }
                             break;
+                        case HOPPER:
+                            if (!hopper && !(enchant = player.hasPermission(Perm.user_create_hopper))) {
+                                return Result.DENY_BLOCK_PERM;
+                            }
+                            break;
+                        case DROPPER:
+                            if (!dropper && !(enchant = player.hasPermission(Perm.user_create_dropper))) {
+                                return Result.DENY_BLOCK_PERM;
+                            }
+                            break;
+                        case TRAPPED_CHEST:
+                            if (!trappedChest && !(enchant = player.hasPermission(Perm.user_create_trapped_chest))) {
+                                return Result.DENY_BLOCK_PERM;
+                            }
+                            break;
+
                     }
                 }
-                if (!chest && !dispenser && !furnace && !door && !trap && !gate && !brewery && !cauldron && !enchant) {
+                if (!chest && !dispenser && !furnace && !door && !trap && !gate && !brewery && !cauldron && !enchant && !hopper && !dropper && !trappedChest) {
                     //never found a valid block to protect
                     return Result.DENY_SIGN_PRIVATE_NOTHING_NEARBY;
                 }
