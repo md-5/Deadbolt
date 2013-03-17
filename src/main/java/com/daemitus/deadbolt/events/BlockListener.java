@@ -53,7 +53,8 @@ public class BlockListener implements Listener {
             return;
         }
         if (event.getBlock().getType() == Material.HOPPER) {
-            if (!Deadbolt.get(event.getBlock().getRelative(BlockFace.UP)).isOwner(player)) {
+            Deadbolted d = Deadbolt.get(event.getBlock().getRelative(BlockFace.UP));
+            if (d.isProtected() && !d.isOwner(player)) {
                 Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_hopper);
                 event.setCancelled(true);
             }
