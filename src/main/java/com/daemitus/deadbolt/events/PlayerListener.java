@@ -63,6 +63,7 @@ public class PlayerListener implements Listener {
             case FENCE_GATE:
                 return onPlayerInteractDoor(event);
             case CHEST:
+            case TRAPPED_CHEST:
             case FURNACE:
             case CAULDRON:
             case DISPENSER:
