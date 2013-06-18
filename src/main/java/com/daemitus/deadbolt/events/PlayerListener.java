@@ -158,6 +158,8 @@ public class PlayerListener implements Listener {
         switch (block.getType()) {
             case CHEST:
                 return player.hasPermission(Perm.user_create_chest);
+            case TRAPPED_CHEST:
+                return player.hasPermission(Perm.user_create_trapped_chest);
             case DISPENSER:
                 return player.hasPermission(Perm.user_create_dispenser);
             case FURNACE:
