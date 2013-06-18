@@ -59,6 +59,7 @@ public class Deadbolted {
             case BURNING_FURNACE:
                 searchFurnace(block, Deadbolt.getConfig().group_furnaces, Deadbolt.getConfig().group_furnaces);
                 break;
+            case TRAPPED_CHEST:
             case CHEST:
                 searchChest(block, true, false);
                 break;
