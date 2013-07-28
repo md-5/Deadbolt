@@ -28,27 +28,10 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)
-                && !handleLeftClick(event)) {
-            event.setUseInteractedBlock(Result.DENY);
-            event.setUseItemInHand(Result.DENY);
-        }
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                 && !handleRightClick(event)) {
             event.setUseInteractedBlock(Result.DENY);
             event.setUseItemInHand(Result.DENY);
-        }
-    }
-
-    private boolean handleLeftClick(PlayerInteractEvent event) {
-        switch (event.getClickedBlock().getType()) {
-            case WOODEN_DOOR:
-            case IRON_DOOR_BLOCK:
-            case TRAP_DOOR:
-            case FENCE_GATE:
-                return onPlayerInteractDoor(event);
-            default:
-                return true;
         }
     }
 
