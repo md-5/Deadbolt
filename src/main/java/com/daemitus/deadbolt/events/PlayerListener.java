@@ -74,6 +74,7 @@ public class PlayerListener implements Listener {
             case WOODEN_DOOR:
             case IRON_DOOR_BLOCK:
             case TRAP_DOOR:
+            case TRAPPED_CHEST:
             case FENCE_GATE:
             case BREWING_STAND:
             case ENCHANTMENT_TABLE:
