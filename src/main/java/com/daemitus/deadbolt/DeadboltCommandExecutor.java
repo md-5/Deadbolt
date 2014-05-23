@@ -90,22 +90,20 @@ public class DeadboltCommandExecutor implements CommandExecutor {
 
         text = Util.formatForSign(text);
         if (lineNum == 0) {
-            if (Util.removeColor(lines[0]).equalsIgnoreCase(Util.removeColor(text))) {
-                lines[0] = text;
-            } else {
+            if (!Util.removeColor(lines[0]).equalsIgnoreCase(Util.removeColor(text))) {
                 Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().cmd_identifier_not_changeable);
                 return true;
             }
         } else if (lineNum == 1 && Deadbolt.getLanguage().isPrivate(Util.removeColor(lines[0]))) {
-            if (Util.removeColor(lines[1]).equalsIgnoreCase(Util.removeColor(text))) {
-                lines[1] = text;
-            } else {
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().cmd_owner_not_changeable);
-                return true;
+            if (!Util.removeColor(lines[1]).equalsIgnoreCase(Util.removeColor(text))) {
+                if (!player.hasPermission(Perm.admin_change_owner)) {
+                    Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().cmd_owner_not_changeable);
+                    return true;
+                }
             }
-        } else {
-            lines[lineNum] = text;
         }
+        lines[lineNum] = text;
+
         if (Deadbolt.getConfig().clear_sign_selection) {
             Deadbolt.getConfig().selectedSign.remove(player);
         }
