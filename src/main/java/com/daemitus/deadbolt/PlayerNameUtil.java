@@ -180,8 +180,13 @@ public class PlayerNameUtil implements Listener {
     
     protected synchronized static void populateCaseInsensitiveNameToCaseCorrectName()
     {   
+        // Check if listFiles returns null (ie folder does not exist)
+        File[] files = playerfolder.listFiles();
+		if (files == null) {
+            return;
+        }
         // Populate by removing .dat
-        for (File playerfile : playerfolder.listFiles())
+        for (File playerfile : files)
         {
             String filename = playerfile.getName();
             String playername = filename.substring(0, filename.length()-4);
