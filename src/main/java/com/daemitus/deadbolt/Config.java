@@ -47,6 +47,8 @@ public class Config extends AnnotatedConfig {
     public boolean deny_pistons = true;
     @ConfigComment("Denies redstone from toggling protected blocks")
     public boolean deny_redstone = true;
+    @ConfigComment("Denies Hopper Minecart from interacting with protected blocks")
+    public boolean deny_hoppercart = true;
     @ConfigComment("List of blockIDs protected by redstone unless overrode by [everyone]")
     public List<Integer> redstone_protected_blockids = Arrays.asList(64, 71, 96);
     @ConfigComment("Denies function of the [timer: x] tag on signs")
