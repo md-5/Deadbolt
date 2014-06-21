@@ -42,6 +42,10 @@ public class DeadboltPlugin extends JavaPlugin implements Listener {
         if (Deadbolt.getConfig().deny_redstone) {
             new RedstoneListener();
         }
+        if (Deadbolt.getConfig().deny_hoppercart) {
+            new HopperMinecartListener();
+        }
+
 
         getServer().getPluginManager().registerEvents(this, this);
         getCommand("deadbolt").setExecutor(new DeadboltCommandExecutor(this));

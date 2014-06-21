@@ -3,7 +3,11 @@ package com.daemitus.deadbolt;
 import java.util.Set;
 import java.util.logging.Logger;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
 public final class Deadbolt {
 
@@ -87,5 +91,24 @@ public final class Deadbolt {
 
     public static Deadbolted get(Block block) {
         return new Deadbolted(block);
+    }
+
+    public static boolean isProtected(Inventory inventory) {
+        Deadbolted deadbolted = get(inventory);
+        return deadbolted != null && deadbolted.isProtected();
+    }
+
+    public static Deadbolted get(Inventory inventory) {
+        InventoryHolder holder = inventory.getHolder();
+
+        if (holder instanceof DoubleChest) {
+            return get(((DoubleChest) holder).getLocation().getBlock());
+        }
+
+        if (holder instanceof BlockState) {
+            return get(((BlockState) holder).getBlock());
+        }
+
+        return null;
     }
 }
