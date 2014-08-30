@@ -259,15 +259,15 @@ public class Deadbolted {
     private boolean parseSign(Sign sign) {
         String ident = Util.getLine(sign, 0);
         if (Deadbolt.getLanguage().isPrivate(ident)) {
-            String line1 = Util.getLine(sign, 1);
+            String line1 = Bukkit.getOfflinePlayer(Util.getLine(sign, 1)).getUniqueId().toString();
             owner = line1.isEmpty() ? owner : line1;
-            users.add(Util.getLine(sign, 2));
-            users.add(Util.getLine(sign, 3));
+            users.add(Bukkit.getOfflinePlayer(Util.getLine(sign, 2)).getUniqueId().toString());
+            users.add(Bukkit.getOfflinePlayer(Util.getLine(sign, 3)).getUniqueId().toString());
             return true;
         } else if (Deadbolt.getLanguage().isMoreUsers(ident)) {
-            users.add(Util.getLine(sign, 1));
-            users.add(Util.getLine(sign, 2));
-            users.add(Util.getLine(sign, 3));
+            users.add(Bukkit.getOfflinePlayer(Util.getLine(sign, 1)).getUniqueId().toString());
+            users.add(Bukkit.getOfflinePlayer(Util.getLine(sign, 2)).getUniqueId().toString());
+            users.add(Bukkit.getOfflinePlayer(Util.getLine(sign, 3)).getUniqueId().toString());
             return true;
         }
         return false;
@@ -278,7 +278,7 @@ public class Deadbolted {
     }
 
     public boolean isOwner(Player player) {
-        return isProtected() && Util.signNameEqualsPlayerName(owner, player.getName());
+        return isProtected() && Util.signNameEqualsPlayerName(Bukkit.getOfflinePlayer(UUID.fromString(owner)).getName(), player.getName());
     }
 
     public boolean isUser(Player player) {
@@ -286,7 +286,7 @@ public class Deadbolted {
             return true;
         } else {
             for (String user : users) {
-                if (Util.signNameEqualsPlayerName(user, player.getName())) {
+                if (Util.signNameEqualsPlayerName(Bukkit.getOfflinePlayer(UUID.fromString(user)).getName(), player.getName())) {
                     return true;
                 }
             }
@@ -296,7 +296,7 @@ public class Deadbolted {
 
     public boolean isEveryone() {
         for (String line : users) {
-            if (Deadbolt.getLanguage().isEveryone(line)) {
+            if (Deadbolt.getLanguage().isEveryone(Bukkit.getOfflinePlayer(UUID.fromString(line)).getName())) {
                 return true;
             }
         }
@@ -305,7 +305,7 @@ public class Deadbolted {
 
     public int getTimer() {
         for (String line : users) {
-            int timer = Deadbolt.getLanguage().getTimer(line);
+            int timer = Deadbolt.getLanguage().getTimer(Bukkit.getOfflinePlayer(UUID.fromString(line)).getName());
             if (timer != -1) {
                 return timer;
             }
@@ -322,11 +322,16 @@ public class Deadbolted {
     }
 
     public String getOwner() {
-        return owner;
+        return Bukkit.getOfflinePlayer(UUID.fromString(owner)).getName();
     }
 
     public Set<String> getUsers() {
-        return this.users;
+        Set<String> userList = new HashSet<String>();
+        for (String user : users){
+            userList.add(Bukkit.getOfflinePlayer(UUID.fromString(user)).getName());
+        }
+
+        return userList;
     }
 
     public Set<Block> getBlocks() {
@@ -384,7 +389,7 @@ public class Deadbolted {
         for (Block bl : validToggles) {
             if (ToggleDoorTask.timedBlocks.add(bl)) {
                 plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new ToggleDoorTask(bl,
-                        (runonce && Deadbolt.getConfig().timed_door_sounds && (isNaturalSound(bl) ? true : Deadbolt.getConfig().silent_door_sounds))),
+                                (runonce && Deadbolt.getConfig().timed_door_sounds && (isNaturalSound(bl) ? true : Deadbolt.getConfig().silent_door_sounds))),
                         delay * 20);
                 runonce = false;
             } else {
