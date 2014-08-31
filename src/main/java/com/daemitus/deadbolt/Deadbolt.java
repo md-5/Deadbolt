@@ -1,6 +1,7 @@
 package com.daemitus.deadbolt;
 
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Logger;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -64,7 +65,7 @@ public final class Deadbolt {
      * @return A List<String> containing everything on any [Private] or [More
      * Users] signs associated with <block>
      */
-    public static Set<String> getAllNames(Block block) {
+    public static Set<UUID> getAllUsers(Block block) {
         return new Deadbolted(block).getUsers();
     }
 
@@ -72,10 +73,10 @@ public final class Deadbolt {
      * Retrieves owner of <block>
      *
      * @param block Block to be checked
-     * @return The text on the line below [Private] on the sign associated with
+     * @return The name of the line below [Private] on the sign associated with
      * <block>. null if unprotected
      */
-    public static String getOwnerName(Block block) {
+    public static UUID getOwner(Block block) {
         return new Deadbolted(block).getOwner();
     }
 

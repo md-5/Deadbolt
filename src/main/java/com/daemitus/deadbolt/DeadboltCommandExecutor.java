@@ -83,12 +83,15 @@ public class DeadboltCommandExecutor implements CommandExecutor {
         Sign sign = (Sign) block.getState();
         String lines[] = sign.getLines();
 
-        String text = "";
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
         for (int i = 1; i < args.length; i++) {
-            text += args[i] + (i + 1 < args.length ? " " : "");
+            if (first) first = false;
+            else sb.append(' ');
+            sb.append(args[i]);
         }
 
-        text = Util.formatForSign(text);
+        String text = sb.toString();
         if (lineNum == 0) {
             if (!Util.removeColor(lines[0]).equalsIgnoreCase(Util.removeColor(text))) {
                 Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().cmd_identifier_not_changeable);
@@ -102,7 +105,8 @@ public class DeadboltCommandExecutor implements CommandExecutor {
                 }
             }
         }
-        lines[lineNum] = text;
+
+        lines[lineNum] = UUIDs.isName(text) ? UUIDs.formatName(text) : text; // TODO: Not a player?
 
         if (Deadbolt.getConfig().clear_sign_selection) {
             Deadbolt.getConfig().selectedSign.remove(player);
@@ -119,7 +123,8 @@ public class DeadboltCommandExecutor implements CommandExecutor {
                 lines[i] = Util.formatForSign(lines[i]);
             }
         }
-        sign.update(true);
+        sign.update();
+        UUIDs.deobfuscate(sign, player);
         Deadbolt.getConfig().sendMessage(player, ChatColor.GOLD, Deadbolt.getLanguage().cmd_sign_updated);
         return true;
     }
@@ -133,7 +138,7 @@ public class DeadboltCommandExecutor implements CommandExecutor {
                 fixHelper(player, block);
             } else if (player.hasPermission(Perm.admin_commands)) {
                 fixHelper(player, block);
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_admin_block_fixed, db.getOwner());
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_admin_block_fixed, db.getOwnerName());
             } else {
                 Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().cmd_fix_notowned);
             }
@@ -164,7 +169,7 @@ public class DeadboltCommandExecutor implements CommandExecutor {
             if (db.isOwner(player)) {
                 fixAllHelper(player, block, db);
             } else if (player.hasPermission(Perm.admin_commands)) {
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_admin_block_fixed, db.getOwner());
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_admin_block_fixed, db.getOwnerName());
                 fixAllHelper(player, block, db);
             } else {
                 Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().cmd_fix_notowned);

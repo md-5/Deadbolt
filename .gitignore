@@ -10,6 +10,11 @@
 /nbproject
 /build.xml
 
+# IntelliJ IDEA
+.idea/
+/*.iml
+out/
+
 # vim
 .*.sw[a-p]
 

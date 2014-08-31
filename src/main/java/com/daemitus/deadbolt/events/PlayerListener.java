@@ -3,6 +3,8 @@ package com.daemitus.deadbolt.events;
 import com.daemitus.deadbolt.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -63,7 +65,7 @@ public class PlayerListener implements Listener {
     }
 
     private boolean placeQuickSign(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
+        final Player player = event.getPlayer();
         Block against = event.getClickedBlock();
 
         switch (against.getType()) {
@@ -90,7 +92,7 @@ public class PlayerListener implements Listener {
                     return false;
                 }
 
-                Block signBlock = against.getRelative(clickedFace);
+                final Block signBlock = against.getRelative(clickedFace);
                 if (!signBlock.getType().equals(Material.AIR)) {
                     return false;
                 }
@@ -106,28 +108,49 @@ public class PlayerListener implements Listener {
                 }
 
                 signBlock.setTypeIdAndData(Material.WALL_SIGN.getId(), (byte) Util.blockFaceToNotch(clickedFace), false);
-                Sign signState = (Sign) signBlock.getState();
+                final Sign signState = (Sign) signBlock.getState();
+
+                boolean created = false;
 
                 if (!db.isProtected()) {
+                    created = true;
                     signState.setLine(0, Util.formatForSign(Deadbolt.getLanguage().signtext_private));
-                    signState.setLine(1, Util.formatForSign(player.getName()));
+                    signState.setLine(1, UUIDs.format(player));
                 } else if (db.isOwner(player)) {
                     signState.setLine(0, Util.formatForSign(Deadbolt.getLanguage().signtext_moreusers));
                 } else if (player.hasPermission(Perm.admin_create)) {
                     signState.setLine(0, Util.formatForSign(Deadbolt.getLanguage().signtext_moreusers));
-                    Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_admin_sign_placed, db.getOwner());
+                    Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_admin_sign_placed, db.getOwnerName());
                 } else {
-                    Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_sign_quickplace, db.getOwner());
+                    Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_sign_quickplace, db.getOwnerName());
                     signBlock.setType(Material.AIR);
                     return false;
                 }
 
-                signState.update(true);
-                ItemStack held = player.getItemInHand();
-                held.setAmount(held.getAmount() - 1);
-                if (held.getAmount() == 0) {
-                    player.setItemInHand(null);
+                signState.update();
+
+                if (created) {
+                    final Location loc = signBlock.getLocation();
+                    final String[] lines = signState.getLines().clone();
+                    lines[1] = player.getName();
+
+                    Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+                        @Override
+                        public void run() {
+                            player.sendSignChange(loc, lines);
+                        }
+                    }, 5);
                 }
+
+                // Don't remove the item for players in creative gamemode
+                if (player.getGameMode() != GameMode.CREATIVE) {
+                    ItemStack held = player.getItemInHand();
+                    held.setAmount(held.getAmount() - 1);
+                    if (held.getAmount() == 0) {
+                        player.setItemInHand(null);
+                    }
+                }
+
                 event.setCancelled(true);
                 return false;
             default:
@@ -188,7 +211,7 @@ public class PlayerListener implements Listener {
 
         if (player.hasPermission(Perm.admin_bypass)) {
             db.toggleDoors(block);
-            Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_admin_bypass, db.getOwner());
+            Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_admin_bypass, db.getOwnerName());
             return true;
         }
 
@@ -213,7 +236,7 @@ public class PlayerListener implements Listener {
         }
 
         if (player.hasPermission(Perm.admin_container)) {
-            Deadbolt.getConfig().sendBroadcast(Perm.broadcast_admin_container, ChatColor.RED, Deadbolt.getLanguage().msg_admin_container, player.getName(), db.getOwner());
+            Deadbolt.getConfig().sendBroadcast(Perm.broadcast_admin_container, ChatColor.RED, Deadbolt.getLanguage().msg_admin_container, player.getName(), db.getOwnerName());
             return true;
         }
 
@@ -226,12 +249,11 @@ public class PlayerListener implements Listener {
         Block block = event.getClickedBlock();
         Deadbolted db = Deadbolt.get(block);
 
-        if (!db.isProtected()) {
+        if (!db.isProtected() || db.isAutoExpired(player)) {
             return true;
         }
-        if (db.isAutoExpired(player)) {
-            return true;
-        }
+
+        UUIDs.deobfuscate((Sign) block.getState(), player);
 
         if (db.isOwner(player)) {
             Deadbolt.getConfig().selectedSign.put(player, block);
@@ -241,7 +263,7 @@ public class PlayerListener implements Listener {
 
         if (player.hasPermission(Perm.admin_commands)) {
             Deadbolt.getConfig().selectedSign.put(player, block);
-            Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_admin_sign_selection, db.getOwner());
+            Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_admin_sign_selection, db.getOwnerName());
             return false;
         }
 
