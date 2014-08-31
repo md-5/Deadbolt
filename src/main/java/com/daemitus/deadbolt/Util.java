@@ -1,6 +1,9 @@
 package com.daemitus.deadbolt;
 
+import java.util.UUID;
 import java.util.regex.Pattern;
+
+import com.google.common.base.Preconditions;
 
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
@@ -8,9 +11,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 
 public final class Util {
-
-    protected static final String patternBracketTooLong = "\\[.{14,}\\]";
-    private static final Pattern PSEUDO_COLOR = Pattern.compile("\\&([0-9a-f])");
 
     public static int blockFaceToNotch(BlockFace face) {
         switch (face) {
@@ -31,24 +31,9 @@ public final class Util {
         }
     }
 
-    public static String formatForSign(String line, int maxlen) {
-        line = removeColor(line);
-        line = line.substring(0, line.length() > maxlen ? maxlen : line.length());
-        return line;
-    }
-
     public static String formatForSign(String line) {
-        return formatForSign(line, 15);
-    }
-
-    public static boolean signNameEqualsPlayerName(String signName, String playerName) {
-        String playerName15 = formatForSign(playerName);
-
-        if (signName.equalsIgnoreCase(playerName15)) {
-            return true;
-        }
-
-        return false;
+        // Bukkit does already verify the max length of the line
+        return removeColor(line);
     }
 
     public static Block getSignAttached(Sign signState) {
@@ -62,18 +47,11 @@ public final class Util {
         return ChatColor.stripColor(text);
     }
 
-    public static String createColor(String text) {
-        return text == null ? null : PSEUDO_COLOR.matcher(text).replaceAll("\u00A7$1");
-    }
-
     public static String getLine(Sign signBlock, int line) {
         return removeColor(signBlock.getLine(line));
     }
 
-    public static String truncate(String text) {
-        if (text.matches(patternBracketTooLong)) {
-            return "[" + text.substring(1, 14) + "]";
-        }
-        return text;
+    public static String getLine(String[] lines, int line) {
+        return removeColor(lines[line]);
     }
 }

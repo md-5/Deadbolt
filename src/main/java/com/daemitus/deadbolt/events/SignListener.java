@@ -1,8 +1,12 @@
 package com.daemitus.deadbolt.events;
 
 import com.daemitus.deadbolt.*;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -27,7 +31,7 @@ public class SignListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     @SuppressWarnings("fallthrough")
     public void onSignChange(SignChangeEvent event) {
-        Player player = event.getPlayer();
+        final Player player = event.getPlayer();
         Block block = event.getBlock();
         String[] lines = event.getLines();
 
@@ -73,18 +77,41 @@ public class SignListener implements Listener {
 
         switch (result) {
             case ADMIN_SIGN_PLACED:
-                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_admin_sign_placed, db.getOwner());
+                Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_admin_sign_placed, db.getOwnerName());
             case SUCCESS:
+                final String[] display = lines.clone();
+
                 if (isPrivate) {
-                    String owner = Util.formatForSign(lines[1]);
-                    if (owner.isEmpty()) {
-                        lines[1] = Util.formatForSign(player.getName());
-                    } else if (player.hasPermission(Perm.admin_create)) {
-                        if (plugin.getServer().getPlayerExact(owner) == null) {
-                            Deadbolt.getConfig().sendMessage(player, ChatColor.YELLOW, Deadbolt.getLanguage().msg_admin_warning_player_not_found, owner);
+                    String ownerLine = Util.getLine(lines, 1);
+                    if (!ownerLine.isEmpty() && player.hasPermission(Perm.admin_create)) {
+                        OfflinePlayer owner = Bukkit.getOfflinePlayer(PlayerNameUtil.interpretSignName(ownerLine));
+                        if (!owner.hasPlayedBefore()) {
+                            Deadbolt.getConfig().sendMessage(player, ChatColor.YELLOW, Deadbolt.getLanguage().msg_admin_warning_player_not_found, owner.getName());
                         }
+
+                        lines[1] = UUIDs.format(owner);
+                        display[1] = owner.getName();
                     } else {
-                        lines[1] = Util.formatForSign(player.getName());
+                        lines[1] = UUIDs.format(player);
+                        display[1] = player.getName();
+                    }
+
+                    // Convert additional users to UUIDs
+                    for (int i = 2; i < 4; i++) {
+                        String line = Util.getLine(lines, i);
+                        if (!UUIDs.isName(line)) continue;
+                        OfflinePlayer user = UUIDs.getPlayer(PlayerNameUtil.interpretSignName(line));
+                        lines[i] = UUIDs.format(user);
+                        display[i] = user.getName();
+                    }
+                } else {
+                    // Convert users to UUIDs
+                    for (int i = 1; i < 4; i++) {
+                        String line = Util.getLine(lines, i);
+                        if (!UUIDs.isName(line)) continue;
+                        OfflinePlayer user = UUIDs.getPlayer(PlayerNameUtil.interpretSignName(line));
+                        lines[i] = UUIDs.format(user);
+                        display[i] = user.getName();
                     }
                 }
 
@@ -93,6 +120,16 @@ public class SignListener implements Listener {
                     sign.setLine(i, Util.formatForSign(lines[i]));
                 }
                 sign.update();
+
+                final Location loc = block.getLocation();
+
+                Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+                    @Override
+                    public void run() {
+                        player.sendSignChange(loc, display);
+                    }
+                }, 5);
+
                 return;
             case DENY_SIGN_PRIVATE_ALREADY_OWNED:
                 Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_sign_private_already_owned);

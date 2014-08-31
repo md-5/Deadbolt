@@ -32,9 +32,9 @@ public class BlockListener implements Listener {
         Player player = event.getPlayer();
         Deadbolted db = Deadbolt.get(block);
 
-        if (db.isProtected() && !db.isAutoExpired() && !db.isOwner(player)) {
+        if (db.isProtected() && !db.isOwner(player) && !db.isAutoExpired()) {
             if (player.hasPermission(Perm.admin_break)) {
-                Deadbolt.getConfig().sendBroadcast(Perm.admin_broadcast_break, ChatColor.RED, Deadbolt.getLanguage().msg_admin_break, player.getName(), db.getOwner());
+                Deadbolt.getConfig().sendBroadcast(Perm.admin_broadcast_break, ChatColor.RED, Deadbolt.getLanguage().msg_admin_break, player.getName(), db.getOwnerName());
             } else {
                 Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_break);
                 event.setCancelled(true);
