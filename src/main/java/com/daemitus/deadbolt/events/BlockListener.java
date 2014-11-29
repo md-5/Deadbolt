@@ -85,6 +85,11 @@ public class BlockListener implements Listener {
                 return;
             case IRON_DOOR_BLOCK:
             case WOODEN_DOOR:
+            case SPRUCE_DOOR:
+            case BIRCH_DOOR:
+            case JUNGLE_DOOR:
+            case ACACIA_DOOR:
+            case DARK_OAK_DOOR:
                 if (player.hasPermission(getPermission(block.getType())) && Deadbolt.getConfig().reminder.add(player)) {
                     Deadbolt.getConfig().sendMessage(player, ChatColor.GOLD, Deadbolt.getLanguage().msg_reminder_lock_your_chests);
                 }
@@ -145,6 +150,11 @@ public class BlockListener implements Listener {
                 return Perm.user_create_enchant;
             case WOODEN_DOOR:
             case IRON_DOOR_BLOCK:
+            case SPRUCE_DOOR:
+            case BIRCH_DOOR:
+            case JUNGLE_DOOR:
+            case ACACIA_DOOR:
+            case DARK_OAK_DOOR:
                 return Perm.user_create_door;
             case TRAP_DOOR:
                 return Perm.user_create_trapdoor;

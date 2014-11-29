@@ -180,6 +180,11 @@ public class SignListener implements Listener {
                             break;
                         case WOODEN_DOOR:
                         case IRON_DOOR_BLOCK:
+                        case SPRUCE_DOOR:
+                        case BIRCH_DOOR:
+                        case JUNGLE_DOOR:
+                        case ACACIA_DOOR:
+                        case DARK_OAK_DOOR:
                             if (!door && !(door = player.hasPermission(Perm.user_create_door))) {
                                 return Result.DENY_BLOCK_PERM;
                             }
