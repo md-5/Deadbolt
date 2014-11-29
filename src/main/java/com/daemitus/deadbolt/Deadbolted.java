@@ -35,6 +35,11 @@ public class Deadbolted {
                 break;
             case WOODEN_DOOR:
             case IRON_DOOR_BLOCK:
+            case SPRUCE_DOOR:
+            case BIRCH_DOOR:
+            case JUNGLE_DOOR:
+            case ACACIA_DOOR:
+            case DARK_OAK_DOOR:
                 searchDoor(block, true, true);
                 break;
             case FENCE_GATE:
@@ -397,6 +402,11 @@ public class Deadbolted {
         switch (block.getType()) {
             case WOODEN_DOOR:
             case TRAP_DOOR:
+            case SPRUCE_DOOR:
+            case BIRCH_DOOR:
+            case JUNGLE_DOOR:
+            case ACACIA_DOOR:
+            case DARK_OAK_DOOR:
                 return true;
             default:
                 return false;
@@ -407,6 +417,11 @@ public class Deadbolted {
         switch (block.getType()) {
             case WOODEN_DOOR:
             case IRON_DOOR_BLOCK:
+            case SPRUCE_DOOR:
+            case BIRCH_DOOR:
+            case JUNGLE_DOOR:
+            case ACACIA_DOOR:
+            case DARK_OAK_DOOR:
                 return true;
             case TRAP_DOOR:
                 return Deadbolt.getConfig().vertical_trapdoors;

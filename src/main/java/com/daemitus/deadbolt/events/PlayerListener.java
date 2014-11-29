@@ -42,6 +42,11 @@ public class PlayerListener implements Listener {
         switch (event.getClickedBlock().getType()) {
             case WOODEN_DOOR:
             case IRON_DOOR_BLOCK:
+            case SPRUCE_DOOR:
+            case BIRCH_DOOR:
+            case JUNGLE_DOOR:
+            case ACACIA_DOOR:
+            case DARK_OAK_DOOR:
             case TRAP_DOOR:
             case FENCE_GATE:
                 return onPlayerInteractDoor(event);
@@ -73,6 +78,11 @@ public class PlayerListener implements Listener {
             case BURNING_FURNACE:
             case WOODEN_DOOR:
             case IRON_DOOR_BLOCK:
+            case SPRUCE_DOOR:
+            case BIRCH_DOOR:
+            case JUNGLE_DOOR:
+            case ACACIA_DOOR:
+            case DARK_OAK_DOOR:
             case TRAP_DOOR:
             case TRAPPED_CHEST:
             case FENCE_GATE:
@@ -151,6 +161,11 @@ public class PlayerListener implements Listener {
             case BURNING_FURNACE:
                 return player.hasPermission(Perm.user_create_furnace);
             case WOODEN_DOOR:
+            case SPRUCE_DOOR:
+            case BIRCH_DOOR:
+            case JUNGLE_DOOR:
+            case ACACIA_DOOR:
+            case DARK_OAK_DOOR:
                 return player.hasPermission(Perm.user_create_door);
             case IRON_DOOR_BLOCK:
                 return player.hasPermission(Perm.user_create_door);

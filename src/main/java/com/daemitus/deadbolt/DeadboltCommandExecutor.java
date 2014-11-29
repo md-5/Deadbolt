@@ -145,6 +145,11 @@ public class DeadboltCommandExecutor implements CommandExecutor {
         switch (block.getType()) {
             case WOODEN_DOOR:
             case IRON_DOOR_BLOCK:
+            case SPRUCE_DOOR:
+            case BIRCH_DOOR:
+            case JUNGLE_DOOR:
+            case ACACIA_DOOR:
+            case DARK_OAK_DOOR:
                 block.setData((byte) (block.getData() ^ 0x4));
                 break;
             case TRAP_DOOR:
@@ -177,6 +182,11 @@ public class DeadboltCommandExecutor implements CommandExecutor {
         switch (block.getType()) {
             case WOODEN_DOOR:
             case IRON_DOOR_BLOCK:
+            case SPRUCE_DOOR:
+            case BIRCH_DOOR:
+            case JUNGLE_DOOR:
+            case ACACIA_DOOR:
+            case DARK_OAK_DOOR:
             case TRAP_DOOR:
             case FENCE_GATE:
                 for (Block b : db.getBlocks()) {
