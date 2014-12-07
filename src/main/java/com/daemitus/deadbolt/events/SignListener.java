@@ -1,6 +1,7 @@
 package com.daemitus.deadbolt.events;
 
 import com.daemitus.deadbolt.*;
+import com.daemitus.deadbolt.listener.ListenerManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -93,6 +94,9 @@ public class SignListener implements Listener {
                     sign.setLine(i, Util.formatForSign(lines[i]));
                 }
                 sign.update();
+                if (!ListenerManager.canSignChange(db, event)) {
+                                      break;
+                   }
                 return;
             case DENY_SIGN_PRIVATE_ALREADY_OWNED:
                 Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_sign_private_already_owned);

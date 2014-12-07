@@ -2,6 +2,7 @@ package com.daemitus.deadbolt.events;
 
 import com.daemitus.deadbolt.Deadbolt;
 import com.daemitus.deadbolt.Deadbolted;
+import com.daemitus.deadbolt.listener.ListenerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -20,7 +21,7 @@ public class PistonListener implements Listener {
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
         for (Block block : event.getBlocks()) {
             Deadbolted db = Deadbolt.get(block);
-            if (db.isProtected()) {
+            if (db.isProtected() && !ListenerManager.canPistonExtend(db, event)) {
                 event.setCancelled(true);
                 break;
             }
