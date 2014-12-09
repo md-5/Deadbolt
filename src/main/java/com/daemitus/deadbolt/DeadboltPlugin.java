@@ -1,23 +1,32 @@
 package com.daemitus.deadbolt;
 
 import com.daemitus.deadbolt.events.*;
+import com.daemitus.deadbolt.listener.ListenerManager;
 import com.md_5.config.FileYamlStorage;
 import java.io.File;
 import java.util.regex.Pattern;
+
+import lombok.delombok.DelombokApp;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class DeadboltPlugin extends JavaPlugin implements Listener {
 
     public Config c;
     public Language l;
+
     private FileYamlStorage<Config> configStorage;
     private FileYamlStorage<Language> languageStorage;
 
+    public ListenerManager listenerManager;
+
     @Override
     public void onEnable() {
+
         Deadbolt.setPlugin(this);
         bootStrap();
 
@@ -46,15 +55,31 @@ public class DeadboltPlugin extends JavaPlugin implements Listener {
             new HopperMinecartListener();
         }
 
+        listenerManager = new ListenerManager();
+        listenerManager.registerListeners();
+        listenerManager.checkListeners();
 
         getServer().getPluginManager().registerEvents(this, this);
         getCommand("deadbolt").setExecutor(new DeadboltCommandExecutor(this));
+
+
+        Util.extractLibraries("TownyListener.class",this.getDataFolder() + "/listeners");
     }
 
     @Override
     public void onDisable() {
         ToggleDoorTask.cleanup();
     }
+
+    @EventHandler
+    public void onPluginEnable(PluginEnableEvent event) {
+                listenerManager.checkListener(event.getPlugin());
+            }
+
+    @EventHandler
+    public void onPluginDisable(PluginDisableEvent event) {
+               listenerManager.checkListener(event.getPlugin());
+          }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {

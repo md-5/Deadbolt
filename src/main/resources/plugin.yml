@@ -1,9 +1,9 @@
 name: Deadbolt
 main: com.daemitus.deadbolt.DeadboltPlugin
 version: 2.2
-authors: [daemitus, md_5]
+authors: [daemitus, md_5, cindy_k]
 description: A simple plugin for locking containers and doors without passwords or database files. Recreated from Acru's original plugin.
-
+softdepend: [Towny]
 commands:
   deadbolt:
     description: Access to the Deadbolt plugin via commands.

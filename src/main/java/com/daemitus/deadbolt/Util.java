@@ -1,11 +1,16 @@
 package com.daemitus.deadbolt;
 
+import java.io.*;
+import java.util.jar.JarFile;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
 
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+
+import org.apache.commons.io.FilenameUtils;
 
 public final class Util {
 
@@ -75,5 +80,34 @@ public final class Util {
             return "[" + text.substring(1, 14) + "]";
         }
         return text;
+    }
+
+    public static void extractLibraries(String listenerFile, String dest){
+        try {
+            String home = DeadboltPlugin.class.getProtectionDomain().
+                    getCodeSource().getLocation().toString().
+                    substring(6);
+            JarFile jar = new JarFile(home);
+            ZipEntry entry = jar.getEntry(listenerFile);
+
+            String inFileName = FilenameUtils.getBaseName(entry.getName())+".class";
+            File efile = new File(dest, inFileName);
+            InputStream in =
+                    new BufferedInputStream(jar.getInputStream(entry));
+            OutputStream out =
+                    new BufferedOutputStream(new FileOutputStream(efile));
+            byte[] buffer = new byte[2048];
+            for (;;)  {
+                int nBytes = in.read(buffer);
+                if (nBytes <= 0) break;
+                out.write(buffer, 0, nBytes);
+            }
+            out.flush();
+            out.close();
+            in.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.daemitus.deadbolt.events;
 
 import com.daemitus.deadbolt.*;
+import com.daemitus.deadbolt.listener.ListenerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -103,7 +104,8 @@ public class PlayerListener implements Listener {
             case ENCHANTMENT_TABLE:
             case CAULDRON:
 
-                if (!canQuickProtect(player, against)) {
+
+                if (!canQuickProtect(player, against) || !ListenerManager.canSignChangeQuick(Deadbolt.get(against), event)) {
                     Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_block_perm, against.getType().name());
                     return false;
                 }
@@ -216,7 +218,7 @@ public class PlayerListener implements Listener {
             return true;
         }
 
-        if (db.isUser(player)) {
+        if (db.isUser(player)  || ListenerManager.canPlayerInteract(db, event)) {
             db.toggleDoors(block);
             return true;
         }
@@ -236,7 +238,7 @@ public class PlayerListener implements Listener {
         Block block = event.getClickedBlock();
         Deadbolted db = Deadbolt.get(block);
 
-        if (!db.isProtected()) {
+        if (!db.isProtected()  || ListenerManager.canPlayerInteract(db, event)) {
             return true;
         }
         if (db.isAutoExpired(player)) {
