@@ -2,15 +2,17 @@ package com.daemitus.deadbolt;
 
 import com.md_5.config.AnnotatedConfig;
 import com.md_5.config.ConfigComment;
-import java.util.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.*;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -50,7 +52,19 @@ public class Config extends AnnotatedConfig {
     @ConfigComment("Denies Hopper Minecart from interacting with protected blocks")
     public boolean deny_hoppercart = true;
     @ConfigComment("List of blockIDs protected by redstone unless overrode by [everyone]")
-    public List<Integer> redstone_protected_blockids = Arrays.asList(64, 71, 96);
+    public List<Integer> redstone_protected_blockids = Arrays.asList(
+            // Doors
+            Material.WOODEN_DOOR.getId(),
+            Material.IRON_DOOR_BLOCK.getId(),
+            Material.SPRUCE_DOOR.getId(),
+            Material.BIRCH_DOOR.getId(),
+            Material.JUNGLE_DOOR.getId(),
+            Material.ACACIA_DOOR.getId(),
+            Material.DARK_OAK_DOOR.getId(),
+            // trap doors
+            Material.TRAP_DOOR.getId(),
+            Material.IRON_TRAPDOOR.getId()
+    );
     @ConfigComment("Denies function of the [timer: x] tag on signs")
     public boolean deny_timed_doors = false;
     @ConfigComment("Forces timed doors on every protected (trap)door")

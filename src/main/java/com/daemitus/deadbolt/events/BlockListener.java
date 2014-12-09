@@ -7,7 +7,6 @@ import com.daemitus.deadbolt.Perm;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import static org.bukkit.Material.HOPPER;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -104,6 +103,7 @@ public class BlockListener implements Listener {
                 }
                 return;
             case TRAP_DOOR:
+            case IRON_TRAPDOOR:
                 if (player.hasPermission(getPermission(block.getType())) && Deadbolt.getConfig().reminder.add(player)) {
                     Deadbolt.getConfig().sendMessage(player, ChatColor.GOLD, Deadbolt.getLanguage().msg_reminder_lock_your_chests);
                 }
@@ -113,6 +113,11 @@ public class BlockListener implements Listener {
                 }
                 return;
             case FENCE_GATE:
+            case BIRCH_FENCE_GATE:
+            case ACACIA_FENCE_GATE:
+            case DARK_OAK_FENCE_GATE:
+            case JUNGLE_FENCE_GATE:
+            case SPRUCE_FENCE_GATE:
                 if (player.hasPermission(getPermission(block.getType())) && Deadbolt.getConfig().reminder.add(player)) {
                     Deadbolt.getConfig().sendMessage(player, ChatColor.GOLD, Deadbolt.getLanguage().msg_reminder_lock_your_chests);
                 }
@@ -157,8 +162,14 @@ public class BlockListener implements Listener {
             case DARK_OAK_DOOR:
                 return Perm.user_create_door;
             case TRAP_DOOR:
+            case IRON_TRAPDOOR:
                 return Perm.user_create_trapdoor;
             case FENCE_GATE:
+            case BIRCH_FENCE_GATE:
+            case ACACIA_FENCE_GATE:
+            case DARK_OAK_FENCE_GATE:
+            case JUNGLE_FENCE_GATE:
+            case SPRUCE_FENCE_GATE:
                 return Perm.user_create_fencegate;
             case ANVIL:
                 return Perm.user_create_anvil;

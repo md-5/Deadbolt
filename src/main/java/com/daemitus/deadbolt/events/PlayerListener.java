@@ -3,6 +3,7 @@ package com.daemitus.deadbolt.events;
 import com.daemitus.deadbolt.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -48,7 +49,13 @@ public class PlayerListener implements Listener {
             case ACACIA_DOOR:
             case DARK_OAK_DOOR:
             case TRAP_DOOR:
+            case IRON_TRAPDOOR:
             case FENCE_GATE:
+            case BIRCH_FENCE_GATE:
+            case ACACIA_FENCE_GATE:
+            case DARK_OAK_FENCE_GATE:
+            case JUNGLE_FENCE_GATE:
+            case SPRUCE_FENCE_GATE:
                 return onPlayerInteractDoor(event);
             case CHEST:
             case TRAPPED_CHEST:
@@ -84,8 +91,14 @@ public class PlayerListener implements Listener {
             case ACACIA_DOOR:
             case DARK_OAK_DOOR:
             case TRAP_DOOR:
+            case IRON_TRAPDOOR:
             case TRAPPED_CHEST:
             case FENCE_GATE:
+            case BIRCH_FENCE_GATE:
+            case ACACIA_FENCE_GATE:
+            case DARK_OAK_FENCE_GATE:
+            case JUNGLE_FENCE_GATE:
+            case SPRUCE_FENCE_GATE:
             case BREWING_STAND:
             case ENCHANTMENT_TABLE:
             case CAULDRON:
@@ -134,7 +147,10 @@ public class PlayerListener implements Listener {
 
                 signState.update(true);
                 ItemStack held = player.getItemInHand();
-                held.setAmount(held.getAmount() - 1);
+                // Don't reduce amount for creative mode players
+                if (!player.getGameMode().equals(GameMode.CREATIVE))
+                    held.setAmount(held.getAmount() - 1);
+
                 if (held.getAmount() == 0) {
                     player.setItemInHand(null);
                 }
@@ -157,7 +173,6 @@ public class PlayerListener implements Listener {
             case DISPENSER:
                 return player.hasPermission(Perm.user_create_dispenser);
             case FURNACE:
-                return player.hasPermission(Perm.user_create_furnace);
             case BURNING_FURNACE:
                 return player.hasPermission(Perm.user_create_furnace);
             case WOODEN_DOOR:
@@ -166,12 +181,17 @@ public class PlayerListener implements Listener {
             case JUNGLE_DOOR:
             case ACACIA_DOOR:
             case DARK_OAK_DOOR:
-                return player.hasPermission(Perm.user_create_door);
             case IRON_DOOR_BLOCK:
                 return player.hasPermission(Perm.user_create_door);
             case TRAP_DOOR:
+            case IRON_TRAPDOOR:
                 return player.hasPermission(Perm.user_create_trapdoor);
             case FENCE_GATE:
+            case BIRCH_FENCE_GATE:
+            case ACACIA_FENCE_GATE:
+            case DARK_OAK_FENCE_GATE:
+            case JUNGLE_FENCE_GATE:
+            case SPRUCE_FENCE_GATE:
                 return player.hasPermission(Perm.user_create_fencegate);
             case BREWING_STAND:
                 return player.hasPermission(Perm.user_create_brewery);
