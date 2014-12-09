@@ -17,16 +17,16 @@
 
     <repositories>
         <repository>
-            <id>essentials-repo</id>
-            <url>http://ess.ementalo.com/nexus/content/groups/public/</url>
-        </repository>
-        <repository>
             <id>repobo-snap</id>
             <url>http://repo.bukkit.org/content/groups/public</url>
         </repository>
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>cindyscats</id>
+            <url>http://basket.cindyscats.com/content/repositories/thirdparty/</url>
         </repository>
     </repositories>
 
@@ -66,8 +66,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
             <version>1.8-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -81,9 +81,9 @@
             <version>1.3.2</version>
         </dependency>
         <dependency>
-            <groupId>com.palmergames.bukkit.towny</groupId>
-            <artifactId>towny</artifactId>
-            <version>0.84.0</version>
+            <groupId>com.palmergames</groupId>
+            <artifactId>Towny</artifactId>
+            <version>0.89.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
