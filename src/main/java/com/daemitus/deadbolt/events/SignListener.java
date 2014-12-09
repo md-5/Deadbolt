@@ -31,7 +31,7 @@ public class SignListener implements Listener {
         Block block = event.getBlock();
         String[] lines = event.getLines();
 
-        //fix for clientside sign edit hack
+        //fix for client-side sign edit hack
         if (event.getBlock().getType().equals(Material.WALL_SIGN)) {
             Sign sign = (Sign) event.getBlock().getState();
             String ident = Util.getLine(sign, 0);
@@ -190,11 +190,17 @@ public class SignListener implements Listener {
                             }
                             break;
                         case TRAP_DOOR:
+                        case IRON_TRAPDOOR:
                             if (!trap && !(trap = player.hasPermission(Perm.user_create_trapdoor))) {
                                 return Result.DENY_BLOCK_PERM;
                             }
                             break;
                         case FENCE_GATE:
+                        case BIRCH_FENCE_GATE:
+                        case ACACIA_FENCE_GATE:
+                        case DARK_OAK_FENCE_GATE:
+                        case JUNGLE_FENCE_GATE:
+                        case SPRUCE_FENCE_GATE:
                             if (!gate && !(gate = player.hasPermission(Perm.user_create_fencegate))) {
                                 return Result.DENY_BLOCK_PERM;
                             }

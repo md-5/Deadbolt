@@ -1,10 +1,11 @@
 package com.daemitus.deadbolt;
 
 import com.md_5.config.AnnotatedConfig;
-import java.util.regex.Pattern;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.bukkit.block.Sign;
+
+import java.util.regex.Pattern;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
