@@ -37,6 +37,14 @@ public class PlayerListener implements Listener {
     }
 
     private boolean handleRightClick(PlayerInteractEvent event) {
+        // seems to be the only real way to detect shift clicks
+        if (event.getPlayer().isSneaking() && event.getPlayer().getItemInHand().getType().equals(Material.SIGN)) {
+            Deadbolted deadbolted = Deadbolt.get(event.getClickedBlock());
+            if (!deadbolted.isProtected() || deadbolted.isOwner(event.getPlayer()) || event.getPlayer().hasPermission(Perm.admin_create)) {
+                return true;
+            }
+        }
+
         if (event.getPlayer().getItemInHand().getType().equals(Material.SIGN) && !event.isCancelled()) {
             placeQuickSign(event);
         }
