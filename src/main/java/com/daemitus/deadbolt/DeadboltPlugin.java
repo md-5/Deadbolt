@@ -2,19 +2,18 @@ package com.daemitus.deadbolt;
 
 import com.daemitus.deadbolt.events.*;
 import com.md_5.config.FileYamlStorage;
-import java.io.File;
-import java.util.regex.Pattern;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.util.regex.Pattern;
+
 public class DeadboltPlugin extends JavaPlugin implements Listener {
 
     public Config c;
     public Language l;
-    private FileYamlStorage<Config> configStorage;
-    private FileYamlStorage<Language> languageStorage;
 
     @Override
     public void onEnable() {
@@ -62,7 +61,7 @@ public class DeadboltPlugin extends JavaPlugin implements Listener {
     }
 
     public void bootStrap() {
-        configStorage = new FileYamlStorage<Config>(new File(getDataFolder(), "config.yml"), Config.class, this);
+        FileYamlStorage<Config> configStorage = new FileYamlStorage<Config>(new File(getDataFolder(), "config.yml"), Config.class, this);
         c = configStorage.load();
         configStorage.save();
 
@@ -71,20 +70,20 @@ public class DeadboltPlugin extends JavaPlugin implements Listener {
             Deadbolt.getLogger().warning(langFile.getName() + " not found, copying default english.yml");
             langFile = new File(getDataFolder(), "english.yml");
         }
-        languageStorage = new FileYamlStorage<Language>(langFile, Language.class, this);
+        FileYamlStorage<Language> languageStorage = new FileYamlStorage<Language>(langFile, Language.class, this);
         l = languageStorage.load();
         languageStorage.save();
 
         if (l.signtext_private.length() > 13) {
             Deadbolt.getLogger().warning(l.signtext_private + " is too long, defaulting to [" + (l.signtext_private = l.d_signtext_private) + "]");
         }
-        l.p_signtext_private = Pattern.compile("\\[(?i)(" + l.d_signtext_private + "|" + l.signtext_private + ")\\]");
+        l.p_signtext_private = Pattern.compile("\\[?(?i)(" + l.d_signtext_private + "|" + l.signtext_private + ")]?");
         l.signtext_private = "[" + l.signtext_private + "]";
 
         if (l.signtext_moreusers.length() > 13) {
             Deadbolt.getLogger().warning(l.signtext_moreusers + " is too long, defaulting to [" + (l.signtext_moreusers = l.d_signtext_moreusers) + "]");
         }
-        l.p_signtext_moreusers = Pattern.compile("\\[(?i)(" + l.d_signtext_moreusers + "|" + l.signtext_moreusers + ")\\]");
+        l.p_signtext_moreusers = Pattern.compile("\\[?(?i)(" + l.d_signtext_moreusers + "|" + l.signtext_moreusers + ")]?");
         l.signtext_moreusers = "[" + l.signtext_moreusers + "]";
 
         if (l.signtext_everyone.length() > 13) {
