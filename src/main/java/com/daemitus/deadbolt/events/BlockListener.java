@@ -224,7 +224,7 @@ public class BlockListener implements Listener {
             case CRIMSON_TRAPDOOR:
             case IRON_TRAPDOOR:
                 return Perm.user_create_trapdoor;
-            case FENCE_GATE:
+            case OAK_FENCE_GATE:
             case BIRCH_FENCE_GATE:
             case ACACIA_FENCE_GATE:
             case DARK_OAK_FENCE_GATE:
