@@ -54,15 +54,24 @@ public class Config extends AnnotatedConfig {
     @ConfigComment("List of blockIDs protected by redstone unless overrode by [everyone]")
     public List<Integer> redstone_protected_blockids = Arrays.asList(
             // Doors
-            Material.WOODEN_DOOR.getId(),
-            Material.IRON_DOOR_BLOCK.getId(),
+            Material.OAK_DOOR.getId(),
+            Material.IRON_DOOR.getId(),
             Material.SPRUCE_DOOR.getId(),
             Material.BIRCH_DOOR.getId(),
             Material.JUNGLE_DOOR.getId(),
             Material.ACACIA_DOOR.getId(),
             Material.DARK_OAK_DOOR.getId(),
+            Material.WARPED_DOOR.getId(),
+            Material.CRIMSON_DOOR.getId(),
             // trap doors
-            Material.TRAP_DOOR.getId(),
+            Material.OAK_TRAPDOOR.getId(),
+            Material.BIRCH_TRAPDOOR.getId(),
+            Material.SPRUCE_TRAPDOOR.getId(),
+            Material.JUNGLE_TRAPDOOR.getId(),
+            Material.ACACIA_TRAPDOOR.getId(),
+            Material.DARK_OAK_TRAPDOOR.getId(),
+            Material.WARPED_TRAPDOOR.getId(),
+            Material.CRIMSON_TRAPDOOR.getId(),
             Material.IRON_TRAPDOOR.getId()
     );
     @ConfigComment("Denies function of the [timer: x] tag on signs")
