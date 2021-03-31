@@ -36,7 +36,14 @@ public class Deadbolted {
         switch (block.getType()) {
             case AIR:
                 break;
-            case WALL_SIGN:
+            case OAK_WALL_SIGN:
+            case SPRUCE_WALL_SIGN:
+            case BIRCH_WALL_SIGN:
+            case ACACIA_WALL_SIGN:
+            case JUNGLE_WALL_SIGN:
+            case DARK_OAK_WALL_SIGN:
+            case WARPED_WALL_SIGN:
+            case CRIMSON_WALL_SIGN:
                 BlockState state = block.getState();
                 org.bukkit.block.Sign signState = (Sign) state;
                 if (Deadbolt.getLanguage().isValidWallSign(signState)) {
@@ -97,23 +104,23 @@ public class Deadbolted {
             case TRAPPED_CHEST:
             case CHEST:
             case BARREL:
-                case SHULKER_BOX:
-                case WHITE_SHULKER_BOX:
-                case ORANGE_SHULKER_BOX:
-                case MAGENTA_SHULKER_BOX:
-                case LIGHT_BLUE_SHULKER_BOX:
-                case YELLOW_SHULKER_BOX:
-                case LIME_SHULKER_BOX:
-                case PINK_SHULKER_BOX:
-                case GRAY_SHULKER_BOX:
-                case LIGHT_GRAY_SHULKER_BOX:
-                case CYAN_SHULKER_BOX:
-                case PURPLE_SHULKER_BOX:
-                case BLUE_SHULKER_BOX:
-                case BROWN_SHULKER_BOX:
-                case GREEN_SHULKER_BOX:
-                case RED_SHULKER_BOX:
-                case BLACK_SHULKER_BOX:
+            case SHULKER_BOX:
+            case WHITE_SHULKER_BOX:
+            case ORANGE_SHULKER_BOX:
+            case MAGENTA_SHULKER_BOX:
+            case LIGHT_BLUE_SHULKER_BOX:
+            case YELLOW_SHULKER_BOX:
+            case LIME_SHULKER_BOX:
+            case PINK_SHULKER_BOX:
+            case GRAY_SHULKER_BOX:
+            case LIGHT_GRAY_SHULKER_BOX:
+            case CYAN_SHULKER_BOX:
+            case PURPLE_SHULKER_BOX:
+            case BLUE_SHULKER_BOX:
+            case BROWN_SHULKER_BOX:
+            case GREEN_SHULKER_BOX:
+            case RED_SHULKER_BOX:
+            case BLACK_SHULKER_BOX:
                 searchChest(block, true, false);
                 break;
             default:
@@ -432,19 +439,19 @@ public class Deadbolted {
         Set<Block> clickedDoor = new HashSet<Block>();
         if (isNaturalOpen(block)) {
             // special case for Trap Doors so multiple sets don't get miss-aligned
-            if (block.getType() != Material.TRAP_DOOR)
+            if (block.getType() != Material.TRAPDOOR)
                 clickedDoor.add(block);
             if (isVerticallyJoined(block)) {
                 Block b = block;
                 while ((b = b.getRelative(BlockFace.UP)).getType().equals(block.getType())
                         // special case for Trap Doors so it works vertically
-                        && b.getType() != Material.TRAP_DOOR) {
+                        && b.getType() != Material.TRAPDOOR) {
                     clickedDoor.add(b);
                 }
                 b = block;
                 while ((b = b.getRelative(BlockFace.DOWN)).getType().equals(block.getType())
                         // special case for Trap Doors so it works vertically
-                        && b.getType() != Material.TRAP_DOOR) {
+                        && b.getType() != Material.TRAPDOOR) {
                     clickedDoor.add(b);
                 }
             }
