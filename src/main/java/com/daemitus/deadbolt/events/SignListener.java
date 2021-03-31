@@ -163,6 +163,24 @@ public class SignListener implements Listener {
                     //not authorized to protect?
                     switch (setBlock.getType()) {
                         case CHEST:
+                        case BARREL:
+                        case SHULKER_BOX:
+                        case WHITE_SHULKER_BOX:
+                        case ORANGE_SHULKER_BOX:
+                        case MAGENTA_SHULKER_BOX:
+                        case LIGHT_BLUE_SHULKER_BOX:
+                        case YELLOW_SHULKER_BOX:
+                        case LIME_SHULKER_BOX:
+                        case PINK_SHULKER_BOX:
+                        case GRAY_SHULKER_BOX:
+                        case LIGHT_GRAY_SHULKER_BOX:
+                        case CYAN_SHULKER_BOX:
+                        case PURPLE_SHULKER_BOX:
+                        case BLUE_SHULKER_BOX:
+                        case BROWN_SHULKER_BOX:
+                        case GREEN_SHULKER_BOX:
+                        case RED_SHULKER_BOX:
+                        case BLACK_SHULKER_BOX:
                             if (!chest && !(chest = player.hasPermission(Perm.user_create_chest))) {
                                 return Result.DENY_BLOCK_PERM;
                             }
