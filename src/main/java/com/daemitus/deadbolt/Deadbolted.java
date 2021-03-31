@@ -36,31 +36,50 @@ public class Deadbolted {
         switch (block.getType()) {
             case AIR:
                 break;
-            case WALL_SIGN:
+            case OAK_WALL_SIGN:
+            case SPRUCE_WALL_SIGN:
+            case BIRCH_WALL_SIGN:
+            case ACACIA_WALL_SIGN:
+            case JUNGLE_WALL_SIGN:
+            case DARK_OAK_WALL_SIGN:
+            case WARPED_WALL_SIGN:
+            case CRIMSON_WALL_SIGN:
                 BlockState state = block.getState();
                 org.bukkit.block.Sign signState = (Sign) state;
                 if (Deadbolt.getLanguage().isValidWallSign(signState)) {
                     search(Util.getSignAttached(signState));
                 }
                 break;
-            case WOODEN_DOOR:
-            case IRON_DOOR_BLOCK:
+            case OAK_DOOR:
+            case IRON_DOOR:
             case SPRUCE_DOOR:
             case BIRCH_DOOR:
             case JUNGLE_DOOR:
             case ACACIA_DOOR:
             case DARK_OAK_DOOR:
+            case CRIMSON_DOOR:
+            case WARPED_DOOR:
                 searchDoor(block, true, true);
                 break;
-            case FENCE_GATE:
+            case OAK_FENCE_GATE:
             case BIRCH_FENCE_GATE:
             case ACACIA_FENCE_GATE:
             case DARK_OAK_FENCE_GATE:
             case JUNGLE_FENCE_GATE:
             case SPRUCE_FENCE_GATE:
+            case WARPED_FENCE_GATE:
+            case CRIMSON_FENCE_GATE:
                 searchFenceGate(block, true, true);
                 break;
-            case TRAP_DOOR:
+            case OAK_TRAPDOOR:
+            case BIRCH_TRAPDOOR:
+            case SPRUCE_TRAPDOOR:
+            case ACACIA_TRAPDOOR:
+            case DARK_OAK_TRAPDOOR:
+            case JUNGLE_TRAPDOOR:
+            case SPRUCE_TRAPDOOR:
+            case WARPED_TRAPDOOR:
+            case CRIMSON_TRAPDOOR:
             case IRON_TRAPDOOR:
                 searchTrapDoor(block, true, Deadbolt.getConfig().vertical_trapdoors);
                 break;
@@ -77,11 +96,31 @@ public class Deadbolted {
                 searchSimpleBlock(block, Deadbolt.getConfig().group_cauldrons, Deadbolt.getConfig().group_cauldrons);
                 break;
             case FURNACE:
+            case BLAST_FURNACE:
+            case SMOKER:
             case BURNING_FURNACE:
                 searchFurnace(block, Deadbolt.getConfig().group_furnaces, Deadbolt.getConfig().group_furnaces);
                 break;
             case TRAPPED_CHEST:
             case CHEST:
+            case BARREL:
+            case SHULKER_BOX:
+            case WHITE_SHULKER_BOX:
+            case ORANGE_SHULKER_BOX:
+            case MAGENTA_SHULKER_BOX:
+            case LIGHT_BLUE_SHULKER_BOX:
+            case YELLOW_SHULKER_BOX:
+            case LIME_SHULKER_BOX:
+            case PINK_SHULKER_BOX:
+            case GRAY_SHULKER_BOX:
+            case LIGHT_GRAY_SHULKER_BOX:
+            case CYAN_SHULKER_BOX:
+            case PURPLE_SHULKER_BOX:
+            case BLUE_SHULKER_BOX:
+            case BROWN_SHULKER_BOX:
+            case GREEN_SHULKER_BOX:
+            case RED_SHULKER_BOX:
+            case BLACK_SHULKER_BOX:
                 searchChest(block, true, false);
                 break;
             default:
@@ -97,13 +136,15 @@ public class Deadbolted {
                 Block adjacentUp = block.getRelative(BlockFace.UP);
                 switch (adjacentUp.getType()) {
                     // adjacentUp.getState().getData() instanceof Door no longer works for new doors
-                    case WOODEN_DOOR:
+                    case OAK_DOOR:
                     case IRON_DOOR_BLOCK:
                     case SPRUCE_DOOR:
                     case BIRCH_DOOR:
                     case JUNGLE_DOOR:
                     case ACACIA_DOOR:
                     case DARK_OAK_DOOR:
+                    case WARPED_DOOR:
+                    case CRIMSON_DOOR:
                         search(adjacentUp);
                         break;
                 }
@@ -117,6 +158,8 @@ public class Deadbolted {
                     case JUNGLE_DOOR:
                     case ACACIA_DOOR:
                     case DARK_OAK_DOOR:
+                    case WARPED_DOOR:
+                    case CRIMSON_DOOR:
                         search(adjacentDown);
                         break;
                 }
@@ -161,12 +204,14 @@ public class Deadbolted {
             Block adjacent = block.getRelative(bf);
             if (horizontal) {
                 switch (adjacent.getType()) {
-                    case FENCE_GATE:
+                    case OAK_FENCE_GATE:
                     case BIRCH_FENCE_GATE:
                     case ACACIA_FENCE_GATE:
                     case DARK_OAK_FENCE_GATE:
                     case JUNGLE_FENCE_GATE:
                     case SPRUCE_FENCE_GATE:
+                    case WARPED_FENCE_GATE:
+                    case CRIMSON_FENCE_GATE:
                         searchFenceGate(adjacent, horizontal, vertical);
                         break;
                 }
@@ -180,12 +225,14 @@ public class Deadbolted {
             for (BlockFace bf : Deadbolt.getConfig().VERTICAL_FACES) {
                 Block adjacent = block.getRelative(bf);
                 switch (adjacent.getType()) {
-                    case FENCE_GATE:
+                    case OAK_FENCE_GATE:
                     case BIRCH_FENCE_GATE:
                     case ACACIA_FENCE_GATE:
                     case DARK_OAK_FENCE_GATE:
                     case JUNGLE_FENCE_GATE:
                     case SPRUCE_FENCE_GATE:
+                    case WARPED_FENCE_GATE:
+                    case CRIMSON_FENCE_GATE:
                         searchFenceGate(adjacent, horizontal, vertical);
                         break;
                 }
@@ -392,19 +439,19 @@ public class Deadbolted {
         Set<Block> clickedDoor = new HashSet<Block>();
         if (isNaturalOpen(block)) {
             // special case for Trap Doors so multiple sets don't get miss-aligned
-            if (block.getType() != Material.TRAP_DOOR)
+            if (block.getType() != Material.TRAPDOOR)
                 clickedDoor.add(block);
             if (isVerticallyJoined(block)) {
                 Block b = block;
                 while ((b = b.getRelative(BlockFace.UP)).getType().equals(block.getType())
                         // special case for Trap Doors so it works vertically
-                        && b.getType() != Material.TRAP_DOOR) {
+                        && b.getType() != Material.TRAPDOOR) {
                     clickedDoor.add(b);
                 }
                 b = block;
                 while ((b = b.getRelative(BlockFace.DOWN)).getType().equals(block.getType())
                         // special case for Trap Doors so it works vertically
-                        && b.getType() != Material.TRAP_DOOR) {
+                        && b.getType() != Material.TRAPDOOR) {
                     clickedDoor.add(b);
                 }
             }
@@ -463,6 +510,8 @@ public class Deadbolted {
             case JUNGLE_DOOR:
             case ACACIA_DOOR:
             case DARK_OAK_DOOR:
+            case WARPED_DOOR:
+            case CRIMSON_DOOR:
                 return true;
             default:
                 return false;
@@ -478,8 +527,17 @@ public class Deadbolted {
             case JUNGLE_DOOR:
             case ACACIA_DOOR:
             case DARK_OAK_DOOR:
+            case WARPED_DOOR:
+            case CRIMSON_DOOR:
                 return true;
-            case TRAP_DOOR:
+            case OAK_TRAPDOOR:
+            case BIRCH_TRAPDOOR:
+            case SPRUCE_TRAPDOOR:
+            case JUNGLE_TRAPDOOR:
+            case ACACIA_TRAPDOOR:
+            case DARK_OAK_TRAPDOOR:
+            case CRIMSON_TRAPDOOR:
+            case WARPED_TRAPDOOR:
             case IRON_TRAPDOOR:
                 return Deadbolt.getConfig().vertical_trapdoors;
             default:

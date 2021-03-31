@@ -143,21 +143,32 @@ public class DeadboltCommandExecutor implements CommandExecutor {
 
     private void fixHelper(Player player, Block block) {
         switch (block.getType()) {
-            case WOODEN_DOOR:
-            case IRON_DOOR_BLOCK:
+            case OAK_DOOR:
+            case IRON_DOOR:
             case SPRUCE_DOOR:
             case BIRCH_DOOR:
             case JUNGLE_DOOR:
             case ACACIA_DOOR:
             case DARK_OAK_DOOR:
-            case TRAP_DOOR:
+            case WARPED_DOOR:
+            case CRIMSON_DOOR:
+            case OAK_TRAPDOOR:
+            case BIRCH_TRAPDOOR:
+            case SPRUCE_TRAPDOOR:
+            case JUNGLE_TRAPDOOR:
+            case ACACIA_TRAPDOOR:
+            case DARK_OAK_TRAPDOOR:
+            case WARPED_TRAPDOOR:
+            case CRIMSON_TRAPDOOR:
             case IRON_TRAPDOOR:
-            case FENCE_GATE:
+            case OAK_FENCE_GATE:
             case BIRCH_FENCE_GATE:
             case ACACIA_FENCE_GATE:
             case DARK_OAK_FENCE_GATE:
             case JUNGLE_FENCE_GATE:
             case SPRUCE_FENCE_GATE:
+            case WARPED_FENCE_GATE:
+            case CRIMSON_FENCE_GATE:
                 block.setData((byte) (block.getData() ^ 0x4));
                 break;
             default:
@@ -184,21 +195,32 @@ public class DeadboltCommandExecutor implements CommandExecutor {
 
     private void fixAllHelper(Player player, Block block, Deadbolted db) {
         switch (block.getType()) {
-            case WOODEN_DOOR:
-            case IRON_DOOR_BLOCK:
+            case OAK_DOOR:
+            case IRON_DOOR:
             case SPRUCE_DOOR:
             case BIRCH_DOOR:
             case JUNGLE_DOOR:
             case ACACIA_DOOR:
             case DARK_OAK_DOOR:
-            case TRAP_DOOR:
+            case WARPED_DOOR:
+            case CRIMSON_DOOR:
+            case OAK_TRAPDOOR:
+            case BIRCH_TRAPDOOR:
+            case SPRUCE_TRAPDOOR:
+            case JUNGLE_TRAPDOOR:
+            case ACACIA_TRAPDOOR:
+            case DARK_OAK_TRAPDOOR:
+            case WARPED_TRAPDOOR:
+            case CRIMSON_TRAPDOOR:
             case IRON_TRAPDOOR:
-            case FENCE_GATE:
+            case OAK_FENCE_GATE:
             case BIRCH_FENCE_GATE:
             case ACACIA_FENCE_GATE:
             case DARK_OAK_FENCE_GATE:
             case JUNGLE_FENCE_GATE:
             case SPRUCE_FENCE_GATE:
+            case WARPED_FENCE_GATE:
+            case CRIMSON_FENCE_GATE:
                 for (Block b : db.getBlocks()) {
                     if (b.getType().equals(block.getType())) {
                         b.setData((byte) (b.getData() ^ 0x4));

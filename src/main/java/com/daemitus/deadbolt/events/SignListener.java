@@ -163,6 +163,24 @@ public class SignListener implements Listener {
                     //not authorized to protect?
                     switch (setBlock.getType()) {
                         case CHEST:
+                        case BARREL:
+                        case SHULKER_BOX:
+                        case WHITE_SHULKER_BOX:
+                        case ORANGE_SHULKER_BOX:
+                        case MAGENTA_SHULKER_BOX:
+                        case LIGHT_BLUE_SHULKER_BOX:
+                        case YELLOW_SHULKER_BOX:
+                        case LIME_SHULKER_BOX:
+                        case PINK_SHULKER_BOX:
+                        case GRAY_SHULKER_BOX:
+                        case LIGHT_GRAY_SHULKER_BOX:
+                        case CYAN_SHULKER_BOX:
+                        case PURPLE_SHULKER_BOX:
+                        case BLUE_SHULKER_BOX:
+                        case BROWN_SHULKER_BOX:
+                        case GREEN_SHULKER_BOX:
+                        case RED_SHULKER_BOX:
+                        case BLACK_SHULKER_BOX:
                             if (!chest && !(chest = player.hasPermission(Perm.user_create_chest))) {
                                 return Result.DENY_BLOCK_PERM;
                             }
@@ -173,6 +191,8 @@ public class SignListener implements Listener {
                             }
                             break;
                         case FURNACE:
+                        case BLAST_FURNACE:
+                        case SMOKER:
                         case BURNING_FURNACE:
                             if (!furnace && !(furnace = player.hasPermission(Perm.user_create_furnace))) {
                                 return Result.DENY_BLOCK_PERM;
@@ -185,11 +205,20 @@ public class SignListener implements Listener {
                         case JUNGLE_DOOR:
                         case ACACIA_DOOR:
                         case DARK_OAK_DOOR:
+                        case WARPED_DOOR:
+                        case CRIMSON_DOOR:
                             if (!door && !(door = player.hasPermission(Perm.user_create_door))) {
                                 return Result.DENY_BLOCK_PERM;
                             }
                             break;
-                        case TRAP_DOOR:
+                        case OAK_TRAPDOOR:
+                        case BIRCH_TRAPDOOR:
+                        case SPRUCE_TRAPDOOR:
+                        case JUNGLE_TRAPDOOR:
+                        case ACACIA_TRAPDOOR:
+                        case DARK_OAK_TRAPDOOR:
+                        case WARPED_TRAPDOOR:
+                        case CRIMSON_TRAPDOOR:
                         case IRON_TRAPDOOR:
                             if (!trap && !(trap = player.hasPermission(Perm.user_create_trapdoor))) {
                                 return Result.DENY_BLOCK_PERM;
@@ -201,6 +230,8 @@ public class SignListener implements Listener {
                         case DARK_OAK_FENCE_GATE:
                         case JUNGLE_FENCE_GATE:
                         case SPRUCE_FENCE_GATE:
+                        case WARPED_FENCE_GATE:
+                        case CRIMSON_FENCE_GATE:
                             if (!gate && !(gate = player.hasPermission(Perm.user_create_fencegate))) {
                                 return Result.DENY_BLOCK_PERM;
                             }
