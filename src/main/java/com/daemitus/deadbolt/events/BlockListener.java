@@ -63,6 +63,8 @@ public class BlockListener implements Listener {
         switch (block.getType()) {
             case CHEST:
             case FURNACE:
+            case BLAST_FURNACE:
+            case SMOKER:
             case CAULDRON:
             case DISPENSER:
             case BREWING_STAND:
@@ -82,13 +84,15 @@ public class BlockListener implements Listener {
                     Deadbolt.getConfig().sendMessage(player, ChatColor.RED, Deadbolt.getLanguage().msg_deny_container_expansion);
                 }
                 return;
-            case IRON_DOOR_BLOCK:
+            case IRON_DOOR:
             case WOODEN_DOOR:
             case SPRUCE_DOOR:
             case BIRCH_DOOR:
             case JUNGLE_DOOR:
             case ACACIA_DOOR:
             case DARK_OAK_DOOR:
+            case WARPED_DOOR:
+            case CRIMSON_DOOR:
                 if (player.hasPermission(getPermission(block.getType())) && Deadbolt.getConfig().reminder.add(player)) {
                     Deadbolt.getConfig().sendMessage(player, ChatColor.GOLD, Deadbolt.getLanguage().msg_reminder_lock_your_chests);
                 }
@@ -102,7 +106,14 @@ public class BlockListener implements Listener {
                     event.setCancelled(true);
                 }
                 return;
-            case TRAP_DOOR:
+            case OAK_TRAPDOOR:
+            case BIRCH_TRAPDOOR:
+            case SPRUCE_TRAPDOOR:
+            case JUNGLE_TRAPDOOR:
+            case ACACIA_TRAPDOOR:
+            case DARK_OAK_TRAPDOOR:
+            case WARPED_TRAPDOOR:
+            case CRIMSON_TRAPDOOR:
             case IRON_TRAPDOOR:
                 if (player.hasPermission(getPermission(block.getType())) && Deadbolt.getConfig().reminder.add(player)) {
                     Deadbolt.getConfig().sendMessage(player, ChatColor.GOLD, Deadbolt.getLanguage().msg_reminder_lock_your_chests);
@@ -118,6 +129,8 @@ public class BlockListener implements Listener {
             case DARK_OAK_FENCE_GATE:
             case JUNGLE_FENCE_GATE:
             case SPRUCE_FENCE_GATE:
+            case WARPED_FENCE_GATE:
+            case CRIMSON_FENCE_GATE:
                 if (player.hasPermission(getPermission(block.getType())) && Deadbolt.getConfig().reminder.add(player)) {
                     Deadbolt.getConfig().sendMessage(player, ChatColor.GOLD, Deadbolt.getLanguage().msg_reminder_lock_your_chests);
                 }
@@ -143,6 +156,8 @@ public class BlockListener implements Listener {
             case CHEST:
                 return Perm.user_create_chest;
             case FURNACE:
+            case BLAST_FURNACE:
+            case SMOKER:
             case BURNING_FURNACE:
                 return Perm.user_create_furnace;
             case CAULDRON:
@@ -153,15 +168,24 @@ public class BlockListener implements Listener {
                 return Perm.user_create_brewery;
             case ENCHANTMENT_TABLE:
                 return Perm.user_create_enchant;
-            case WOODEN_DOOR:
-            case IRON_DOOR_BLOCK:
+            case OAK_DOOR:
+            case IRON_DOOR:
             case SPRUCE_DOOR:
             case BIRCH_DOOR:
             case JUNGLE_DOOR:
             case ACACIA_DOOR:
             case DARK_OAK_DOOR:
+            case WARPED_DOOR:
+            case CRIMSON_DOOR:
                 return Perm.user_create_door;
-            case TRAP_DOOR:
+            case OAK_TRAPDOOR:
+            case BIRCH_TRAPDOOR:
+            case SPRUCE_TRAPDOOR:
+            case JUNGLE_TRAPDOOR:
+            case ACACIA_TRAPDOOR:
+            case DARK_OAK_TRAPDOOR:
+            case WARPED_TRAPDOOR:
+            case CRIMSON_TRAPDOOR:
             case IRON_TRAPDOOR:
                 return Perm.user_create_trapdoor;
             case FENCE_GATE:
@@ -170,6 +194,8 @@ public class BlockListener implements Listener {
             case DARK_OAK_FENCE_GATE:
             case JUNGLE_FENCE_GATE:
             case SPRUCE_FENCE_GATE:
+            case WARPED_FENCE_GATE:
+            case CRIMSON_FENCE_GATE:
                 return Perm.user_create_fencegate;
             case ANVIL:
                 return Perm.user_create_anvil;
